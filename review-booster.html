@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Google Review Booster — AI Fusion Automations</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --primary: #7c3aed;
+    --primary-light: #a78bfa;
+    --primary-dark: #5b21b6;
+    --accent: #06b6d4;
+    --accent-light: #22d3ee;
+    --bg: #0f0f1a;
+    --bg-card: #1a1a2e;
+    --bg-card-hover: #1e1e35;
+    --text: #f1f5f9;
+    --text-muted: #94a3b8;
+    --border: #2d2d4a;
+    --success: #10b981;
+    --warning: #f59e0b;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  .gradient-bg {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(124,58,237,0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 100%, rgba(6,182,212,0.1) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .logo-icon {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+  }
+
+  .logo-text {
+    font-size: 1.1rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--primary-light), var(--accent-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .header h1 {
+    font-size: 2.4rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+    background: linear-gradient(135deg, #fff, var(--primary-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .header p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.2s;
+  }
+
+  .card:hover { border-color: var(--primary); }
+
+  .card-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .card-subtitle {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .step-badge {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+  }
+
+  /* Form */
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    color: var(--text-muted);
+  }
+
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(124,58,237,0.2);
+  }
+
+  .form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  @media (max-width: 600px) {
+    .form-row { grid-template-columns: 1fr; }
+  }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    width: 100%;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 25px rgba(124,58,237,0.4);
+  }
+
+  .btn-secondary {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255,255,255,0.1);
+  }
+
+  .btn-copy {
+    background: rgba(16,185,129,0.1);
+    border: 1px solid rgba(16,185,129,0.3);
+    color: var(--success);
+    padding: 0.5rem 0.8rem;
+    font-size: 0.8rem;
+  }
+
+  .btn-copy:hover { background: rgba(16,185,129,0.2); }
+
+  /* Results */
+  .results { display: none; }
+  .results.active { display: block; }
+
+  .result-box {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .result-box label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .result-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .result-link input {
+    flex: 1;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.6rem 0.8rem;
+    color: var(--accent-light);
+    font-size: 0.85rem;
+    font-family: monospace;
+  }
+
+  .qr-container {
+    text-align: center;
+    padding: 1.5rem;
+  }
+
+  .qr-container canvas, .qr-container img {
+    border-radius: 12px;
+    border: 4px solid white;
+  }
+
+  .qr-actions {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+
+  /* Response Templates */
+  .template-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    position: relative;
+  }
+
+  .template-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .template-label.positive { color: var(--success); }
+  .template-label.negative { color: var(--warning); }
+
+  .template-text {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  .template-copy {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+  }
+
+  /* Stats preview */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .stat-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary-light), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+  }
+
+  /* Tips */
+  .tip {
+    display: flex;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: rgba(124,58,237,0.08);
+    border: 1px solid rgba(124,58,237,0.2);
+    border-radius: 10px;
+    margin-bottom: 0.75rem;
+  }
+
+  .tip-icon { font-size: 1.2rem; flex-shrink: 0; }
+  .tip-text { font-size: 0.85rem; color: var(--text-muted); }
+  .tip-text strong { color: var(--text); }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 3rem 0 2rem;
+    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+  }
+
+  .footer p {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  .footer a {
+    color: var(--primary-light);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .footer a:hover { text-decoration: underline; }
+
+  .cta-box {
+    background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(6,182,212,0.1));
+    border: 1px solid rgba(124,58,237,0.3);
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  .cta-box h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .cta-box p {
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+    font-size: 0.95rem;
+  }
+
+  .cta-box .btn {
+    width: auto;
+    padding: 0.7rem 2rem;
+  }
+
+  .hidden { display: none; }
+
+  /* Loading animation */
+  .loader-container {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .loader-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+
+  .loader-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .loader-time {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .loader-track {
+    width: 100%;
+    height: 8px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .loader-fill {
+    height: 100%;
+    border-radius: 10px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    width: 0%;
+    transition: width 0.3s ease;
+    position: relative;
+  }
+
+  .loader-fill::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  .loader-steps {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .loader-step {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    transition: all 0.3s;
+  }
+
+  .loader-step.active {
+    color: var(--accent-light);
+  }
+
+  .loader-step.done {
+    color: var(--success);
+  }
+
+  .loader-step-icon {
+    width: 18px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--accent);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Print QR */
+  @media print {
+    body { background: white; color: black; }
+    .no-print { display: none !important; }
+    .print-only { display: block !important; }
+    .card { border: 1px solid #ddd; }
+  }
+</style>
+</head>
+<body>
+<div class="gradient-bg"></div>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">⚡</div>
+      <div class="logo-text">AI Fusion Automations</div>
+    </div>
+    <h1>Google Review Booster</h1>
+    <p>Generate your direct Google review link, QR code, and AI-powered response templates — all in seconds.</p>
+  </div>
+
+  <!-- Why Reviews Matter -->
+  <div class="stats-row no-print">
+    <div class="stat-card">
+      <div class="stat-value">93%</div>
+      <div class="stat-label">of customers read reviews before buying</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">4.2★</div>
+      <div class="stat-label">minimum rating customers trust</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">+31%</div>
+      <div class="stat-label">more revenue with 5+ recent reviews</div>
+    </div>
+  </div>
+
+  <!-- Step 1: Business Details -->
+  <div class="card no-print" id="step1">
+    <div class="card-title"><span class="step-badge">Step 1</span> Find Your Business</div>
+    <div class="card-subtitle">Just type your business name and we'll find your Google listing automatically.</div>
+
+    <div class="form-group">
+      <label>Business Name *</label>
+      <input type="text" id="bizName" placeholder="e.g. Happy Chimney Sweep" autocomplete="off" />
+    </div>
+
+    <div class="form-group">
+      <label>Location (optional — helps narrow results)</label>
+      <input type="text" id="bizLocation" placeholder="e.g. East Grinstead, London, Manchester" />
+    </div>
+
+    <button class="btn btn-primary" id="searchBtn" onclick="searchBusiness()">🔍 Find My Business on Google</button>
+
+    <!-- Loading Progress Bar -->
+    <div id="searchLoader" class="loader-container hidden">
+      <div class="loader-header">
+        <div class="loader-label"><span class="spinner"></span> Searching Google...</div>
+        <div class="loader-time" id="loaderTime">~3 seconds</div>
+      </div>
+      <div class="loader-track">
+        <div class="loader-fill" id="loaderFill"></div>
+      </div>
+      <div class="loader-steps">
+        <div class="loader-step" id="step-connect"><span class="loader-step-icon">○</span> Connecting to Google Places API</div>
+        <div class="loader-step" id="step-search"><span class="loader-step-icon">○</span> Searching for your business</div>
+        <div class="loader-step" id="step-verify"><span class="loader-step-icon">○</span> Verifying listing details</div>
+        <div class="loader-step" id="step-generate"><span class="loader-step-icon">○</span> Preparing your review toolkit</div>
+      </div>
+    </div>
+
+    <!-- Search Results -->
+    <div id="searchResults" class="hidden" style="margin-top:1.5rem;">
+      <div style="font-size:0.85rem;font-weight:600;color:var(--accent);margin-bottom:0.75rem;">Select your business:</div>
+      <div id="searchResultsList"></div>
+    </div>
+
+    <!-- Not Found Error -->
+    <div id="notFoundError" class="hidden" style="margin-top:1.5rem;">
+      <div style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:12px;padding:1.25rem;">
+        <div style="font-weight:700;color:var(--warning);margin-bottom:0.5rem;">😕 We couldn't find your business on Google</div>
+        <div style="font-size:0.9rem;color:var(--text-muted);margin-bottom:1rem;">This usually means your Google Business Profile isn't set up yet, or the listing needs optimising. Don't worry — we can help!</div>
+        <a href="https://aifusionautomations.com" target="_blank" class="btn btn-primary" style="background:linear-gradient(135deg, var(--warning), #ef4444);width:auto;padding:0.7rem 1.5rem;">📞 Get Free Help Setting Up Your Google Listing →</a>
+      </div>
+    </div>
+
+    <!-- Selected Business + Extra Fields -->
+    <div id="selectedBusiness" class="hidden" style="margin-top:1.5rem;">
+      <div style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:12px;padding:1rem;margin-bottom:1.25rem;">
+        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.25rem;">
+          <span style="color:var(--success);font-weight:700;">✅ Selected:</span>
+          <span id="selectedName" style="font-weight:600;"></span>
+        </div>
+        <div id="selectedAddress" style="font-size:0.85rem;color:var(--text-muted);"></div>
+        <div id="selectedRating" style="font-size:0.85rem;color:var(--warning);margin-top:0.25rem;"></div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Your Name (for response templates)</label>
+          <input type="text" id="ownerName" placeholder="e.g. Grant" />
+        </div>
+        <div class="form-group">
+          <label>Industry</label>
+          <select id="bizIndustry">
+            <option value="general">General Business</option>
+            <option value="restaurant">Restaurant / Cafe</option>
+            <option value="retail">Retail / Shop</option>
+            <option value="trades">Trades / Home Services</option>
+            <option value="health">Health / Wellness</option>
+            <option value="beauty">Beauty / Hair</option>
+            <option value="professional">Professional Services</option>
+            <option value="fitness">Fitness / Gym</option>
+            <option value="automotive">Automotive</option>
+            <option value="tech">Technology / IT</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="generateAll()">⚡ Generate Review Toolkit</button>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="results" id="results">
+
+    <!-- Step 2: Review Link & QR -->
+    <div class="card">
+      <div class="card-title"><span class="step-badge">Step 2</span> Your Direct Review Link</div>
+      <div class="card-subtitle">Share this link with customers — it takes them straight to your Google review form.</div>
+
+      <div class="result-box">
+        <label>📎 Direct Review Link</label>
+        <div class="result-link">
+          <input type="text" id="reviewLink" readonly />
+          <button class="btn btn-copy" onclick="copyText('reviewLink')">📋 Copy</button>
+        </div>
+      </div>
+
+      <div class="result-box">
+        <label>📱 QR Code — Print this for your counter, receipts, or business cards</label>
+        <div class="qr-container">
+          <div id="qrCode"></div>
+          <div class="qr-actions">
+            <button class="btn btn-secondary" onclick="downloadQR()">⬇️ Download PNG</button>
+            <button class="btn btn-secondary" onclick="printQR()">🖨️ Print</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-box">
+        <label>💬 SMS Template — Text this to customers after service</label>
+        <div style="position:relative">
+          <textarea id="smsTemplate" rows="3" readonly style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:0.8rem;color:var(--text-muted);font-size:0.85rem;width:100%;font-family:inherit;resize:none;"></textarea>
+          <button class="btn btn-copy" onclick="copyText('smsTemplate')" style="position:absolute;top:0.5rem;right:0.5rem;">📋</button>
+        </div>
+      </div>
+
+      <div class="result-box">
+        <label>📧 Email Template — Send this after a job well done</label>
+        <div style="position:relative">
+          <textarea id="emailTemplate" rows="6" readonly style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:0.8rem;color:var(--text-muted);font-size:0.85rem;width:100%;font-family:inherit;resize:none;"></textarea>
+          <button class="btn btn-copy" onclick="copyText('emailTemplate')" style="position:absolute;top:0.5rem;right:0.5rem;">📋</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Response Templates -->
+    <div class="card">
+      <div class="card-title"><span class="step-badge">Step 3</span> AI Review Response Templates</div>
+      <div class="card-subtitle">Copy-paste these when replying to reviews. Responding to every review boosts your ranking.</div>
+
+      <div id="responseTemplates"></div>
+    </div>
+
+    <!-- Tips -->
+    <div class="card no-print">
+      <div class="card-title">💡 Pro Tips to Get More Reviews</div>
+      <div class="card-subtitle">Simple tactics that the top-rated businesses use.</div>
+
+      <div class="tip">
+        <div class="tip-icon">⏰</div>
+        <div class="tip-text"><strong>Ask within 24 hours.</strong> The closer to the experience, the more likely they'll leave a review. Send the SMS or email the same day.</div>
+      </div>
+      <div class="tip">
+        <div class="tip-icon">🎯</div>
+        <div class="tip-text"><strong>Make it personal.</strong> "Hi Sarah, it was great helping with your boiler today — would you mind leaving us a quick review?" beats generic requests every time.</div>
+      </div>
+      <div class="tip">
+        <div class="tip-icon">📱</div>
+        <div class="tip-text"><strong>Use the QR code everywhere.</strong> Print it on receipts, invoices, business cards, van signage, and your front desk. The easier you make it, the more reviews you'll get.</div>
+      </div>
+      <div class="tip">
+        <div class="tip-icon">💬</div>
+        <div class="tip-text"><strong>Always respond to reviews.</strong> Google rewards businesses that engage. Reply to every review within 48 hours — yes, even the bad ones.</div>
+      </div>
+      <div class="tip">
+        <div class="tip-icon">🚫</div>
+        <div class="tip-text"><strong>Never offer incentives for reviews.</strong> It violates Google's policies and can get your listing suspended. Just ask genuinely — most happy customers are glad to help.</div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-box no-print">
+      <h3>Want to automate this entire process?</h3>
+      <p>AI Fusion Automations can set up automatic review requests that go out after every job — via SMS, email, or WhatsApp. No manual work needed.</p>
+      <a href="https://aifusionautomations.com" target="_blank" class="btn btn-primary" style="background:linear-gradient(135deg, var(--primary), var(--accent));">Book a Free 15-Min Strategy Call →</a>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer no-print">
+    <div class="logo" style="margin-bottom:1rem;">
+      <div class="logo-icon" style="width:32px;height:32px;font-size:1rem;">⚡</div>
+      <div class="logo-text" style="font-size:0.9rem;">AI Fusion Automations</div>
+    </div>
+    <p>Free tool powered by <a href="https://aifusionautomations.com" target="_blank">AI Fusion Automations</a></p>
+    <p style="margin-top:0.5rem;font-size:0.75rem;">Helping businesses grow with AI-powered automation, chatbots, and CRM solutions.</p>
+  </div>
+
+</div>
+
+<script>
+const GAPI_KEY = 'AIzaSyAwXJVUdiKP9CKw47un9LhEoFW8YgkIm2s';
+let selectedPlaceId = null;
+let selectedPlaceName = '';
+
+// Progress bar animation
+let loaderInterval = null;
+
+function showLoader() {
+  const loader = document.getElementById('searchLoader');
+  loader.classList.remove('hidden');
+  const fill = document.getElementById('loaderFill');
+  const timeEl = document.getElementById('loaderTime');
+  fill.style.width = '0%';
+
+  // Reset steps
+  ['step-connect','step-search','step-verify','step-generate'].forEach(id => {
+    const el = document.getElementById(id);
+    el.className = 'loader-step';
+    el.querySelector('.loader-step-icon').textContent = '○';
+  });
+
+  let progress = 0;
+  let elapsed = 0;
+  const totalEstimate = 3; // seconds
+
+  // Step 1: Connecting (0-25%)
+  setStepActive('step-connect');
+
+  loaderInterval = setInterval(() => {
+    elapsed += 0.1;
+    const remaining = Math.max(0, Math.ceil(totalEstimate - elapsed));
+    timeEl.textContent = remaining > 0 ? `~${remaining} second${remaining !== 1 ? 's' : ''}` : 'Almost done...';
+
+    if (progress < 25) {
+      progress += 2.5;
+    } else if (progress >= 25 && progress < 26) {
+      setStepDone('step-connect');
+      setStepActive('step-search');
+      progress = 26;
+    } else if (progress < 60) {
+      progress += 1.5;
+    } else if (progress >= 60 && progress < 61) {
+      setStepDone('step-search');
+      setStepActive('step-verify');
+      progress = 61;
+    } else if (progress < 85) {
+      progress += 0.8;
+    } else if (progress < 95) {
+      progress += 0.2; // slow down near end, waiting for actual response
+    }
+
+    fill.style.width = Math.min(progress, 95) + '%';
+  }, 100);
+}
+
+function completeLoader(success) {
+  clearInterval(loaderInterval);
+  const fill = document.getElementById('loaderFill');
+  const timeEl = document.getElementById('loaderTime');
+
+  setStepDone('step-verify');
+  if (success) {
+    setStepDone('step-generate');
+    fill.style.width = '100%';
+    timeEl.textContent = 'Done!';
+  } else {
+    const genStep = document.getElementById('step-generate');
+    genStep.className = 'loader-step';
+    genStep.querySelector('.loader-step-icon').textContent = '✗';
+    genStep.style.color = 'var(--warning)';
+    fill.style.width = '100%';
+    fill.style.background = 'linear-gradient(90deg, var(--warning), #ef4444)';
+    timeEl.textContent = 'Not found';
+  }
+
+  setTimeout(() => {
+    document.getElementById('searchLoader').classList.add('hidden');
+    // Reset fill color for next search
+    fill.style.background = '';
+  }, 1200);
+}
+
+function setStepActive(id) {
+  const el = document.getElementById(id);
+  el.className = 'loader-step active';
+  el.querySelector('.loader-step-icon').innerHTML = '<span class="spinner" style="width:12px;height:12px;border-width:1.5px;"></span>';
+}
+
+function setStepDone(id) {
+  const el = document.getElementById(id);
+  el.className = 'loader-step done';
+  el.querySelector('.loader-step-icon').textContent = '✓';
+}
+
+async function searchBusiness() {
+  const bizName = document.getElementById('bizName').value.trim();
+  const location = document.getElementById('bizLocation').value.trim();
+
+  if (!bizName) { alert('Please enter your business name.'); return; }
+
+  const btn = document.getElementById('searchBtn');
+  btn.innerHTML = '🔍 Searching...';
+  btn.disabled = true;
+
+  // Hide previous results
+  document.getElementById('searchResults').classList.add('hidden');
+  document.getElementById('notFoundError').classList.add('hidden');
+  document.getElementById('selectedBusiness').classList.add('hidden');
+
+  // Show progress bar
+  showLoader();
+
+  const query = location ? `${bizName} ${location}` : bizName;
+
+  try {
+    // Use Places API (New) Text Search via fetch — works from any origin
+    const resp = await fetch('https://places.googleapis.com/v1/places:searchText', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Goog-Api-Key': GAPI_KEY,
+        'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.rating,places.userRatingCount,places.types,places.googleMapsUri'
+      },
+      body: JSON.stringify({ textQuery: query })
+    });
+
+    const data = await resp.json();
+
+    btn.innerHTML = '🔍 Find My Business on Google';
+    btn.disabled = false;
+
+    if (data.places && data.places.length > 0) {
+      completeLoader(true);
+
+      // Map to consistent format
+      const mapped = data.places.slice(0, 5).map(p => ({
+        place_id: p.id,
+        name: p.displayName?.text || '',
+        formatted_address: p.formattedAddress || '',
+        rating: p.rating,
+        user_ratings_total: p.userRatingCount,
+        types: p.types || [],
+        googleMapsUri: p.googleMapsUri || ''
+      }));
+
+      setTimeout(() => {
+        if (mapped.length === 1) {
+          selectBusiness(mapped[0]);
+        } else {
+          showSearchResults(mapped);
+        }
+      }, 1300);
+    } else {
+      // No results found
+      completeLoader(false);
+      setTimeout(() => {
+        document.getElementById('notFoundError').classList.remove('hidden');
+      }, 1300);
+    }
+
+  } catch (err) {
+    console.error('Search error:', err);
+    completeLoader(false);
+    btn.innerHTML = '🔍 Find My Business on Google';
+    btn.disabled = false;
+    setTimeout(() => {
+      document.getElementById('notFoundError').classList.remove('hidden');
+    }, 1300);
+  }
+}
+
+function showSearchResults(results) {
+  const container = document.getElementById('searchResultsList');
+  container.innerHTML = '';
+
+  results.forEach((place, i) => {
+    const name = place.name || 'Unknown';
+    const addr = place.formatted_address || place.vicinity || '';
+    const rating = place.rating ? `⭐ ${place.rating} (${place.user_ratings_total || 0} reviews)` : 'No reviews yet';
+
+    const div = document.createElement('div');
+    div.style.cssText = 'background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:0.5rem;cursor:pointer;transition:all 0.2s;';
+    div.onmouseenter = () => div.style.borderColor = 'var(--primary)';
+    div.onmouseleave = () => div.style.borderColor = 'var(--border)';
+    div.onclick = () => selectBusiness(place);
+    div.innerHTML = `
+      <div style="font-weight:600;">${name}</div>
+      <div style="font-size:0.85rem;color:var(--text-muted);">${addr}</div>
+      <div style="font-size:0.8rem;color:var(--warning);margin-top:0.25rem;">${rating}</div>
+    `;
+    container.appendChild(div);
+  });
+
+  document.getElementById('searchResults').classList.remove('hidden');
+}
+
+function selectBusiness(place) {
+  selectedPlaceId = place.place_id;
+  selectedPlaceName = place.name || document.getElementById('bizName').value.trim();
+
+  document.getElementById('selectedName').textContent = selectedPlaceName;
+  document.getElementById('selectedAddress').textContent = place.formatted_address || place.vicinity || '';
+  document.getElementById('selectedRating').textContent = place.rating
+    ? `⭐ ${place.rating}/5 from ${place.user_ratings_total || 0} reviews`
+    : 'No reviews yet — let\'s change that!';
+
+  // Auto-detect industry from types
+  if (place.types) {
+    const typeMap = {
+      restaurant: 'restaurant', cafe: 'restaurant', food: 'restaurant', bakery: 'restaurant',
+      store: 'retail', shop: 'retail', shopping_mall: 'retail',
+      plumber: 'trades', electrician: 'trades', roofing_contractor: 'trades', painter: 'trades', locksmith: 'trades', general_contractor: 'trades', home_goods_store: 'trades',
+      doctor: 'health', dentist: 'health', hospital: 'health', pharmacy: 'health', physiotherapist: 'health',
+      beauty_salon: 'beauty', hair_care: 'beauty', spa: 'beauty',
+      lawyer: 'professional', accounting: 'professional', insurance_agency: 'professional', real_estate_agency: 'professional',
+      gym: 'fitness',
+      car_repair: 'automotive', car_dealer: 'automotive', car_wash: 'automotive'
+    };
+    for (const t of place.types) {
+      if (typeMap[t]) {
+        document.getElementById('bizIndustry').value = typeMap[t];
+        break;
+      }
+    }
+  }
+
+  document.getElementById('searchResults').classList.add('hidden');
+  document.getElementById('notFoundError').classList.add('hidden');
+  document.getElementById('selectedBusiness').classList.remove('hidden');
+}
+
+// Allow Enter key to trigger search
+document.addEventListener('DOMContentLoaded', () => {
+  ['bizName', 'bizLocation'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); searchBusiness(); }
+    });
+  });
+});
+
+function generateAll() {
+  if (!selectedPlaceId) { alert('Please search for and select your business first.'); return; }
+
+  const bizName = selectedPlaceName || document.getElementById('bizName').value.trim();
+  const industry = document.getElementById('bizIndustry').value;
+  const ownerName = document.getElementById('ownerName').value.trim() || 'The Team';
+
+  // Generate the direct review URL using Place ID
+  const reviewUrl = `https://search.google.com/local/writereview?placeid=${selectedPlaceId}`;
+
+  document.getElementById('reviewLink').value = reviewUrl;
+
+  // Generate QR code
+  const qrDiv = document.getElementById('qrCode');
+  qrDiv.innerHTML = '';
+  new QRCode(qrDiv, {
+    text: reviewUrl,
+    width: 220,
+    height: 220,
+    colorDark: '#1a1a2e',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.H
+  });
+
+  // SMS template
+  document.getElementById('smsTemplate').value =
+    `Hi! Thank you for choosing ${bizName}. We'd really appreciate a quick Google review — it only takes 30 seconds and helps us grow: ${reviewUrl}`;
+
+  // Email template
+  document.getElementById('emailTemplate').value =
+    `Hi there,\n\nThank you so much for choosing ${bizName} — it was a pleasure working with you!\n\nIf you had a great experience, we'd really appreciate a quick Google review. It only takes 30 seconds and makes a huge difference for our small business:\n\n${reviewUrl}\n\nThank you for your support!\n\nBest regards,\n${ownerName}\n${bizName}`;
+
+  // Generate response templates
+  const templates = getResponseTemplates(bizName, ownerName, industry);
+  const container = document.getElementById('responseTemplates');
+  container.innerHTML = '';
+
+  templates.forEach(t => {
+    const div = document.createElement('div');
+    div.className = 'template-card';
+    div.innerHTML = `
+      <div class="template-label ${t.type}">${t.type === 'positive' ? '⭐' : '⚠️'} ${t.label}</div>
+      <div class="template-text" id="tmpl-${t.id}">${t.text}</div>
+      <button class="btn btn-copy template-copy" onclick="copyTemplate('tmpl-${t.id}')">📋 Copy</button>
+    `;
+    container.appendChild(div);
+  });
+
+  // Show results
+  document.getElementById('results').classList.add('active');
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+}
+
+function getResponseTemplates(biz, owner, industry) {
+  const industryContext = {
+    restaurant: 'dining with us',
+    retail: 'shopping with us',
+    trades: 'trusting us with your home',
+    health: 'visiting our practice',
+    beauty: 'your visit',
+    professional: 'working with us',
+    fitness: 'training with us',
+    automotive: 'bringing your vehicle to us',
+    tech: 'choosing our services',
+    general: 'choosing us'
+  };
+
+  const ctx = industryContext[industry] || 'choosing us';
+
+  return [
+    {
+      id: '5star',
+      type: 'positive',
+      label: '5-Star Review Response',
+      text: `Thank you so much for the wonderful review! We're thrilled to hear you had a great experience ${ctx}. Your kind words mean the world to our team at ${biz}. We look forward to seeing you again soon! — ${owner}`
+    },
+    {
+      id: '4star',
+      type: 'positive',
+      label: '4-Star Review Response',
+      text: `Thank you for your generous review! We're really pleased you had a positive experience ${ctx}. We noticed you gave us 4 stars — if there's anything we can do to earn that 5th star next time, we'd love to hear from you. Thanks again for the support! — ${owner}`
+    },
+    {
+      id: '3star',
+      type: 'negative',
+      label: '3-Star (Mixed) Review Response',
+      text: `Thank you for taking the time to share your feedback. We appreciate your honesty and we're sorry your experience wasn't perfect. At ${biz}, we're always looking to improve. If you'd be willing to share more details about what we could do better, please don't hesitate to reach out to us directly. We'd love the chance to make it right. — ${owner}`
+    },
+    {
+      id: 'negative',
+      type: 'negative',
+      label: '1-2 Star Review Response',
+      text: `Thank you for your feedback — we take all reviews seriously. We're sorry to hear your experience with ${biz} didn't meet expectations. This isn't the standard we aim for, and we'd like to make things right. Please contact us directly so we can understand what happened and find a solution. We value your business and hope to earn back your trust. — ${owner}`
+    },
+    {
+      id: 'specific',
+      type: 'positive',
+      label: 'Detailed/Specific Positive Review',
+      text: `What a lovely review — thank you so much! It's great to hear the specific details of what you enjoyed about ${ctx}. Reviews like yours are what motivate our team at ${biz} to keep delivering our best. We really appreciate you taking the time to write this. See you next time! — ${owner}`
+    },
+    {
+      id: 'short',
+      type: 'positive',
+      label: 'Short/Stars-Only Review',
+      text: `Thank you for the great rating! We're glad you had a positive experience with ${biz}. If you ever need us again, we're here to help. — ${owner}`
+    }
+  ];
+}
+
+function copyText(inputId) {
+  const el = document.getElementById(inputId);
+  el.select();
+  document.execCommand('copy');
+
+  // Find the copy button near this element
+  const btn = el.parentElement.querySelector('.btn-copy') || el.closest('.result-box').querySelector('.btn-copy');
+  if (btn) {
+    const orig = btn.innerHTML;
+    btn.innerHTML = '✅ Copied!';
+    setTimeout(() => btn.innerHTML = orig, 2000);
+  }
+}
+
+function copyTemplate(id) {
+  const text = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById(id).closest('.template-card').querySelector('.btn-copy');
+    const orig = btn.innerHTML;
+    btn.innerHTML = '✅ Copied!';
+    setTimeout(() => btn.innerHTML = '📋 Copy', 2000);
+  });
+}
+
+function downloadQR() {
+  const canvas = document.querySelector('#qrCode canvas');
+  if (!canvas) { alert('Generate the QR code first.'); return; }
+  const link = document.createElement('a');
+  link.download = 'google-review-qr-code.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+function printQR() {
+  window.print();
+}
+</script>
+</body>
+</html>
