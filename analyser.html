@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Business Analyser — AI Fusion Automations</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{--primary:#7c3aed;--primary-light:#a78bfa;--primary-dark:#5b21b6;--accent:#06b6d4;--accent-light:#22d3ee;--bg:#0f0f1a;--bg-card:#1a1a2e;--text:#f1f5f9;--text-muted:#94a3b8;--border:#2d2d4a;--success:#10b981;--warning:#f59e0b;--danger:#ef4444}
+  body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+  .gradient-bg{position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 20% 0%,rgba(124,58,237,.15) 0%,transparent 50%),radial-gradient(ellipse at 80% 100%,rgba(6,182,212,.1) 0%,transparent 50%);pointer-events:none;z-index:0}
+  .container{max-width:960px;margin:0 auto;padding:2rem 1.5rem;position:relative;z-index:1}
+  .header{text-align:center;margin-bottom:2.5rem}
+  .logo{display:inline-flex;align-items:center;gap:.5rem;margin-bottom:1.5rem}
+  .logo-icon{width:44px;height:44px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+  .logo-text{font-size:1.1rem;font-weight:700;background:linear-gradient(135deg,var(--primary-light),var(--accent-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .header h1{font-size:2.4rem;font-weight:800;margin-bottom:.75rem;background:linear-gradient(135deg,#fff,var(--primary-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .header p{color:var(--text-muted);font-size:1.1rem;max-width:600px;margin:0 auto}
+  .card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:2rem;margin-bottom:1.5rem}
+  .card-title{font-size:1.2rem;font-weight:700;margin-bottom:.25rem;display:flex;align-items:center;gap:.5rem}
+  .card-subtitle{color:var(--text-muted);font-size:.9rem;margin-bottom:1.5rem}
+  .step-badge{background:linear-gradient(135deg,var(--primary),var(--accent));color:white;font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:20px}
+  .form-group{margin-bottom:1.25rem}
+  .form-group label{display:block;font-size:.85rem;font-weight:600;margin-bottom:.4rem;color:var(--text-muted)}
+  .form-group input,.form-group select{width:100%;padding:.75rem 1rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.95rem;font-family:inherit;transition:all .2s}
+  .form-group input:focus,.form-group select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(124,58,237,.2)}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  @media(max-width:600px){.form-row{grid-template-columns:1fr}}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.8rem 1.5rem;border-radius:10px;font-size:.95rem;font-weight:600;font-family:inherit;cursor:pointer;border:none;transition:all .2s}
+  .btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:white;width:100%}
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 25px rgba(124,58,237,.4)}
+  .btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none;box-shadow:none}
+  .hidden{display:none}
+
+  /* Loader */
+  .loader-container{margin-top:1.5rem;padding:1.5rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px}
+  .loader-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem}
+  .loader-label{font-size:.85rem;font-weight:600;color:var(--text);display:flex;align-items:center;gap:.5rem}
+  .loader-time{font-size:.8rem;color:var(--text-muted);font-variant-numeric:tabular-nums}
+  .loader-track{width:100%;height:8px;background:rgba(255,255,255,.05);border-radius:10px;overflow:hidden}
+  .loader-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--primary),var(--accent));width:0%;transition:width .3s ease;position:relative}
+  .loader-fill::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:shimmer 1.5s infinite}
+  @keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+  .loader-steps{margin-top:.75rem;display:flex;flex-direction:column;gap:.4rem}
+  .loader-step{display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:var(--text-muted);transition:all .3s}
+  .loader-step.active{color:var(--accent-light)}
+  .loader-step.done{color:var(--success)}
+  .loader-step.error{color:var(--danger)}
+  .loader-step-icon{width:18px;text-align:center;flex-shrink:0}
+  .spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--accent);border-top-color:transparent;border-radius:50%;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* Score Ring */
+  .score-section{text-align:center;padding:2rem 0}
+  .score-ring{position:relative;width:160px;height:160px;margin:0 auto 1rem}
+  .score-ring svg{transform:rotate(-90deg)}
+  .score-ring .bg{fill:none;stroke:rgba(255,255,255,.05);stroke-width:10}
+  .score-ring .fg{fill:none;stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset 1.5s ease}
+  .score-value{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:2.5rem;font-weight:800}
+  .score-label{font-size:1rem;font-weight:600;margin-bottom:.25rem}
+  .score-desc{font-size:.85rem;color:var(--text-muted)}
+
+  /* Report Sections */
+  .report-section{margin-bottom:1.5rem}
+  .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+  .section-title{font-size:1rem;font-weight:700;display:flex;align-items:center;gap:.5rem}
+  .section-score{font-size:.85rem;font-weight:700;padding:.3rem .7rem;border-radius:20px}
+  .score-good{background:rgba(16,185,129,.15);color:var(--success)}
+  .score-ok{background:rgba(245,158,11,.15);color:var(--warning)}
+  .score-bad{background:rgba(239,68,68,.15);color:var(--danger)}
+
+  .metric-row{display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.05)}
+  .metric-row:last-child{border-bottom:none}
+  .metric-name{font-size:.85rem;color:var(--text-muted);display:flex;align-items:center;gap:.4rem}
+  .metric-value{font-size:.85rem;font-weight:600}
+  .metric-good{color:var(--success)}
+  .metric-ok{color:var(--warning)}
+  .metric-bad{color:var(--danger)}
+
+  /* Competitor Table */
+  .comp-table{width:100%;border-collapse:collapse;font-size:.85rem}
+  .comp-table th{text-align:left;padding:.6rem .5rem;color:var(--text-muted);font-weight:600;border-bottom:1px solid var(--border);font-size:.75rem;text-transform:uppercase;letter-spacing:.05em}
+  .comp-table td{padding:.6rem .5rem;border-bottom:1px solid rgba(255,255,255,.03)}
+  .comp-table tr.highlight{background:rgba(124,58,237,.08)}
+  .comp-table .rank{color:var(--accent);font-weight:700}
+
+  /* Recommendations */
+  .rec-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:.75rem}
+  .rec-priority{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:.15rem .5rem;border-radius:10px;display:inline-block;margin-bottom:.4rem}
+  .rec-high{background:rgba(239,68,68,.15);color:var(--danger)}
+  .rec-med{background:rgba(245,158,11,.15);color:var(--warning)}
+  .rec-low{background:rgba(16,185,129,.15);color:var(--success)}
+  .rec-title{font-size:.9rem;font-weight:600;margin-bottom:.3rem}
+  .rec-desc{font-size:.8rem;color:var(--text-muted)}
+
+  /* CTA */
+  .cta-box{background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(6,182,212,.1));border:1px solid rgba(124,58,237,.3);border-radius:16px;padding:2rem;text-align:center;margin-top:2rem}
+  .cta-box h3{font-size:1.3rem;margin-bottom:.5rem}
+  .cta-box p{color:var(--text-muted);margin-bottom:1.25rem;font-size:.95rem}
+  .cta-box .btn{width:auto;padding:.7rem 2rem}
+
+  .footer{text-align:center;padding:3rem 0 2rem;border-top:1px solid var(--border);margin-top:3rem}
+  .footer p{color:var(--text-muted);font-size:.85rem}
+  .footer a{color:var(--primary-light);text-decoration:none;font-weight:600}
+</style>
+</head>
+<body>
+<div class="gradient-bg"></div>
+<div class="container">
+
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">⚡</div>
+      <div class="logo-text">AI Fusion Automations</div>
+    </div>
+    <h1>Business Analyser</h1>
+    <p>Get a free audit of your online presence — website, Google reviews, and competitors — in under 30 seconds.</p>
+  </div>
+
+  <!-- Input -->
+  <div class="card" id="inputCard">
+    <div class="card-title"><span class="step-badge">Free</span> Analyse Your Business</div>
+    <div class="card-subtitle">Enter your business name and we'll do the rest.</div>
+
+    <div class="form-group">
+      <label>Business Name *</label>
+      <input type="text" id="bizName" placeholder="e.g. Happy Chimney Sweep" />
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Location (helps narrow results)</label>
+        <input type="text" id="bizLocation" placeholder="e.g. East Grinstead" />
+      </div>
+      <div class="form-group">
+        <label>Your Website URL (optional)</label>
+        <input type="text" id="bizWebsite" placeholder="e.g. https://yoursite.com" />
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="analyseBtn" onclick="startAnalysis()">🔍 Analyse My Business</button>
+
+    <!-- Loader -->
+    <div id="loader" class="loader-container hidden">
+      <div class="loader-header">
+        <div class="loader-label"><span class="spinner"></span> <span id="loaderText">Analysing...</span></div>
+        <div class="loader-time" id="loaderTime">~15 seconds</div>
+      </div>
+      <div class="loader-track"><div class="loader-fill" id="loaderFill"></div></div>
+      <div class="loader-steps">
+        <div class="loader-step" id="ls-find"><span class="loader-step-icon">○</span> Finding your business on Google</div>
+        <div class="loader-step" id="ls-reviews"><span class="loader-step-icon">○</span> Analysing Google reviews</div>
+        <div class="loader-step" id="ls-website"><span class="loader-step-icon">○</span> Auditing your website</div>
+        <div class="loader-step" id="ls-competitors"><span class="loader-step-icon">○</span> Finding competitors</div>
+        <div class="loader-step" id="ls-report"><span class="loader-step-icon">○</span> Generating your report</div>
+      </div>
+    </div>
+
+    <!-- Not Found -->
+    <div id="notFound" class="hidden" style="margin-top:1.5rem">
+      <div style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:12px;padding:1.25rem">
+        <div style="font-weight:700;color:var(--warning);margin-bottom:.5rem">😕 We couldn't find your business on Google</div>
+        <div style="font-size:.9rem;color:var(--text-muted);margin-bottom:1rem">This usually means your Google Business Profile isn't set up yet. That's actually a big opportunity — let us help!</div>
+        <a href="https://aifusionautomations.com" target="_blank" class="btn btn-primary" style="background:linear-gradient(135deg,var(--warning),#ef4444);width:auto;padding:.7rem 1.5rem">📞 Get Free Help Setting Up Your Google Profile →</a>
+      </div>
+    </div>
+
+    <!-- Select Business -->
+    <div id="selectBiz" class="hidden" style="margin-top:1.5rem">
+      <div style="font-size:.85rem;font-weight:600;color:var(--accent);margin-bottom:.75rem">Select your business:</div>
+      <div id="bizList"></div>
+    </div>
+  </div>
+
+  <!-- Report -->
+  <div id="report" class="hidden">
+
+    <!-- Overall Score -->
+    <div class="card">
+      <div class="score-section">
+        <div class="score-ring">
+          <svg width="160" height="160" viewBox="0 0 160 160">
+            <circle class="bg" cx="80" cy="80" r="70"/>
+            <circle class="fg" id="scoreCircle" cx="80" cy="80" r="70" stroke-dasharray="440" stroke-dashoffset="440"/>
+          </svg>
+          <div class="score-value" id="overallScore">0</div>
+        </div>
+        <div class="score-label" id="overallLabel">Calculating...</div>
+        <div class="score-desc" id="overallDesc"></div>
+      </div>
+    </div>
+
+    <!-- Google Reviews -->
+    <div class="card report-section">
+      <div class="section-header">
+        <div class="section-title">⭐ Google Reviews</div>
+        <div class="section-score" id="reviewsScore"></div>
+      </div>
+      <div id="reviewsMetrics"></div>
+    </div>
+
+    <!-- Website Audit -->
+    <div class="card report-section">
+      <div class="section-header">
+        <div class="section-title">🌐 Website Audit</div>
+        <div class="section-score" id="websiteScore"></div>
+      </div>
+      <div id="websiteMetrics"></div>
+    </div>
+
+    <!-- Competitors -->
+    <div class="card report-section">
+      <div class="section-header">
+        <div class="section-title">🏆 Competitor Comparison</div>
+      </div>
+      <div style="overflow-x:auto"><table class="comp-table" id="compTable"></table></div>
+    </div>
+
+    <!-- Recommendations -->
+    <div class="card">
+      <div class="card-title">📋 Recommendations</div>
+      <div class="card-subtitle">Here's what we'd focus on to improve your online presence.</div>
+      <div id="recommendations"></div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-box">
+      <h3>Want us to fix all of this for you?</h3>
+      <p>AI Fusion Automations specialises in getting businesses found online — from Google reviews to SEO, automation, and AI-powered lead generation.</p>
+      <a href="https://aifusionautomations.com" target="_blank" class="btn btn-primary" style="background:linear-gradient(135deg,var(--primary),var(--accent))">Book a Free 15-Min Strategy Call →</a>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="logo" style="margin-bottom:1rem;justify-content:center">
+      <div class="logo-icon" style="width:32px;height:32px;font-size:1rem">⚡</div>
+      <div class="logo-text" style="font-size:.9rem">AI Fusion Automations</div>
+    </div>
+    <p>Free tool powered by <a href="https://aifusionautomations.com" target="_blank">AI Fusion Automations</a></p>
+  </div>
+
+</div>
+
+<script>
+const GAPI = 'AIzaSyAwXJVUdiKP9CKw47un9LhEoFW8YgkIm2s';
+const PSI_API = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed';
+let selectedPlace = null;
+let loaderInterval = null;
+let loaderProgress = 0;
+
+// ─── Loader helpers ───
+function showLoader(){
+  document.getElementById('loader').classList.remove('hidden');
+  document.getElementById('loaderFill').style.width='0%';
+  loaderProgress=0;
+  let elapsed=0;
+  ['ls-find','ls-reviews','ls-website','ls-competitors','ls-report'].forEach(id=>{
+    const el=document.getElementById(id);el.className='loader-step';el.querySelector('.loader-step-icon').textContent='○';
+  });
+  setStepActive('ls-find');
+  loaderInterval=setInterval(()=>{
+    elapsed+=.1;
+    const rem=Math.max(0,Math.ceil(15-elapsed));
+    document.getElementById('loaderTime').textContent=rem>0?`~${rem}s`:'Almost done...';
+    if(loaderProgress<95)loaderProgress+=.5;
+    document.getElementById('loaderFill').style.width=loaderProgress+'%';
+  },100);
+}
+function advanceLoader(step,pct){
+  loaderProgress=pct;
+  document.getElementById('loaderFill').style.width=pct+'%';
+  const steps=['ls-find','ls-reviews','ls-website','ls-competitors','ls-report'];
+  const idx=steps.indexOf(step);
+  for(let i=0;i<idx;i++)setStepDone(steps[i]);
+  setStepActive(step);
+}
+function finishLoader(){
+  clearInterval(loaderInterval);
+  document.getElementById('loaderFill').style.width='100%';
+  document.getElementById('loaderTime').textContent='Done!';
+  ['ls-find','ls-reviews','ls-website','ls-competitors','ls-report'].forEach(setStepDone);
+  setTimeout(()=>document.getElementById('loader').classList.add('hidden'),800);
+}
+function setStepActive(id){const el=document.getElementById(id);el.className='loader-step active';el.querySelector('.loader-step-icon').innerHTML='<span class="spinner" style="width:12px;height:12px;border-width:1.5px"></span>'}
+function setStepDone(id){const el=document.getElementById(id);el.className='loader-step done';el.querySelector('.loader-step-icon').textContent='✓'}
+
+// ─── Enter key ───
+document.addEventListener('DOMContentLoaded',()=>{
+  ['bizName','bizLocation','bizWebsite'].forEach(id=>{
+    document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();startAnalysis()}});
+  });
+});
+
+// ─── Main Flow ───
+async function startAnalysis(){
+  const name=document.getElementById('bizName').value.trim();
+  if(!name){alert('Please enter your business name.');return}
+
+  const btn=document.getElementById('analyseBtn');
+  btn.disabled=true;btn.innerHTML='🔍 Analysing...';
+  document.getElementById('notFound').classList.add('hidden');
+  document.getElementById('selectBiz').classList.add('hidden');
+  document.getElementById('report').classList.add('hidden');
+  showLoader();
+
+  const loc=document.getElementById('bizLocation').value.trim();
+  const query=loc?`${name} ${loc}`:name;
+
+  try{
+    const resp=await fetch('https://places.googleapis.com/v1/places:searchText',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-Goog-Api-Key':GAPI,'X-Goog-FieldMask':'places.id,places.displayName,places.formattedAddress,places.rating,places.userRatingCount,places.types,places.googleMapsUri,places.websiteUri,places.currentOpeningHours,places.reviews'},
+      body:JSON.stringify({textQuery:query})
+    });
+    const data=await resp.json();
+
+    if(!data.places||data.places.length===0){
+      clearInterval(loaderInterval);document.getElementById('loader').classList.add('hidden');
+      document.getElementById('notFound').classList.remove('hidden');
+      btn.disabled=false;btn.innerHTML='🔍 Analyse My Business';return;
+    }
+
+    const places=data.places.slice(0,5).map(p=>({
+      place_id:p.id,name:p.displayName?.text||'',address:p.formattedAddress||'',
+      rating:p.rating||0,reviews_count:p.userRatingCount||0,types:p.types||[],
+      website:p.websiteUri||'',mapsUri:p.googleMapsUri||'',reviews:p.reviews||[]
+    }));
+
+    if(places.length===1){
+      selectedPlace=places[0];runFullAnalysis();
+    }else{
+      clearInterval(loaderInterval);document.getElementById('loader').classList.add('hidden');
+      showBizList(places);
+      btn.disabled=false;btn.innerHTML='🔍 Analyse My Business';
+    }
+  }catch(err){
+    console.error(err);clearInterval(loaderInterval);document.getElementById('loader').classList.add('hidden');
+    document.getElementById('notFound').classList.remove('hidden');
+    btn.disabled=false;btn.innerHTML='🔍 Analyse My Business';
+  }
+}
+
+function showBizList(places){
+  const c=document.getElementById('bizList');c.innerHTML='';
+  places.forEach(p=>{
+    const d=document.createElement('div');
+    d.style.cssText='background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:.5rem;cursor:pointer;transition:all .2s';
+    d.onmouseenter=()=>d.style.borderColor='var(--primary)';
+    d.onmouseleave=()=>d.style.borderColor='var(--border)';
+    d.onclick=()=>{selectedPlace=p;document.getElementById('selectBiz').classList.add('hidden');showLoader();runFullAnalysis()};
+    d.innerHTML=`<div style="font-weight:600">${p.name}</div><div style="font-size:.85rem;color:var(--text-muted)">${p.address}</div>${p.rating?`<div style="font-size:.8rem;color:var(--warning);margin-top:.25rem">⭐ ${p.rating}/5 (${p.reviews_count} reviews)</div>`:''}`;
+    c.appendChild(d);
+  });
+  document.getElementById('selectBiz').classList.remove('hidden');
+}
+
+async function runFullAnalysis(){
+  const biz=selectedPlace;
+  advanceLoader('ls-reviews',20);
+
+  // Reviews analysis
+  const reviewData=analyseReviews(biz);
+
+  advanceLoader('ls-website',40);
+
+  // Website audit
+  let webUrl=document.getElementById('bizWebsite').value.trim()||biz.website;
+  let webData=null;
+  if(webUrl){
+    if(!webUrl.startsWith('http'))webUrl='https://'+webUrl;
+    try{
+      const psiResp=await fetch(`${PSI_API}?url=${encodeURIComponent(webUrl)}&key=${GAPI}&category=performance&category=seo&category=accessibility&strategy=mobile`);
+      const psi=await psiResp.json();
+      if(psi.lighthouseResult){webData=parseWebAudit(psi.lighthouseResult)}
+    }catch(e){console.error('PSI error:',e)}
+  }
+
+  advanceLoader('ls-competitors',65);
+
+  // Find competitors
+  let competitors=[];
+  try{
+    const mainType=biz.types.find(t=>!['point_of_interest','establishment'].includes(t))||'';
+    const compQuery=mainType?`${mainType} near ${biz.address}`:biz.name.split(' ').slice(0,2).join(' ')+' near '+biz.address;
+    const compResp=await fetch('https://places.googleapis.com/v1/places:searchText',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-Goog-Api-Key':GAPI,'X-Goog-FieldMask':'places.id,places.displayName,places.formattedAddress,places.rating,places.userRatingCount,places.websiteUri'},
+      body:JSON.stringify({textQuery:compQuery,maxResultCount:10})
+    });
+    const compData=await compResp.json();
+    if(compData.places){
+      competitors=compData.places.filter(p=>p.id!==biz.place_id).slice(0,5).map(p=>({
+        name:p.displayName?.text||'',address:p.formattedAddress||'',
+        rating:p.rating||0,reviews_count:p.userRatingCount||0,
+        website:p.websiteUri?'Yes':'No'
+      }));
+    }
+  }catch(e){console.error('Comp error:',e)}
+
+  advanceLoader('ls-report',85);
+
+  // Generate report
+  const overall=calcOverallScore(reviewData,webData,competitors,biz);
+  renderReport(biz,reviewData,webData,competitors,overall);
+
+  finishLoader();
+  document.getElementById('report').classList.remove('hidden');
+  document.getElementById('report').scrollIntoView({behavior:'smooth'});
+  document.getElementById('analyseBtn').disabled=false;
+  document.getElementById('analyseBtn').innerHTML='🔍 Analyse My Business';
+}
+
+function analyseReviews(biz){
+  const d={rating:biz.rating,count:biz.reviews_count,score:0,metrics:[]};
+  // Rating score (out of 30)
+  let rScore=0;
+  if(d.rating>=4.5)rScore=30;else if(d.rating>=4.0)rScore=22;else if(d.rating>=3.5)rScore=15;else if(d.rating>=3.0)rScore=8;else rScore=3;
+
+  // Count score (out of 20)
+  let cScore=0;
+  if(d.count>=100)cScore=20;else if(d.count>=50)cScore=16;else if(d.count>=20)cScore=12;else if(d.count>=10)cScore=8;else if(d.count>=5)cScore=4;else cScore=1;
+
+  d.score=rScore+cScore;
+
+  d.metrics=[
+    {name:'Average Rating',value:`${d.rating||'N/A'}/5`,status:d.rating>=4.2?'good':d.rating>=3.5?'ok':'bad'},
+    {name:'Total Reviews',value:d.count.toString(),status:d.count>=50?'good':d.count>=15?'ok':'bad'},
+    {name:'Review Velocity',value:d.count>=20?'Active':'Needs work',status:d.count>=20?'good':'bad'},
+    {name:'Minimum Threshold (4.2★)',value:d.rating>=4.2?'Passed':'Below',status:d.rating>=4.2?'good':'bad'}
+  ];
+
+  // Sentiment from actual reviews
+  if(biz.reviews&&biz.reviews.length>0){
+    const pos=biz.reviews.filter(r=>r.rating>=4).length;
+    const neg=biz.reviews.filter(r=>r.rating<=2).length;
+    d.metrics.push({name:'Recent Sentiment',value:`${Math.round(pos/biz.reviews.length*100)}% positive`,status:pos/biz.reviews.length>=.8?'good':pos/biz.reviews.length>=.6?'ok':'bad'});
+  }
+
+  return d;
+}
+
+function parseWebAudit(lhr){
+  const cats=lhr.categories||{};
+  const perf=Math.round((cats.performance?.score||0)*100);
+  const seo=Math.round((cats.seo?.score||0)*100);
+  const access=Math.round((cats.accessibility?.score||0)*100);
+  const fcp=lhr.audits?.['first-contentful-paint']?.displayValue||'N/A';
+  const lcp=lhr.audits?.['largest-contentful-paint']?.displayValue||'N/A';
+  const cls=lhr.audits?.['cumulative-layout-shift']?.displayValue||'N/A';
+  const mobile=lhr.audits?.['viewport']?.score===1;
+  const https=lhr.audits?.['is-on-https']?.score===1;
+  const metaDesc=lhr.audits?.['meta-description']?.score===1;
+
+  const score=Math.round((perf+seo+access)/3*0.5);
+  const metrics=[
+    {name:'Performance Score',value:`${perf}/100`,status:perf>=80?'good':perf>=50?'ok':'bad'},
+    {name:'SEO Score',value:`${seo}/100`,status:seo>=80?'good':seo>=50?'ok':'bad'},
+    {name:'Accessibility Score',value:`${access}/100`,status:access>=80?'good':access>=50?'ok':'bad'},
+    {name:'First Contentful Paint',value:fcp,status:parseFloat(fcp)<2?'good':parseFloat(fcp)<4?'ok':'bad'},
+    {name:'Largest Contentful Paint',value:lcp,status:parseFloat(lcp)<2.5?'good':parseFloat(lcp)<4?'ok':'bad'},
+    {name:'Mobile Friendly',value:mobile?'Yes':'No',status:mobile?'good':'bad'},
+    {name:'HTTPS',value:https?'Yes':'No',status:https?'good':'bad'},
+    {name:'Meta Description',value:metaDesc?'Present':'Missing',status:metaDesc?'good':'bad'}
+  ];
+  return{perf,seo,access,score,metrics};
+}
+
+function calcOverallScore(rev,web,comps,biz){
+  let total=rev.score; // max 50 from reviews
+  if(web)total+=web.score; // max 50 from website
+  else total+=0; // no website = 0
+  const max=web?100:50;
+  const pct=Math.round(total/max*100);
+
+  // Competitor rank
+  let rank=1;
+  comps.forEach(c=>{if(c.rating>biz.rating||(c.rating===biz.rating&&c.reviews_count>biz.reviews_count))rank++});
+
+  let label='',desc='';
+  if(pct>=80){label='Excellent';desc='Your online presence is strong. Small tweaks could make it even better.'}
+  else if(pct>=60){label='Good';desc='Solid foundation, but there are clear opportunities to outpace competitors.'}
+  else if(pct>=40){label='Needs Work';desc='Several areas need attention to compete effectively online.'}
+  else{label='Critical';desc='Your online presence needs urgent improvement. You\'re likely losing customers to competitors.'}
+
+  return{score:pct,label,desc,rank,outOf:comps.length+1};
+}
+
+function renderReport(biz,rev,web,comps,overall){
+  // Overall score ring
+  const circle=document.getElementById('scoreCircle');
+  const circumference=2*Math.PI*70;
+  const offset=circumference-(overall.score/100)*circumference;
+  const color=overall.score>=80?'var(--success)':overall.score>=60?'var(--accent)':overall.score>=40?'var(--warning)':'var(--danger)';
+  circle.style.stroke=color;
+  circle.setAttribute('stroke-dasharray',circumference);
+  setTimeout(()=>circle.setAttribute('stroke-dashoffset',offset),100);
+  const scoreEl=document.getElementById('overallScore');
+  scoreEl.style.color=color;
+  animateNumber(scoreEl,overall.score);
+  document.getElementById('overallLabel').textContent=`${overall.label} — Ranked #${overall.rank} of ${overall.outOf} locally`;
+  document.getElementById('overallDesc').textContent=overall.desc;
+
+  // Reviews
+  const revScoreEl=document.getElementById('reviewsScore');
+  const revPct=Math.round(rev.score/50*100);
+  revScoreEl.textContent=`${revPct}%`;
+  revScoreEl.className='section-score '+(revPct>=70?'score-good':revPct>=40?'score-ok':'score-bad');
+  renderMetrics('reviewsMetrics',rev.metrics);
+
+  // Website
+  if(web){
+    const webPct=Math.round(web.score/50*100);
+    const ws=document.getElementById('websiteScore');
+    ws.textContent=`${webPct}%`;
+    ws.className='section-score '+(webPct>=70?'score-good':webPct>=40?'score-ok':'score-bad');
+    renderMetrics('websiteMetrics',web.metrics);
+  }else{
+    document.getElementById('websiteScore').textContent='No website';
+    document.getElementById('websiteScore').className='section-score score-bad';
+    document.getElementById('websiteMetrics').innerHTML='<div style="padding:1rem;text-align:center;color:var(--text-muted)">No website found. Having a website is essential for being found online.</div>';
+  }
+
+  // Competitors
+  renderCompetitors(biz,comps);
+
+  // Recommendations
+  generateRecommendations(biz,rev,web,comps);
+}
+
+function renderMetrics(containerId,metrics){
+  const c=document.getElementById(containerId);c.innerHTML='';
+  metrics.forEach(m=>{
+    c.innerHTML+=`<div class="metric-row"><span class="metric-name">${m.name}</span><span class="metric-value metric-${m.status}">${m.value}</span></div>`;
+  });
+}
+
+function renderCompetitors(biz,comps){
+  const t=document.getElementById('compTable');
+  let html='<thead><tr><th>#</th><th>Business</th><th>Rating</th><th>Reviews</th><th>Website</th></tr></thead><tbody>';
+  const all=[{name:biz.name,rating:biz.rating,reviews_count:biz.reviews_count,website:biz.website?'Yes':'No',isYou:true},...comps];
+  all.sort((a,b)=>b.rating-a.rating||(b.reviews_count-a.reviews_count));
+  all.forEach((c,i)=>{
+    html+=`<tr class="${c.isYou?'highlight':''}"><td class="rank">${i+1}</td><td>${c.name}${c.isYou?' <span style="color:var(--accent);font-size:.75rem">(You)</span>':''}</td><td>⭐ ${c.rating||'N/A'}</td><td>${c.reviews_count||0}</td><td>${c.website}</td></tr>`;
+  });
+  html+='</tbody>';
+  t.innerHTML=html;
+}
+
+function generateRecommendations(biz,rev,web,comps){
+  const c=document.getElementById('recommendations');c.innerHTML='';
+  const recs=[];
+
+  if(!biz.website&&!document.getElementById('bizWebsite').value.trim())
+    recs.push({p:'high',t:'Create a Website',d:'You don\'t appear to have a website. This is the #1 thing holding your business back online. Even a simple one-page site dramatically improves your Google visibility.'});
+  if(rev.count<15)
+    recs.push({p:'high',t:'Get More Google Reviews',d:`You have ${rev.count} reviews. Aim for at least 20-30 to build trust. Use our free Review Booster tool to make it easy for customers to leave reviews.`});
+  if(rev.rating&&rev.rating<4.2)
+    recs.push({p:'high',t:'Improve Your Rating',d:`Your ${rev.rating}★ rating is below the 4.2★ trust threshold. Focus on delivering exceptional service and proactively asking happy customers for reviews.`});
+  if(web&&web.perf<50)
+    recs.push({p:'high',t:'Fix Website Speed',d:`Your site scored ${web.perf}/100 for performance. Slow sites lose 53% of visitors. Compress images, enable caching, and consider a faster host.`});
+  if(web&&web.seo<70)
+    recs.push({p:'med',t:'Improve SEO',d:`Your SEO score is ${web.seo}/100. Add meta descriptions, optimise headings, and ensure your NAP (name, address, phone) is consistent across the web.`});
+  if(web&&web.access<70)
+    recs.push({p:'med',t:'Improve Accessibility',d:`Your accessibility score is ${web.access}/100. Improving this helps all users AND boosts your Google ranking.`});
+
+  const topComp=comps.sort((a,b)=>b.reviews_count-a.reviews_count)[0];
+  if(topComp&&topComp.reviews_count>rev.count*2)
+    recs.push({p:'med',t:'Close the Review Gap',d:`Your top competitor "${topComp.name}" has ${topComp.reviews_count} reviews vs your ${rev.count}. Set up automated review requests to close this gap.`});
+
+  recs.push({p:'low',t:'Set Up Automated Follow-ups',d:'Automate your customer follow-ups with AI-powered SMS, email, and WhatsApp sequences. This alone can 3x your review rate and win back lost leads.'});
+  recs.push({p:'low',t:'Claim & Optimise Your Google Business Profile',d:'Make sure your opening hours, photos, services, and description are complete and up to date. Businesses with complete profiles get 7x more clicks.'});
+
+  recs.forEach(r=>{
+    c.innerHTML+=`<div class="rec-card"><span class="rec-priority rec-${r.p}">${r.p==='high'?'High Priority':r.p==='med'?'Medium':'Quick Win'}</span><div class="rec-title">${r.t}</div><div class="rec-desc">${r.d}</div></div>`;
+  });
+}
+
+function animateNumber(el,target){
+  let current=0;const step=Math.ceil(target/40);
+  const timer=setInterval(()=>{current+=step;if(current>=target){current=target;clearInterval(timer)}el.textContent=current},30);
+}
+</script>
+</body>
+</html>
