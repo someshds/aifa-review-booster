@@ -171,6 +171,24 @@
       <div style="font-size:.85rem;font-weight:600;color:var(--accent);margin-bottom:.75rem">Select your business:</div>
       <div id="bizList"></div>
     </div>
+
+    <!-- Confirm & Website Step -->
+    <div id="confirmStep" class="hidden" style="margin-top:1.5rem">
+      <div style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:12px;padding:1rem;margin-bottom:1.25rem">
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.25rem">
+          <span style="color:var(--success);font-weight:700">✅ Selected:</span>
+          <span id="confirmName" style="font-weight:600"></span>
+        </div>
+        <div id="confirmAddress" style="font-size:.85rem;color:var(--text-muted)"></div>
+        <div id="confirmRating" style="font-size:.85rem;color:var(--warning);margin-top:.25rem"></div>
+      </div>
+      <div class="form-group">
+        <label>Your Website URL (recommended for a full audit)</label>
+        <input type="text" id="confirmWebsite" placeholder="e.g. https://yoursite.com" />
+        <div style="margin-top:.4rem;font-size:.8rem;color:var(--text-muted)">💡 Adding your website lets us audit speed, SEO, and mobile-friendliness.</div>
+      </div>
+      <button class="btn btn-primary" onclick="confirmAndRun()">⚡ Run Full Analysis</button>
+    </div>
   </div>
 
   <!-- Report -->
@@ -328,7 +346,8 @@ async function startAnalysis(){
     }));
 
     if(places.length===1){
-      selectedPlace=places[0];runFullAnalysis();
+      selectedPlace=places[0];clearInterval(loaderInterval);document.getElementById('loader').classList.add('hidden');showConfirmStep(places[0]);
+      btn.disabled=false;btn.innerHTML='🔍 Analyse My Business';
     }else{
       clearInterval(loaderInterval);document.getElementById('loader').classList.add('hidden');
       showBizList(places);
@@ -348,11 +367,30 @@ function showBizList(places){
     d.style.cssText='background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:.5rem;cursor:pointer;transition:all .2s';
     d.onmouseenter=()=>d.style.borderColor='var(--primary)';
     d.onmouseleave=()=>d.style.borderColor='var(--border)';
-    d.onclick=()=>{selectedPlace=p;document.getElementById('selectBiz').classList.add('hidden');showLoader();runFullAnalysis()};
+    d.onclick=()=>{selectedPlace=p;document.getElementById('selectBiz').classList.add('hidden');showConfirmStep(p)};
     d.innerHTML=`<div style="font-weight:600">${p.name}</div><div style="font-size:.85rem;color:var(--text-muted)">${p.address}</div>${p.rating?`<div style="font-size:.8rem;color:var(--warning);margin-top:.25rem">⭐ ${p.rating}/5 (${p.reviews_count} reviews)</div>`:''}`;
     c.appendChild(d);
   });
   document.getElementById('selectBiz').classList.remove('hidden');
+}
+
+function showConfirmStep(place){
+  document.getElementById('confirmName').textContent=place.name;
+  document.getElementById('confirmAddress').textContent=place.address;
+  document.getElementById('confirmRating').textContent=place.rating?`⭐ ${place.rating}/5 (${place.reviews_count} reviews)`:'No reviews yet';
+  // Pre-fill website if Places API returned one
+  const webInput=document.getElementById('confirmWebsite');
+  webInput.value=place.website||document.getElementById('bizWebsite').value.trim()||'';
+  document.getElementById('confirmStep').classList.remove('hidden');
+  document.getElementById('confirmStep').scrollIntoView({behavior:'smooth'});
+}
+
+function confirmAndRun(){
+  // Store the website from the confirm step
+  selectedPlace.confirmedWebsite=document.getElementById('confirmWebsite').value.trim();
+  document.getElementById('confirmStep').classList.add('hidden');
+  showLoader();
+  runFullAnalysis();
 }
 
 async function runFullAnalysis(){
@@ -365,7 +403,7 @@ async function runFullAnalysis(){
   advanceLoader('ls-website',40);
 
   // Website audit
-  let webUrl=document.getElementById('bizWebsite').value.trim()||biz.website;
+  let webUrl=biz.confirmedWebsite||document.getElementById('bizWebsite').value.trim()||biz.website;
   let webData=null;
   if(webUrl){
     if(!webUrl.startsWith('http'))webUrl='https://'+webUrl;
