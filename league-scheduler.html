@@ -265,7 +265,7 @@
 <div class="tools-bar">
   <a href="https://tools.aifusionautomations.com/" target="_blank" rel="noopener">🛠️ More Free Business Tools →</a>
   <a href="mailto:grantdeswardt@gmail.com?subject=Tennis%20League%20App%20Feedback" class="feedback-link">💬 Suggestions &amp; Feedback</a>
-  <span class="ver">v1.5</span>
+  <span class="ver">v1.6</span>
 </div>
 <div class="hdr">
   <h1>🎾 EG Doubles League</h1>
@@ -1151,11 +1151,9 @@ function renderTable() {
     r1.P++; r2.P++;
     r1.SF += sc.s1; r1.SA += sc.s2; r1.GF += sc.g1; r1.GA += sc.g2;
     r2.SF += sc.s2; r2.SA += sc.s1; r2.GF += sc.g2; r2.GA += sc.g1;
-    // Points = sets won (1pt per set)
-    r1.pts += sc.s1;
-    r2.pts += sc.s2;
-    if (sc.s1 > sc.s2)      { r1.W++; r2.L++; }
-    else if (sc.s2 > sc.s1) { r2.W++; r1.L++; }
+    // Points = 3pts for match win, 0 for loss
+    if (sc.s1 > sc.s2)      { r1.pts += 3; r1.W++; r2.L++; }
+    else if (sc.s2 > sc.s1) { r2.pts += 3; r2.W++; r1.L++; }
     else                    { r1.D++; r2.D++; }
   });
 
@@ -1188,7 +1186,7 @@ function renderTable() {
       </table>
     </div>
     <div class="txt-muted mt8" style="padding:4px 2px">
-      1pt per set won &nbsp;·&nbsp; SF/SA = Sets For/Against &nbsp;·&nbsp; Sorted by pts → set diff → game diff
+      3pts per match win &nbsp;·&nbsp; SF/SA = Sets For/Against &nbsp;·&nbsp; Sorted by pts → set diff → game diff
     </div>
     ${played.length > 0 ? `
       <div class="mt16">
