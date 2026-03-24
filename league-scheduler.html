@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>League Match Scheduler — AI Fusion Automations</title>
+  <style>
+    :root {
+      --green: #2d7a3a;
+      --green-light: #4caf50;
+      --green-dark: #1b5e20;
+      --bg: #f4f6f4;
+      --card: #ffffff;
+      --text: #1a1a1a;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --shadow: 0 2px 8px rgba(0,0,0,0.08);
+      --radius: 12px;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --blue: #2563eb;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* ── Header ── */
+    .hdr { background: linear-gradient(135deg, var(--green-dark) 0%, #2d7a3a 100%); color: #fff; padding: 18px 20px 14px; text-align: center; }
+    .hdr h1 { font-size: 19px; font-weight: 700; letter-spacing: -0.3px; }
+    .hdr p { font-size: 12px; opacity: 0.75; margin-top: 2px; }
+
+    /* ── Deadline banner ── */
+    .deadline-banner { background: #7c2d12; color: #fef3c7; padding: 9px 16px; text-align: center; font-size: 13px; font-weight: 600; display: none; }
+    .deadline-banner.urgent { background: #991b1b; }
+
+    /* ── Nav ── */
+    .nav { background: #fff; border-bottom: 1px solid var(--border); display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+    .nav::-webkit-scrollbar { display: none; }
+    .nav-tab { flex: 0 0 auto; padding: 13px 18px; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; transition: all 0.18s; }
+    .nav-tab.active { color: var(--green); border-bottom-color: var(--green); }
+
+    /* ── Content ── */
+    .content { padding: 16px; max-width: 680px; margin: 0 auto; }
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* ── Cards ── */
+    .card { background: var(--card); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow); }
+    .card-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .card-title { font-size: 15px; font-weight: 700; }
+    .section-title { font-size: 18px; font-weight: 700; margin-bottom: 14px; }
+
+    /* ── Buttons ── */
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 10px 18px; border-radius: 9px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: var(--green); color: #fff; }
+    .btn-primary:hover { background: var(--green-dark); }
+    .btn-secondary { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
+    .btn-danger { background: #fee2e2; color: var(--red); }
+    .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 7px; }
+    .btn-full { width: 100%; margin-top: 8px; }
+
+    /* ── Forms ── */
+    .fg { margin-bottom: 12px; }
+    .fl { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .fi { width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 9px; font-size: 14px; background: #fff; color: var(--text); -webkit-appearance: none; appearance: none; }
+    .fi:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(45,122,58,0.12); }
+
+    /* ── Badges ── */
+    .badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+    .b-unscheduled { background: #f3f4f6; color: #9ca3af; }
+    .b-proposed { background: #fef3c7; color: #b45309; }
+    .b-confirmed { background: #dbeafe; color: #1d4ed8; }
+    .b-played { background: #dcfce7; color: #16a34a; }
+
+    /* ── Availability Grid ── */
+    .avail-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .avail-tbl { border-collapse: collapse; font-size: 12px; min-width: 100%; }
+    .avail-tbl th { padding: 5px 3px; text-align: center; font-weight: 600; color: var(--muted); border-bottom: 1px solid var(--border); min-width: 40px; }
+    .avail-tbl td { padding: 3px; border-bottom: 1px solid var(--border); }
+    .slot-lbl { font-size: 11px; font-weight: 600; color: var(--muted); text-align: left !important; padding: 4px 8px !important; white-space: nowrap; }
+    .cell { width: 34px; height: 34px; border-radius: 7px; cursor: pointer; background: #f0f0f0; display: flex; align-items: center; justify-content: center; margin: auto; transition: background 0.12s; border: 2px solid transparent; }
+    .cell.on { background: var(--green); border-color: var(--green-dark); }
+    .cell.on::after { content: '✓'; color: #fff; font-size: 14px; font-weight: 700; }
+    .cell:not(.on):active { background: #c8e6c9; }
+
+    /* ── Week nav ── */
+    .wk-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .wk-title { font-size: 13px; font-weight: 700; }
+
+    /* ── Fixture items ── */
+    .fix-item { background: var(--card); border-radius: var(--radius); padding: 14px 15px; margin-bottom: 8px; box-shadow: var(--shadow); cursor: pointer; border: 1.5px solid transparent; transition: border-color 0.15s; }
+    .fix-item:active { border-color: var(--green); }
+    .fix-item.fix-confirmed { border-left: 3px solid var(--blue); }
+    .fix-item.fix-proposed { border-left: 3px solid var(--amber); }
+    .fix-teams { font-size: 15px; font-weight: 700; margin-bottom: 3px; }
+    .fix-players { font-size: 12px; color: var(--muted); margin-bottom: 7px; }
+    .fix-meta { display: flex; gap: 7px; align-items: center; flex-wrap: wrap; }
+    .fix-time { font-size: 12px; color: var(--muted); margin-top: 6px; }
+    .fix-court { font-size: 12px; color: var(--green-dark); font-weight: 600; margin-top: 2px; }
+    .fix-note { font-size: 12px; color: #b45309; font-weight: 600; margin-top: 2px; }
+    .fix-score { font-size: 14px; font-weight: 700; color: var(--green-dark); margin-top: 6px; }
+    .slot-count { font-size: 11px; font-weight: 700; color: var(--green-dark); background: #dcfce7; padding: 3px 8px; border-radius: 20px; }
+
+    /* ── Modal ── */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; align-items: flex-end; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: #fff; border-radius: 20px 20px 0 0; padding: 20px; width: 100%; max-width: 680px; max-height: 88vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+    .modal-handle { width: 40px; height: 4px; background: #e0e0e0; border-radius: 2px; margin: 0 auto 16px; }
+    .modal-title { font-size: 17px; font-weight: 700; margin-bottom: 14px; }
+
+    /* ── League table ── */
+    .ltbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .ltbl th { background: var(--green-dark); color: #fff; padding: 10px 8px; text-align: center; font-weight: 600; }
+    .ltbl th:first-child { text-align: left; padding-left: 12px; border-radius: 9px 0 0 0; }
+    .ltbl th:last-child { border-radius: 0 9px 0 0; }
+    .ltbl td { padding: 10px 8px; text-align: center; border-bottom: 1px solid var(--border); }
+    .ltbl td:first-child { text-align: left; padding-left: 12px; }
+    .ltbl tr:nth-child(1) td { background: #fffbeb; }
+    .rank { display: inline-flex; width: 22px; height: 22px; align-items: center; justify-content: center; border-radius: 50%; font-size: 11px; font-weight: 700; margin-right: 6px; }
+    .r1 { background: #fbbf24; color: #78350f; }
+    .r2 { background: #d1d5db; color: #374151; }
+    .r3 { background: #b45309; color: #fff; }
+    .rx { background: #f3f4f6; color: #6b7280; }
+
+    /* ── Suggested time slots ── */
+    .ts { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 9px; margin-bottom: 7px; }
+    .ts-info { font-size: 13px; font-weight: 600; }
+    .ts-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+    /* ── Score display ── */
+    .score-summary { display: flex; align-items: center; justify-content: center; gap: 16px; background: #f0fdf4; border-radius: 10px; padding: 14px 12px; margin-bottom: 12px; }
+    .score-team { text-align: center; }
+    .score-team-name { font-size: 12px; color: var(--muted); font-weight: 600; }
+    .score-team-sets { font-size: 32px; font-weight: 800; color: var(--green-dark); line-height: 1; }
+    .score-sep { font-size: 22px; color: var(--muted); font-weight: 300; }
+    .score-detail { font-size: 12px; color: var(--muted); text-align: center; margin-bottom: 12px; }
+
+    /* ── Player chips ── */
+    .pchip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: #f0fdf4; color: var(--green-dark); border-radius: 20px; font-size: 12px; font-weight: 600; }
+
+    /* ── Info box ── */
+    .info-box { background: #eff6ff; border-left: 3px solid var(--blue); padding: 11px 13px; border-radius: 0 8px 8px 0; font-size: 13px; color: #1e40af; margin-bottom: 14px; line-height: 1.5; }
+    .warn-box { background: #fff7ed; border-left: 3px solid var(--amber); padding: 11px 13px; border-radius: 0 8px 8px 0; font-size: 13px; color: #c2410c; margin-bottom: 14px; line-height: 1.5; }
+
+    /* ── Empty state ── */
+    .empty { text-align: center; padding: 40px 20px; color: var(--muted); }
+    .empty-icon { font-size: 46px; margin-bottom: 10px; }
+    .empty h3 { font-size: 15px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+    .empty p { font-size: 13px; }
+
+    /* ── Score inputs ── */
+    .score-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .score-row label { flex: 1; font-size: 13px; font-weight: 600; }
+    .score-in { width: 130px; padding: 8px 10px; border: 1.5px solid var(--border); border-radius: 7px; font-size: 13px; text-align: center; }
+
+    /* ── Toast ── */
+    .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); background: #111; color: #fff; padding: 11px 20px; border-radius: 22px; font-size: 13px; font-weight: 600; z-index: 999; opacity: 0; transition: opacity 0.25s; pointer-events: none; white-space: nowrap; }
+    .toast.show { opacity: 1; }
+
+    /* ── Utilities ── */
+    .flex { display: flex; }
+    .gap8 { gap: 8px; }
+    .wrap { flex-wrap: wrap; }
+    .mt8 { margin-top: 8px; }
+    .mt12 { margin-top: 12px; }
+    .mt16 { margin-top: 16px; }
+    .txt-muted { color: var(--muted); font-size: 12px; }
+    .divider { height: 1px; background: var(--border); margin: 14px 0; }
+    .fw700 { font-weight: 700; }
+
+    /* ── Players grid in modal ── */
+    .players-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+    .players-box { background: #f9fafb; padding: 10px 12px; border-radius: 9px; }
+    .players-box-label { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+    .players-box-name { font-size: 13px; line-height: 1.6; }
+
+    @media (min-width: 600px) { .content { padding: 22px; } }
+
+    /* ── AIFA Footer ── */
+    .aifa-footer { background: #111827; color: #9ca3af; text-align: center; padding: 20px 16px; margin-top: 24px; font-size: 13px; }
+    .aifa-footer a { color: #6ee7b7; text-decoration: none; font-weight: 600; }
+    .aifa-footer a:hover { text-decoration: underline; }
+    .aifa-footer-brand { font-size: 14px; font-weight: 700; color: #f9fafb; margin-bottom: 5px; }
+    .aifa-footer-cta { margin-top: 6px; font-size: 12px; }
+    .aifa-footer-cta a { color: #a78bfa; }
+  </style>
+</head>
+<body>
+
+<div class="hdr">
+  <h1>🎾 League Match Scheduler</h1>
+  <p>Demo: East Grinstead Tennis Club · Doubles League · AI-powered scheduling</p>
+</div>
+<div id="deadline-banner" class="deadline-banner"></div>
+
+<nav class="nav">
+  <div class="nav-tab active" onclick="showTab('teams')">Teams</div>
+  <div class="nav-tab" onclick="showTab('availability')">Availability</div>
+  <div class="nav-tab" onclick="showTab('fixtures')">Fixtures</div>
+  <div class="nav-tab" onclick="showTab('table')">League Table</div>
+</nav>
+
+<div class="content">
+
+  <!-- ── TEAMS ── -->
+  <div id="tab-teams" class="section active">
+    <div class="flex gap8" style="align-items:center; margin-bottom:14px; justify-content:space-between">
+      <div class="section-title" style="margin-bottom:0">Teams</div>
+      <button class="btn btn-primary btn-sm" onclick="showAddTeamForm()" id="btn-add-team">+ Add Team</button>
+    </div>
+
+    <div id="add-team-form" class="card" style="display:none; border:2px solid var(--green);">
+      <div class="card-title" style="margin-bottom:12px">New Team</div>
+      <div class="fg"><label class="fl">Team Name</label><input class="fi" id="inp-tname" placeholder="e.g. The Aces" /></div>
+      <div class="fg"><label class="fl">Player 1</label><input class="fi" id="inp-p1" placeholder="First Last" /></div>
+      <div class="fg"><label class="fl">Player 2</label><input class="fi" id="inp-p2" placeholder="First Last" /></div>
+      <div class="flex gap8 mt8">
+        <button class="btn btn-secondary" style="flex:1" onclick="hideAddTeamForm()">Cancel</button>
+        <button class="btn btn-primary" style="flex:1" onclick="addTeam()">Add Team</button>
+      </div>
+    </div>
+
+    <div id="teams-list"></div>
+    <div id="teams-footer"></div>
+  </div>
+
+  <!-- ── AVAILABILITY ── -->
+  <div id="tab-availability" class="section">
+    <div class="section-title">My Availability</div>
+    <div class="card">
+      <div class="fg" style="margin-bottom:0">
+        <label class="fl">Your Name</label>
+        <select class="fi" id="avail-sel" onchange="onPlayerSelect()">
+          <option value="">— Select your name —</option>
+        </select>
+      </div>
+    </div>
+    <div id="avail-body" style="display:none">
+      <div class="info-box">Tap a slot to toggle your availability. <strong>Green = available</strong>. Use the arrows to navigate weeks.</div>
+      <div class="wk-nav">
+        <button class="btn btn-secondary btn-sm" onclick="changeWeek(-1)">◀ Prev</button>
+        <span class="wk-title" id="wk-label"></span>
+        <button class="btn btn-secondary btn-sm" onclick="changeWeek(1)">Next ▶</button>
+      </div>
+      <div class="card" style="padding:12px 8px">
+        <div class="avail-wrap"><div id="avail-grid"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FIXTURES ── -->
+  <div id="tab-fixtures" class="section">
+    <div class="section-title">Fixtures</div>
+    <div style="margin-bottom:12px">
+      <select class="fi" id="fix-filter" onchange="renderFixtures()">
+        <option value="all">All matches</option>
+        <option value="unscheduled">Unscheduled</option>
+        <option value="proposed">Pending</option>
+        <option value="confirmed">Scheduled</option>
+        <option value="played">Played</option>
+      </select>
+    </div>
+    <div id="fixtures-list"></div>
+  </div>
+
+  <!-- ── LEAGUE TABLE ── -->
+  <div id="tab-table" class="section">
+    <div class="section-title">League Table</div>
+    <div id="league-content"></div>
+  </div>
+
+</div>
+
+<!-- ── FIXTURE MODAL ── -->
+<div id="fix-modal" class="modal-overlay" onclick="modalBgClick(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+/* ── State ─────────────────────────────────────────────────── */
+const SK = 'eg_tennis_v2';
+let S = { teams: [], availability: {}, fixtures: [] };
+
+/* ── Default league data ────────────────────────────────────── */
+const DEFAULT_TEAMS = [
+  { id:'M1', name:'Davis / Perry',       player1:'Mark Davis',       player2:'Mark Perry'      },
+  { id:'M2', name:'Byrne / Martin',      player1:'Sean Byrne',       player2:'Dave Martin'     },
+  { id:'M3', name:'Caldwell / Donohoe',  player1:'Greg Caldwell',    player2:'Peter Donohoe'   },
+  { id:'M4', name:'De Swardt / Payne',   player1:'Grant De Swardt',  player2:'James Payne'     },
+  { id:'M5', name:'North / Burton',      player1:'Stuart North',     player2:'Toby Burton'     },
+  { id:'M6', name:'Pemmasani / Talman',  player1:'Vinay Pemmasani',  player2:'Shaun Talman'    },
+];
+
+function initDefaults() {
+  S.teams = DEFAULT_TEAMS.map(t => ({...t}));
+  S.availability = {};
+
+  // Generate round-robin (15 fixtures)
+  const fixes = [];
+  let n = 1;
+  for (let i = 0; i < S.teams.length; i++)
+    for (let j = i+1; j < S.teams.length; j++)
+      fixes.push({ id:'F'+n++, t1:S.teams[i].id, t2:S.teams[j].id,
+        status:'unscheduled', date:null, slot:null,
+        scheduledTime:null, court:null, note:null, score:null });
+  // F1:M1-M2, F2:M1-M3, F3:M1-M4, F4:M1-M5, F5:M1-M6
+  // F6:M2-M3, F7:M2-M4, F8:M2-M5, F9:M2-M6
+  // F10:M3-M4, F11:M3-M5, F12:M3-M6
+  // F13:M4-M5, F14:M4-M6, F15:M5-M6
+
+  const set = (t1, t2, fields) => {
+    const f = fixes.find(f => f.t1===t1 && f.t2===t2);
+    if (f) Object.assign(f, fields);
+  };
+
+  // ── Played results (set-based scoring: each set won = 1pt) ──
+  // T1 beat T4: 2 sets to 0
+  set('M1','M4', { status:'played', score:'6-4 6-3|4-6 3-6' });
+  // T4 beat T2: 3 sets to 0
+  set('M2','M4', { status:'played', score:'2-6 1-6 3-6|6-2 6-1 6-3' });
+  // T2 beat T5: 1 set to 0
+  set('M2','M5', { status:'played', score:'6-4|4-6' });
+  // T6 beat T2: 3 sets to 0
+  set('M2','M6', { status:'played', score:'2-6 3-6 4-6|6-2 6-3 6-4' });
+  // T4 beat T3: 3 sets to 1
+  set('M3','M4', { status:'played', score:'6-4 3-6 3-6 3-6|4-6 6-3 6-3 6-3' });
+  // T3 vs T5: 2 sets each (draw — T3 won on match tiebreak)
+  set('M3','M5', { status:'played', score:'6-4 6-3 4-6 3-6|4-6 3-6 6-4 6-3' });
+
+  // ── This weekend's scheduled matches ──
+  // Sat 29 Mar, 09:00–10:30 — Caldwell/Donohoe vs Pemmasani/Talman
+  set('M3','M6', { status:'confirmed', date:'2026-03-29',
+    scheduledTime:'09:00–10:30', court:'Court booked' });
+  // Sat 29 Mar, 12:00 — North/Burton vs Pemmasani/Talman
+  set('M5','M6', { status:'confirmed', date:'2026-03-29',
+    scheduledTime:'12:00', court:'Court booked' });
+  // Sun 30 Mar, 16:30–18:00 — De Swardt/Payne vs Pemmasani/Talman (Court 1)
+  set('M4','M6', { status:'confirmed', date:'2026-03-30',
+    scheduledTime:'16:30–18:00', court:'Court 1' });
+  // Sun 30 Mar, 18:00 — Davis/Perry vs Pemmasani/Talman — PENDING Mark's confirmation
+  set('M1','M6', { status:'proposed', date:'2026-03-30',
+    scheduledTime:'18:00', court:'Court 1',
+    note:'Pending Mark Davis confirmation' });
+
+  S.fixtures = fixes;
+  save();
+}
+
+function load() {
+  try {
+    const d = localStorage.getItem(SK);
+    if (d) {
+      S = JSON.parse(d);
+      if (!S.teams || S.teams.length === 0) initDefaults();
+    } else {
+      initDefaults();
+    }
+  } catch(e) { initDefaults(); }
+}
+function save() { localStorage.setItem(SK, JSON.stringify(S)); }
+
+/* ── Tabs ───────────────────────────────────────────────────── */
+const TABS = ['teams','availability','fixtures','table'];
+function showTab(t) {
+  TABS.forEach((tab, i) => {
+    document.getElementById('tab-' + tab).classList.toggle('active', tab === t);
+    document.querySelectorAll('.nav-tab')[i].classList.toggle('active', tab === t);
+  });
+  if (t === 'availability') refreshPlayerSelect();
+  if (t === 'fixtures') renderFixtures();
+  if (t === 'table') renderTable();
+}
+
+/* ── Teams ──────────────────────────────────────────────────── */
+function renderTeams() {
+  const list = document.getElementById('teams-list');
+  const footer = document.getElementById('teams-footer');
+
+  if (S.teams.length === 0) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">🎾</div><h3>No teams yet</h3><p>Tap "Add Team" to register up to 6 teams</p></div>`;
+    footer.innerHTML = '';
+    return;
+  }
+
+  list.innerHTML = S.teams.map(t => `
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">${x(t.name)}</div>
+        <button class="btn btn-danger btn-sm" onclick="removeTeam('${t.id}')">Remove</button>
+      </div>
+      <div class="flex gap8 wrap">
+        <span class="pchip">🎾 ${x(t.player1)}</span>
+        <span class="pchip">🎾 ${x(t.player2)}</span>
+      </div>
+    </div>`).join('');
+
+  const n = S.teams.length;
+  const totalPossible = n * (n - 1) / 2;
+
+  if (S.fixtures.length > 0) {
+    footer.innerHTML = `
+      <div class="info-box">
+        ✅ ${S.fixtures.length} fixtures active.
+        <a href="#" style="color:var(--blue);font-weight:700" onclick="resetFixtures(event)">Reset fixtures</a>
+        &nbsp;·&nbsp;
+        <a href="#" style="color:var(--blue);font-weight:700" onclick="resetToDefaults(event)">Reset to league defaults</a>
+      </div>`;
+  } else if (n >= 2) {
+    footer.innerHTML = `
+      <div class="card" style="background:#f0fdf4;border:1px solid #bbf7d0">
+        <div class="card-title" style="color:var(--green-dark);margin-bottom:6px">${n === 6 ? '✅ All 6 teams added!' : `${n} / 6 teams`}</div>
+        <p class="txt-muted" style="margin-bottom:12px">
+          ${n < 6 ? 'Add more teams, or' : 'Ready to'} generate the ${totalPossible}-match round-robin.
+        </p>
+        <button class="btn btn-primary btn-full" onclick="generateFixtures()">Generate ${totalPossible} Fixtures</button>
+      </div>`;
+  } else {
+    footer.innerHTML = '';
+  }
+
+  document.getElementById('btn-add-team').style.display = n >= 6 ? 'none' : '';
+}
+
+function showAddTeamForm() {
+  document.getElementById('add-team-form').style.display = 'block';
+  document.getElementById('inp-tname').focus();
+}
+function hideAddTeamForm() {
+  document.getElementById('add-team-form').style.display = 'none';
+  ['inp-tname','inp-p1','inp-p2'].forEach(id => document.getElementById(id).value = '');
+}
+function addTeam() {
+  const name = v('inp-tname'), p1 = v('inp-p1'), p2 = v('inp-p2');
+  if (!name || !p1 || !p2) { toast('Please fill in all fields'); return; }
+  if (S.teams.length >= 6) { toast('Maximum 6 teams'); return; }
+  const pAll = getAllPlayers();
+  if (pAll.includes(p1)) { toast(`${p1} is already registered`); return; }
+  if (pAll.includes(p2)) { toast(`${p2} is already registered`); return; }
+  if (p1.toLowerCase() === p2.toLowerCase()) { toast('Player names must be different'); return; }
+  S.teams.push({ id: 'T' + Date.now(), name, player1: p1, player2: p2 });
+  save(); hideAddTeamForm(); renderTeams(); toast('Team added!');
+}
+function removeTeam(id) {
+  if (!confirm('Remove this team? This will also remove their fixtures.')) return;
+  S.teams = S.teams.filter(t => t.id !== id);
+  S.fixtures = S.fixtures.filter(f => f.t1 !== id && f.t2 !== id);
+  save(); renderTeams();
+}
+function generateFixtures() {
+  const teams = S.teams;
+  const fixes = [];
+  let n = 1;
+  for (let i = 0; i < teams.length; i++)
+    for (let j = i+1; j < teams.length; j++)
+      fixes.push({ id:'F'+n++, t1:teams[i].id, t2:teams[j].id,
+        status:'unscheduled', date:null, slot:null,
+        scheduledTime:null, court:null, note:null, score:null });
+  S.fixtures = fixes;
+  save(); renderTeams(); toast(`${fixes.length} fixtures generated!`);
+}
+function resetFixtures(e) {
+  e.preventDefault();
+  if (!confirm('Reset all fixtures and scores? This cannot be undone.')) return;
+  S.fixtures = []; save(); renderTeams();
+}
+function resetToDefaults(e) {
+  e.preventDefault();
+  if (!confirm('Reset everything to the league defaults? This will overwrite all current data.')) return;
+  initDefaults(); renderTeams(); toast('Reset to league defaults');
+}
+
+/* ── Availability ───────────────────────────────────────────── */
+let weekOff = 0;
+
+function getAllPlayers() {
+  return S.teams.flatMap(t => [t.player1, t.player2]);
+}
+
+function refreshPlayerSelect() {
+  const sel = document.getElementById('avail-sel');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">— Select your name —</option>';
+  getAllPlayers().forEach(p => {
+    const o = document.createElement('option');
+    o.value = p; o.textContent = p;
+    if (p === cur) o.selected = true;
+    sel.appendChild(o);
+  });
+  onPlayerSelect();
+}
+
+function onPlayerSelect() {
+  const p = document.getElementById('avail-sel').value;
+  document.getElementById('avail-body').style.display = p ? 'block' : 'none';
+  if (p) renderAvailGrid();
+}
+
+function weekDates() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const dow = today.getDay();
+  const mon = new Date(today);
+  mon.setDate(today.getDate() - (dow === 0 ? 6 : dow - 1) + weekOff * 7);
+  return Array.from({length:7}, (_, i) => { const d = new Date(mon); d.setDate(mon.getDate()+i); return d; });
+}
+
+function ds(d) { return d.toISOString().split('T')[0]; }
+function avk(player, date, slot) { return `${player}|${ds(date)}|${slot}`; }
+function isTd(d) { const t=new Date(); return d.getFullYear()===t.getFullYear()&&d.getMonth()===t.getMonth()&&d.getDate()===t.getDate(); }
+function fmtShort(d) { return d.toLocaleDateString('en-GB', {day:'numeric',month:'short'}); }
+function fmtFull(s) {
+  const d = new Date(s + 'T00:00:00');
+  return d.toLocaleDateString('en-GB', {weekday:'short',day:'numeric',month:'short',year:'numeric'});
+}
+function cap(s) { return s ? s[0].toUpperCase()+s.slice(1) : s; }
+
+function renderAvailGrid() {
+  const player = document.getElementById('avail-sel').value;
+  if (!player) return;
+  const dates = weekDates();
+  const slots = ['morning','afternoon','evening'];
+  const slotIcons = { morning:'🌅', afternoon:'☀️', evening:'🌙' };
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+  document.getElementById('wk-label').textContent = `${fmtShort(dates[0])} – ${fmtShort(dates[6])}`;
+
+  let h = `<table class="avail-tbl"><thead><tr><th style="text-align:left;min-width:80px">Slot</th>`;
+  dates.forEach((d,i) => {
+    const td = isTd(d);
+    h += `<th style="${td?'color:var(--green);':''}${d.getDay()===0||d.getDay()===6?'background:#fafafa;':''}">
+      ${days[i]}<br><span style="font-size:10px;font-weight:400">${d.getDate()}</span></th>`;
+  });
+  h += '</tr></thead><tbody>';
+  slots.forEach(slot => {
+    h += `<tr><td class="slot-lbl">${slotIcons[slot]} ${cap(slot)}</td>`;
+    dates.forEach(d => {
+      const on = S.availability[avk(player, d, slot)] ? 'on' : '';
+      h += `<td><div class="cell ${on}" data-date="${ds(d)}" data-slot="${slot}" onclick="toggleCell(this)"></div></td>`;
+    });
+    h += '</tr>';
+  });
+  h += '</tbody></table>';
+  document.getElementById('avail-grid').innerHTML = h;
+}
+
+function toggleCell(el) {
+  const player = document.getElementById('avail-sel').value;
+  if (!player) return;
+  const d = new Date(el.dataset.date + 'T00:00:00');
+  const key = avk(player, d, el.dataset.slot);
+  if (S.availability[key]) { delete S.availability[key]; el.classList.remove('on'); }
+  else { S.availability[key] = true; el.classList.add('on'); }
+  save();
+}
+
+function changeWeek(dir) { weekOff += dir; renderAvailGrid(); }
+
+/* ── Fixtures ───────────────────────────────────────────────── */
+function findSlots(fix) {
+  const t1 = S.teams.find(t => t.id === fix.t1);
+  const t2 = S.teams.find(t => t.id === fix.t2);
+  if (!t1 || !t2) return [];
+  const players = [t1.player1, t1.player2, t2.player1, t2.player2];
+  const result = [];
+  const today = new Date(); today.setHours(0,0,0,0);
+  for (let i = 0; i < 42; i++) {
+    const d = new Date(today); d.setDate(today.getDate()+i);
+    for (const slot of ['morning','afternoon','evening']) {
+      if (players.every(p => S.availability[avk(p, d, slot)]))
+        result.push({ date: ds(d), slot });
+    }
+  }
+  return result;
+}
+
+function renderFixtures() {
+  const filter = document.getElementById('fix-filter').value;
+  const el = document.getElementById('fixtures-list');
+  if (S.fixtures.length === 0) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">📋</div><h3>No fixtures yet</h3><p>Add teams and generate fixtures in the Teams tab</p></div>`;
+    return;
+  }
+  let fixes = filter === 'all' ? S.fixtures : S.fixtures.filter(f => f.status === filter);
+  if (fixes.length === 0) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div><h3>No ${filter} matches</h3></div>`;
+    return;
+  }
+  el.innerHTML = fixes.map(f => {
+    const t1 = S.teams.find(t => t.id === f.t1);
+    const t2 = S.teams.find(t => t.id === f.t2);
+    if (!t1 || !t2) return '';
+    const slots = f.status === 'unscheduled' ? findSlots(f) : [];
+    const slotBadge = f.status === 'unscheduled' && slots.length > 0
+      ? `<span class="slot-count">🟢 ${slots.length} slot${slots.length!==1?'s':''}</span>` : '';
+    const noSlot = f.status === 'unscheduled' && slots.length === 0
+      ? `<span class="badge b-unscheduled" style="background:#fee2e2;color:#b91c1c">No availability</span>` : '';
+
+    // Score summary for played matches
+    let scoreHtml = '';
+    if (f.score) {
+      const sc = parseScore(f.score);
+      if (sc) {
+        const winner = sc.s1 > sc.s2 ? x(t1.name) : sc.s2 > sc.s1 ? x(t2.name) : 'Draw';
+        const wLabel = sc.s1 === sc.s2 ? 'Draw' : `${winner} won`;
+        scoreHtml = `<div class="fix-score">${sc.s1}–${sc.s2} sets &nbsp;·&nbsp; ${wLabel}</div>`;
+      }
+    }
+
+    // Time, court, note
+    const timeStr = f.scheduledTime || (f.slot ? cap(f.slot) : '');
+    const timeHtml = f.date
+      ? `<div class="fix-time">📅 ${fmtFull(f.date)}${timeStr ? '&ensp;' + timeStr : ''}</div>` : '';
+    const courtHtml = f.court ? `<div class="fix-court">🎾 ${x(f.court)}</div>` : '';
+    const noteHtml  = f.note  ? `<div class="fix-note">⚠️ ${x(f.note)}</div>` : '';
+
+    const extraCls = f.status === 'confirmed' ? ' fix-confirmed' : f.status === 'proposed' ? ' fix-proposed' : '';
+
+    return `<div class="fix-item${extraCls}" onclick="openFixture('${f.id}')">
+      <div class="fix-teams">${x(t1.name)} <span style="color:#9ca3af;font-weight:400">vs</span> ${x(t2.name)}</div>
+      <div class="fix-players">${x(t1.player1)} &amp; ${x(t1.player2)} &nbsp;·&nbsp; ${x(t2.player1)} &amp; ${x(t2.player2)}</div>
+      <div class="fix-meta">
+        <span class="badge b-${f.status}">${statusLbl(f.status)}</span>
+        ${slotBadge}${noSlot}
+      </div>
+      ${timeHtml}${courtHtml}${noteHtml}${scoreHtml}
+    </div>`;
+  }).join('');
+}
+
+/* ── Fixture modal ──────────────────────────────────────────── */
+let activeFixId = null;
+
+function openFixture(id) {
+  activeFixId = id;
+  renderModal();
+  document.getElementById('fix-modal').classList.add('open');
+}
+
+function renderModal() {
+  const id = activeFixId;
+  const f = S.fixtures.find(f => f.id === id);
+  if (!f) return;
+  const t1 = S.teams.find(t => t.id === f.t1);
+  const t2 = S.teams.find(t => t.id === f.t2);
+  if (!t1 || !t2) return;
+
+  const slots = findSlots(f);
+
+  let slotsHtml = '';
+  if (f.status !== 'played') {
+    if (slots.length === 0) {
+      slotsHtml = `<div class="warn-box">No overlapping availability found for all 4 players. Ask everyone to update their availability.</div>`;
+    } else {
+      slotsHtml = `<div class="card-title" style="margin-bottom:9px">Best Available Times <span class="txt-muted">(${slots.length} found)</span></div>
+        ${slots.slice(0,6).map(s =>
+          `<div class="ts">
+            <div><div class="ts-info">${fmtFull(s.date)}</div><div class="ts-sub">${cap(s.slot)} session</div></div>
+            <button class="btn btn-primary btn-sm" onclick="proposeTime('${s.date}','${s.slot}')">
+              ${f.status==='unscheduled'?'Propose':'Reschedule'}
+            </button>
+          </div>`
+        ).join('')}
+        ${slots.length>6?`<div class="txt-muted" style="text-align:center;padding:6px">+${slots.length-6} more slots</div>`:''}
+        <div class="divider"></div>`;
+    }
+  }
+
+  let actions = '';
+  if (f.status === 'proposed') {
+    actions = `<div class="card-title" style="margin-bottom:9px">Actions</div>
+      <div class="flex gap8" style="margin-bottom:14px">
+        <button class="btn btn-primary" style="flex:1" onclick="setStatus('confirmed')">✅ Confirm</button>
+        <button class="btn btn-secondary" style="flex:1" onclick="setStatus('unscheduled')">Unschedule</button>
+      </div>`;
+  }
+  if (f.status === 'confirmed') {
+    actions = `<div class="flex gap8" style="margin-bottom:14px">
+      <button class="btn btn-primary" style="flex:1" onclick="setStatus('played')">Mark as Played</button>
+      <button class="btn btn-secondary" style="flex:1" onclick="setStatus('unscheduled')">Unschedule</button>
+    </div>`;
+  }
+
+  // Score section
+  let scoreHtml = '';
+  if (f.status === 'confirmed' || f.status === 'played') {
+    const sc = f.score ? f.score.split('|') : ['',''];
+    const parsed = parseScore(f.score);
+    let scoreSummary = '';
+    if (parsed && f.score) {
+      const winner = parsed.s1 > parsed.s2 ? t1.name : parsed.s2 > parsed.s1 ? t2.name : null;
+      scoreSummary = `
+        <div class="score-summary">
+          <div class="score-team">
+            <div class="score-team-name">${x(t1.name)}</div>
+            <div class="score-team-sets">${parsed.s1}</div>
+          </div>
+          <div class="score-sep">–</div>
+          <div class="score-team">
+            <div class="score-team-name">${x(t2.name)}</div>
+            <div class="score-team-sets">${parsed.s2}</div>
+          </div>
+        </div>
+        <div class="score-detail">
+          ${winner ? `<strong>${x(winner)}</strong> won` : '<strong>Draw</strong>'} &nbsp;·&nbsp;
+          Sets: ${x(sc[0])} / ${x(sc[1])}
+        </div>`;
+    }
+    scoreHtml = `<div class="divider"></div>
+      <div class="card-title" style="margin-bottom:10px">Score</div>
+      ${scoreSummary}
+      <div class="txt-muted" style="margin-bottom:8px;font-size:12px">Enter set scores for each team (e.g. <strong>6-4 6-3</strong> for 2 sets won)</div>
+      <div class="score-row"><label>${x(t1.name)}</label><input class="score-in fi" id="sc1" placeholder="6-4 6-3" value="${x(sc[0])}" /></div>
+      <div class="score-row"><label>${x(t2.name)}</label><input class="score-in fi" id="sc2" placeholder="4-6 3-6" value="${x(sc[1])}" /></div>
+      <button class="btn btn-primary btn-full" onclick="saveScore()">Save Score</button>`;
+  }
+
+  // Time / court / note info block
+  const timeStr = f.scheduledTime || (f.slot ? cap(f.slot) : '');
+  const scheduleInfo = (f.date || f.court || f.note) ? `
+    <div style="background:#f9fafb;border-radius:9px;padding:11px 13px;margin-bottom:14px;font-size:13px">
+      ${f.date ? `<div>📅 <strong>${fmtFull(f.date)}</strong>${timeStr ? '&ensp;' + timeStr : ''}</div>` : ''}
+      ${f.court ? `<div style="margin-top:4px">🎾 ${x(f.court)}</div>` : ''}
+      ${f.note  ? `<div style="margin-top:4px;color:#b45309;font-weight:600">⚠️ ${x(f.note)}</div>` : ''}
+    </div>` : '';
+
+  document.getElementById('modal-body').innerHTML = `
+    <div class="modal-title">${x(t1.name)} vs ${x(t2.name)}</div>
+    <div class="flex gap8 wrap" style="margin-bottom:12px">
+      <span class="badge b-${f.status}">${statusLbl(f.status)}</span>
+    </div>
+    <div class="players-grid">
+      <div class="players-box">
+        <div class="players-box-label">${x(t1.name)}</div>
+        <div class="players-box-name">${x(t1.player1)}<br>${x(t1.player2)}</div>
+      </div>
+      <div class="players-box">
+        <div class="players-box-label">${x(t2.name)}</div>
+        <div class="players-box-name">${x(t2.player1)}<br>${x(t2.player2)}</div>
+      </div>
+    </div>
+    ${scheduleInfo}
+    ${actions}
+    ${slotsHtml}
+    ${scoreHtml}
+    <button class="btn btn-secondary btn-full mt12" onclick="closeModal()">Close</button>
+  `;
+}
+
+function modalBgClick(e) { if (e.target === document.getElementById('fix-modal')) closeModal(); }
+function closeModal() { document.getElementById('fix-modal').classList.remove('open'); }
+
+function proposeTime(date, slot) {
+  const f = S.fixtures.find(f => f.id === activeFixId);
+  if (!f) return;
+  f.status = 'proposed'; f.date = date; f.slot = slot;
+  save(); toast('Time proposed!'); renderModal(); renderFixtures();
+}
+
+function setStatus(status) {
+  const f = S.fixtures.find(f => f.id === activeFixId);
+  if (!f) return;
+  f.status = status;
+  if (status === 'unscheduled') { f.date = null; f.slot = null; f.scheduledTime = null; f.court = null; f.note = null; }
+  save(); toast(`Status: ${statusLbl(status)}`); renderModal(); renderFixtures();
+}
+
+function saveScore() {
+  const f = S.fixtures.find(f => f.id === activeFixId);
+  if (!f) return;
+  const s1 = document.getElementById('sc1').value.trim();
+  const s2 = document.getElementById('sc2').value.trim();
+  if (!s1 || !s2) { toast('Enter scores for both teams'); return; }
+  f.score = `${s1}|${s2}`; f.status = 'played';
+  save(); toast('Score saved!'); renderModal(); renderFixtures(); renderTable();
+}
+
+/* ── Score parser (uses T1's set-by-set string only) ─────────── */
+// Score format: "6-4 6-3 4-6|4-6 3-6 6-4"
+// T1's string: each "A-B" means T1 won A games, T2 won B games in that set.
+// Points = sets won (1pt per set).
+function parseScore(raw) {
+  if (!raw) return null;
+  const r1 = raw.split('|')[0];
+  if (!r1) return null;
+  try {
+    const sets = r1.trim().split(/\s+/);
+    let s1=0, s2=0, g1=0, g2=0;
+    sets.forEach(s => {
+      const parts = s.split('-').map(Number);
+      if (parts.length >= 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+        g1 += parts[0]; g2 += parts[1];
+        if (parts[0] > parts[1]) s1++;
+        else if (parts[1] > parts[0]) s2++;
+      }
+    });
+    return { s1, s2, g1, g2 };
+  } catch(e) { return null; }
+}
+
+/* ── League Table ───────────────────────────────────────────── */
+function renderTable() {
+  const el = document.getElementById('league-content');
+  if (S.teams.length === 0) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">🏆</div><h3>No teams yet</h3></div>`;
+    return;
+  }
+  const rows = S.teams.map(t => ({
+    id:t.id, name:t.name, p1:t.player1, p2:t.player2,
+    P:0, W:0, D:0, L:0, SF:0, SA:0, GF:0, GA:0, pts:0
+  }));
+
+  S.fixtures.filter(f => f.status==='played' && f.score).forEach(f => {
+    const sc = parseScore(f.score);
+    if (!sc) return;
+    const r1 = rows.find(r => r.id===f.t1);
+    const r2 = rows.find(r => r.id===f.t2);
+    if (!r1 || !r2) return;
+    r1.P++; r2.P++;
+    r1.SF += sc.s1; r1.SA += sc.s2; r1.GF += sc.g1; r1.GA += sc.g2;
+    r2.SF += sc.s2; r2.SA += sc.s1; r2.GF += sc.g2; r2.GA += sc.g1;
+    // Points = sets won (1pt per set)
+    r1.pts += sc.s1;
+    r2.pts += sc.s2;
+    if (sc.s1 > sc.s2)      { r1.W++; r2.L++; }
+    else if (sc.s2 > sc.s1) { r2.W++; r1.L++; }
+    else                    { r1.D++; r2.D++; }
+  });
+
+  rows.sort((a,b) => {
+    if (b.pts !== a.pts) return b.pts - a.pts;
+    const sd = r => r.SF - r.SA;
+    if (sd(b) !== sd(a)) return sd(b) - sd(a);
+    return (b.GF - b.GA) - (a.GF - a.GA);
+  });
+
+  const rankCls = ['r1','r2','r3','rx','rx','rx'];
+  const played = S.fixtures.filter(f => f.status==='played');
+
+  el.innerHTML = `
+    <div style="overflow-x:auto;border-radius:${9}px;box-shadow:var(--shadow)">
+      <table class="ltbl">
+        <thead><tr>
+          <th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th>
+          <th title="Sets For">SF</th><th title="Sets Against">SA</th><th>Pts</th>
+        </tr></thead>
+        <tbody>${rows.map((r,i) => `<tr>
+          <td>
+            <span class="rank ${rankCls[i]}">${i+1}</span><strong>${x(r.name)}</strong>
+            <div style="font-size:11px;color:var(--muted);padding-left:30px;margin-top:2px">${x(r.p1)} &amp; ${x(r.p2)}</div>
+          </td>
+          <td>${r.P}</td><td>${r.W}</td><td>${r.D}</td><td>${r.L}</td>
+          <td>${r.SF}</td><td>${r.SA}</td>
+          <td><strong>${r.pts}</strong></td>
+        </tr>`).join('')}</tbody>
+      </table>
+    </div>
+    <div class="txt-muted mt8" style="padding:4px 2px">
+      1pt per set won &nbsp;·&nbsp; SF/SA = Sets For/Against &nbsp;·&nbsp; Sorted by pts → set diff → game diff
+    </div>
+    ${played.length > 0 ? `
+      <div class="mt16">
+        <div class="card-title" style="margin-bottom:10px">Results (${played.length} played)</div>
+        ${played.slice().reverse().map(f => {
+          const t1 = S.teams.find(t => t.id===f.t1);
+          const t2 = S.teams.find(t => t.id===f.t2);
+          if (!t1 || !t2) return '';
+          const sc = parseScore(f.score);
+          const sc2 = f.score ? f.score.split('|') : ['?','?'];
+          const winner = sc && sc.s1 > sc.s2 ? t1.name : sc && sc.s2 > sc.s1 ? t2.name : null;
+          const sets = sc ? `${sc.s1}–${sc.s2}` : '?–?';
+          return `<div class="card" style="padding:12px;margin-bottom:8px">
+            <div style="font-size:12px;color:var(--muted);margin-bottom:4px">${f.date ? fmtFull(f.date) : 'Date TBC'}</div>
+            <div style="font-size:14px;font-weight:700">
+              ${x(t1.name)} <span style="color:var(--green-dark);font-size:16px">${sets}</span> ${x(t2.name)}
+              ${winner ? `<span style="font-size:12px;color:var(--muted);font-weight:400"> — ${x(winner)} won</span>` : '<span style="font-size:12px;color:var(--muted);font-weight:400"> — draw</span>'}
+            </div>
+            <div style="font-size:11px;color:var(--muted);margin-top:3px">${x(sc2[0])} &nbsp;/&nbsp; ${x(sc2[1])}</div>
+          </div>`;
+        }).join('')}
+      </div>` : ''}
+  `;
+}
+
+/* ── Deadline banner ────────────────────────────────────────── */
+function renderDeadline() {
+  const el = document.getElementById('deadline-banner');
+  const deadline = new Date('2026-03-29T23:59:00');
+  const now = new Date();
+  const diffMs = deadline - now;
+  const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+  if (diffDays > 0) {
+    const unplayed = S.fixtures.filter(f => f.status !== 'played').length;
+    el.innerHTML = `⏰ League deadline: <strong>Sun 29 Mar 2026</strong> &nbsp;·&nbsp; <strong>${diffDays} day${diffDays!==1?'s':''}</strong> to go &nbsp;·&nbsp; ${unplayed} fixture${unplayed!==1?'s':''} remaining`;
+    el.className = 'deadline-banner' + (diffDays <= 2 ? ' urgent' : '');
+    el.style.display = 'block';
+  } else if (diffDays <= 0 && diffDays > -7) {
+    el.innerHTML = `🎾 League deadline passed — check results in the League Table`;
+    el.className = 'deadline-banner';
+    el.style.display = 'block';
+  }
+}
+
+/* ── Utilities ──────────────────────────────────────────────── */
+function x(s) { if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function v(id) { return document.getElementById(id).value.trim(); }
+function statusLbl(s) {
+  return { unscheduled:'Unscheduled', proposed:'Pending', confirmed:'Scheduled', played:'Played' }[s] || s;
+}
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+/* ── Boot ───────────────────────────────────────────────────── */
+load();
+renderDeadline();
+renderTeams();
+</script>
+
+<footer class="aifa-footer">
+  <div class="aifa-footer-brand">⚡ Built by <a href="https://aifusionautomations.com" target="_blank" rel="noopener">AI Fusion Automations</a></div>
+  <div class="aifa-footer-cta">Need a custom app for your club or business? <a href="https://aifusionautomations.com" target="_blank" rel="noopener">Contact us →</a></div>
+</footer>
+
+</body>
+</html>
