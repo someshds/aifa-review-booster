@@ -265,7 +265,7 @@
 <div class="tools-bar">
   <a href="https://tools.aifusionautomations.com/" target="_blank" rel="noopener">🛠️ More Free Business Tools →</a>
   <a href="mailto:grantdeswardt@gmail.com?subject=Tennis%20League%20App%20Feedback" class="feedback-link">💬 Suggestions &amp; Feedback</a>
-  <span class="ver">v1.6</span>
+  <span class="ver">v1.7</span>
 </div>
 <div class="hdr">
   <h1>🎾 EG Doubles League</h1>
@@ -505,21 +505,46 @@
       <div class="help-section">
         <div class="help-section-hdr">
           <span class="help-section-icon">🏆</span>
-          <span class="help-section-title">League Table</span>
+          <span class="help-section-title">League Table &amp; Scoring</span>
         </div>
         <div class="help-step">
           <div class="help-step-num">1</div>
-          <div class="help-step-text">Teams earn <strong>1 point per set won</strong>. The more sets you win across the season, the higher you rank.</div>
+          <div class="help-step-text"><strong>1 point per set won</strong> + <strong>1 bonus point for playing</strong> (awarded to both teams). A 2–0 win = 3pts. A 2–1 win = 3pts. A 1–2 loss = 2pts. A 0–2 loss = 1pt.</div>
         </div>
         <div class="help-step">
           <div class="help-step-num">2</div>
-          <div class="help-step-text"><strong>Tiebreaker order:</strong> Total points → Set difference (SF–SA) → Game difference.</div>
+          <div class="help-step-text"><strong>Walkovers:</strong> winning pair gets 2pts, other gets 0. Submit as League Points 2–0 with 0–0 in sets.</div>
         </div>
         <div class="help-step">
           <div class="help-step-num">3</div>
-          <div class="help-step-text">Column guide: <strong>P</strong> = matches played · <strong>W/D/L</strong> = wins, draws, losses · <strong>SF</strong> = sets for · <strong>SA</strong> = sets against · <strong>Pts</strong> = total points.</div>
+          <div class="help-step-text"><strong>Tiebreaker order:</strong> Total points → Set difference (SF–SA) → Game difference. Columns: <strong>P</strong> played · <strong>W/D/L</strong> · <strong>SF/SA</strong> sets for/against · <strong>Pts</strong>.</div>
         </div>
-        <div class="help-tip">💡 Scroll below the table for a full results log with individual set scores.</div>
+        <div class="help-tip">💡 You must play at least 3 matches to qualify for promotion. Scroll below the table for the full results log.</div>
+      </div>
+
+      <!-- League Rules -->
+      <div class="help-section">
+        <div class="help-section-hdr">
+          <span class="help-section-icon">📜</span>
+          <span class="help-section-title">League Rules</span>
+        </div>
+        <div class="help-step">
+          <div class="help-step-num">1</div>
+          <div class="help-step-text"><strong>Format:</strong> Best of 3 sets. If sets reach 1–1, play a <strong>10-point championship tiebreak</strong> instead of a full third set.</div>
+        </div>
+        <div class="help-step">
+          <div class="help-step-num">2</div>
+          <div class="help-step-text"><strong>Arranging matches:</strong> Propose at least <strong>5 dates</strong> to your opponents before you can claim a walkover. Start early — deadline pressure is real!</div>
+        </div>
+        <div class="help-step">
+          <div class="help-step-num">3</div>
+          <div class="help-step-text"><strong>Rain:</strong> If it rains <em>before</em> the match starts, reschedule the whole match. If it rains <em>during</em> play, resume from the exact score when conditions allow.</div>
+        </div>
+        <div class="help-step">
+          <div class="help-step-num">4</div>
+          <div class="help-step-text"><strong>Promotion:</strong> Minimum 3 matches played to qualify. Top finishers are eligible for promotion at the end of the season.</div>
+        </div>
+        <div class="help-tip">💡 Use the Chat tab and Availability tab to coordinate match times early — don't leave it to the last week!</div>
       </div>
 
       <!-- Chat -->
@@ -1110,7 +1135,7 @@ function saveScore() {
 /* ── Score parser (uses T1's set-by-set string only) ─────────── */
 // Score format: "6-4 6-3 4-6|4-6 3-6 6-4"
 // T1's string: each "A-B" means T1 won A games, T2 won B games in that set.
-// Points = sets won (1pt per set).
+// Points = 1pt per set won + 1pt for playing (both teams).
 function parseScore(raw) {
   if (!raw) return null;
   const r1 = raw.split('|')[0];
@@ -1151,9 +1176,11 @@ function renderTable() {
     r1.P++; r2.P++;
     r1.SF += sc.s1; r1.SA += sc.s2; r1.GF += sc.g1; r1.GA += sc.g2;
     r2.SF += sc.s2; r2.SA += sc.s1; r2.GF += sc.g2; r2.GA += sc.g1;
-    // Points = 3pts for match win, 0 for loss
-    if (sc.s1 > sc.s2)      { r1.pts += 3; r1.W++; r2.L++; }
-    else if (sc.s2 > sc.s1) { r2.pts += 3; r2.W++; r1.L++; }
+    // Points = 1pt per set won + 1pt for playing (both teams)
+    r1.pts += sc.s1 + 1;
+    r2.pts += sc.s2 + 1;
+    if (sc.s1 > sc.s2)      { r1.W++; r2.L++; }
+    else if (sc.s2 > sc.s1) { r2.W++; r1.L++; }
     else                    { r1.D++; r2.D++; }
   });
 
@@ -1186,7 +1213,7 @@ function renderTable() {
       </table>
     </div>
     <div class="txt-muted mt8" style="padding:4px 2px">
-      3pts per match win &nbsp;·&nbsp; SF/SA = Sets For/Against &nbsp;·&nbsp; Sorted by pts → set diff → game diff
+      1pt per set won + 1pt for playing &nbsp;·&nbsp; SF/SA = Sets For/Against &nbsp;·&nbsp; Sorted by pts → set diff → game diff
     </div>
     ${played.length > 0 ? `
       <div class="mt16">
