@@ -3,34 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>League Match Scheduler — AI Fusion Automations</title>
+  <title>EG Doubles League</title>
   <style>
     :root {
-      --green: #2d7a3a;
-      --green-light: #4caf50;
-      --green-dark: #1b5e20;
-      --bg: #f4f6f4;
+      --green: #2563eb;
+      --green-light: #60a5fa;
+      --green-dark: #1e3a8a;
+      --bg: #f1f5f9;
       --card: #ffffff;
       --text: #1a1a1a;
       --muted: #6b7280;
-      --border: #e5e7eb;
+      --border: #e2e8f0;
       --shadow: 0 2px 8px rgba(0,0,0,0.08);
       --radius: 12px;
       --amber: #f59e0b;
       --red: #ef4444;
-      --blue: #2563eb;
+      --blue: #6366f1;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
     /* ── Header ── */
-    .hdr { background: linear-gradient(135deg, var(--green-dark) 0%, #2d7a3a 100%); color: #fff; padding: 18px 20px 14px; text-align: center; }
+    .hdr { background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color: #fff; padding: 18px 20px 14px; text-align: center; }
     .hdr h1 { font-size: 19px; font-weight: 700; letter-spacing: -0.3px; }
     .hdr p { font-size: 12px; opacity: 0.75; margin-top: 2px; }
 
     /* ── Deadline banner ── */
-    .deadline-banner { background: #7c2d12; color: #fef3c7; padding: 9px 16px; text-align: center; font-size: 13px; font-weight: 600; display: none; }
-    .deadline-banner.urgent { background: #991b1b; }
+    .deadline-banner { background: #1e3a8a; color: #bfdbfe; padding: 9px 16px; text-align: center; font-size: 13px; font-weight: 600; display: none; }
+    .deadline-banner.urgent { background: #1e40af; }
 
     /* ── Nav ── */
     .nav { background: #fff; border-bottom: 1px solid var(--border); display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
@@ -63,14 +63,14 @@
     .fg { margin-bottom: 12px; }
     .fl { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
     .fi { width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 9px; font-size: 14px; background: #fff; color: var(--text); -webkit-appearance: none; appearance: none; }
-    .fi:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(45,122,58,0.12); }
+    .fi:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(37,99,235,0.12); }
 
     /* ── Badges ── */
     .badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
     .b-unscheduled { background: #f3f4f6; color: #9ca3af; }
     .b-proposed { background: #fef3c7; color: #b45309; }
-    .b-confirmed { background: #dbeafe; color: #1d4ed8; }
-    .b-played { background: #dcfce7; color: #16a34a; }
+    .b-confirmed { background: #ede9fe; color: #5b21b6; }
+    .b-played { background: #d1fae5; color: #065f46; }
 
     /* ── Availability Grid ── */
     .avail-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -81,7 +81,7 @@
     .cell { width: 34px; height: 34px; border-radius: 7px; cursor: pointer; background: #f0f0f0; display: flex; align-items: center; justify-content: center; margin: auto; transition: background 0.12s; border: 2px solid transparent; }
     .cell.on { background: var(--green); border-color: var(--green-dark); }
     .cell.on::after { content: '✓'; color: #fff; font-size: 14px; font-weight: 700; }
-    .cell:not(.on):active { background: #c8e6c9; }
+    .cell:not(.on):active { background: #bfdbfe; }
 
     /* ── Week nav ── */
     .wk-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
@@ -99,7 +99,7 @@
     .fix-court { font-size: 12px; color: var(--green-dark); font-weight: 600; margin-top: 2px; }
     .fix-note { font-size: 12px; color: #b45309; font-weight: 600; margin-top: 2px; }
     .fix-score { font-size: 14px; font-weight: 700; color: var(--green-dark); margin-top: 6px; }
-    .slot-count { font-size: 11px; font-weight: 700; color: var(--green-dark); background: #dcfce7; padding: 3px 8px; border-radius: 20px; }
+    .slot-count { font-size: 11px; font-weight: 700; color: var(--green-dark); background: #dbeafe; padding: 3px 8px; border-radius: 20px; }
 
     /* ── Modal ── */
     .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; align-items: flex-end; justify-content: center; }
@@ -115,20 +115,20 @@
     .ltbl th:last-child { border-radius: 0 9px 0 0; }
     .ltbl td { padding: 10px 8px; text-align: center; border-bottom: 1px solid var(--border); }
     .ltbl td:first-child { text-align: left; padding-left: 12px; }
-    .ltbl tr:nth-child(1) td { background: #fffbeb; }
+    .ltbl tr:nth-child(1) td { background: #fef9ee; }
     .rank { display: inline-flex; width: 22px; height: 22px; align-items: center; justify-content: center; border-radius: 50%; font-size: 11px; font-weight: 700; margin-right: 6px; }
     .r1 { background: #fbbf24; color: #78350f; }
     .r2 { background: #d1d5db; color: #374151; }
-    .r3 { background: #b45309; color: #fff; }
+    .r3 { background: #f97316; color: #fff; }
     .rx { background: #f3f4f6; color: #6b7280; }
 
     /* ── Suggested time slots ── */
-    .ts { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 9px; margin-bottom: 7px; }
+    .ts { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 9px; margin-bottom: 7px; }
     .ts-info { font-size: 13px; font-weight: 600; }
     .ts-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
 
     /* ── Score display ── */
-    .score-summary { display: flex; align-items: center; justify-content: center; gap: 16px; background: #f0fdf4; border-radius: 10px; padding: 14px 12px; margin-bottom: 12px; }
+    .score-summary { display: flex; align-items: center; justify-content: center; gap: 16px; background: #eff6ff; border-radius: 10px; padding: 14px 12px; margin-bottom: 12px; }
     .score-team { text-align: center; }
     .score-team-name { font-size: 12px; color: var(--muted); font-weight: 600; }
     .score-team-sets { font-size: 32px; font-weight: 800; color: var(--green-dark); line-height: 1; }
@@ -136,10 +136,10 @@
     .score-detail { font-size: 12px; color: var(--muted); text-align: center; margin-bottom: 12px; }
 
     /* ── Player chips ── */
-    .pchip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: #f0fdf4; color: var(--green-dark); border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .pchip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: #eff6ff; color: var(--green-dark); border-radius: 20px; font-size: 12px; font-weight: 600; }
 
     /* ── Info box ── */
-    .info-box { background: #eff6ff; border-left: 3px solid var(--blue); padding: 11px 13px; border-radius: 0 8px 8px 0; font-size: 13px; color: #1e40af; margin-bottom: 14px; line-height: 1.5; }
+    .info-box { background: #eef2ff; border-left: 3px solid var(--blue); padding: 11px 13px; border-radius: 0 8px 8px 0; font-size: 13px; color: #4338ca; margin-bottom: 14px; line-height: 1.5; }
     .warn-box { background: #fff7ed; border-left: 3px solid var(--amber); padding: 11px 13px; border-radius: 0 8px 8px 0; font-size: 13px; color: #c2410c; margin-bottom: 14px; line-height: 1.5; }
 
     /* ── Empty state ── */
@@ -154,7 +154,7 @@
     .score-in { width: 130px; padding: 8px 10px; border: 1.5px solid var(--border); border-radius: 7px; font-size: 13px; text-align: center; }
 
     /* ── Toast ── */
-    .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); background: #111; color: #fff; padding: 11px 20px; border-radius: 22px; font-size: 13px; font-weight: 600; z-index: 999; opacity: 0; transition: opacity 0.25s; pointer-events: none; white-space: nowrap; }
+    .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); background: #1e3a8a; color: #fff; padding: 11px 20px; border-radius: 22px; font-size: 13px; font-weight: 600; z-index: 999; opacity: 0; transition: opacity 0.25s; pointer-events: none; white-space: nowrap; }
     .toast.show { opacity: 1; }
 
     /* ── Utilities ── */
@@ -170,26 +170,58 @@
 
     /* ── Players grid in modal ── */
     .players-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
-    .players-box { background: #f9fafb; padding: 10px 12px; border-radius: 9px; }
+    .players-box { background: #f8faff; padding: 10px 12px; border-radius: 9px; border: 1px solid #e0e7ff; }
     .players-box-label { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
     .players-box-name { font-size: 13px; line-height: 1.6; }
 
     @media (min-width: 600px) { .content { padding: 22px; } }
 
-    /* ── AIFA Footer ── */
-    .aifa-footer { background: #111827; color: #9ca3af; text-align: center; padding: 20px 16px; margin-top: 24px; font-size: 13px; }
-    .aifa-footer a { color: #6ee7b7; text-decoration: none; font-weight: 600; }
-    .aifa-footer a:hover { text-decoration: underline; }
-    .aifa-footer-brand { font-size: 14px; font-weight: 700; color: #f9fafb; margin-bottom: 5px; }
-    .aifa-footer-cta { margin-top: 6px; font-size: 12px; }
-    .aifa-footer-cta a { color: #a78bfa; }
+    /* ── Business tools bar ── */
+    .tools-bar { background: #0f172a; text-align: center; padding: 7px 12px; }
+    .tools-bar a { color: #93c5fd; font-size: 12px; font-weight: 600; text-decoration: none; letter-spacing: 0.2px; }
+    .tools-bar a:hover { color: #bfdbfe; }
+
+    /* ── Initials avatar ── */
+    .avatar { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; font-size: 9px; font-weight: 800; color: #fff; flex-shrink: 0; }
+    .avatar-lg { width: 32px; height: 32px; font-size: 11px; }
+
+    /* ── All-player availability calendar ── */
+    .avail-cal-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .avail-cal { border-collapse: collapse; font-size: 11px; min-width: 100%; }
+    .avail-cal th { padding: 4px 3px; text-align: center; font-weight: 600; color: var(--muted); border-bottom: 1px solid var(--border); min-width: 52px; }
+    .avail-cal th.slot-col { text-align: left; min-width: 72px; }
+    .avail-cal td { padding: 4px 3px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .avail-cal td.slot-col { font-size: 11px; font-weight: 600; color: var(--muted); padding: 6px 8px; white-space: nowrap; }
+    .avail-cell { display: flex; flex-wrap: wrap; gap: 2px; justify-content: center; min-height: 28px; padding: 2px; }
+    .avail-cal .today-col { background: #eff6ff; }
+
+    /* ── Suggestions ── */
+    .sug-item { background: var(--card); border-radius: var(--radius); padding: 13px 14px; margin-bottom: 8px; box-shadow: var(--shadow); border-left: 3px solid var(--green); }
+    .sug-match { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+    .sug-slots { display: flex; flex-wrap: wrap; gap: 6px; }
+    .sug-slot { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 7px; padding: 4px 9px; font-size: 11px; font-weight: 600; color: var(--green-dark); }
+
+    /* ── Chat ── */
+    .chat-messages { background: #f8faff; border-radius: var(--radius); padding: 12px; min-height: 200px; max-height: 420px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; border: 1px solid #e0e7ff; }
+    .chat-msg { display: flex; gap: 9px; align-items: flex-start; }
+    .chat-bubble { background: #fff; border-radius: 0 10px 10px 10px; padding: 8px 11px; box-shadow: 0 1px 3px rgba(0,0,0,0.07); flex: 1; min-width: 0; border: 1px solid var(--border); }
+    .chat-bubble.mine { background: #dbeafe; border-color: #bfdbfe; border-radius: 10px 0 10px 10px; }
+    .chat-meta { font-size: 11px; color: var(--muted); margin-bottom: 3px; }
+    .chat-name { font-weight: 700; color: var(--text); }
+    .chat-text { font-size: 13px; line-height: 1.45; word-break: break-word; }
+    .chat-input-row { display: flex; gap: 8px; align-items: center; }
+    .chat-empty { text-align: center; padding: 30px; color: var(--muted); font-size: 13px; }
+    .chat-msg.mine { flex-direction: row-reverse; }
   </style>
 </head>
 <body>
 
+<div class="tools-bar">
+  <a href="https://tools.aifusionautomations.com/" target="_blank" rel="noopener">🛠️ More Free Business Tools →</a>
+</div>
 <div class="hdr">
-  <h1>🎾 League Match Scheduler</h1>
-  <p>Demo: East Grinstead Tennis Club · Doubles League · AI-powered scheduling</p>
+  <h1>🎾 EG Doubles League</h1>
+  <p>East Grinstead Tennis &amp; Racket Club · Men's Doubles League 3</p>
 </div>
 <div id="deadline-banner" class="deadline-banner"></div>
 
@@ -198,6 +230,7 @@
   <div class="nav-tab" onclick="showTab('availability')">Availability</div>
   <div class="nav-tab" onclick="showTab('fixtures')">Fixtures</div>
   <div class="nav-tab" onclick="showTab('table')">League Table</div>
+  <div class="nav-tab" onclick="showTab('chat')">💬 Chat</div>
 </nav>
 
 <div class="content">
@@ -209,7 +242,7 @@
       <button class="btn btn-primary btn-sm" onclick="showAddTeamForm()" id="btn-add-team">+ Add Team</button>
     </div>
 
-    <div id="add-team-form" class="card" style="display:none; border:2px solid var(--green);">
+    <div id="add-team-form" class="card" style="display:none; border:2px solid var(--green); background:#f8faff;">
       <div class="card-title" style="margin-bottom:12px">New Team</div>
       <div class="fg"><label class="fl">Team Name</label><input class="fi" id="inp-tname" placeholder="e.g. The Aces" /></div>
       <div class="fg"><label class="fl">Player 1</label><input class="fi" id="inp-p1" placeholder="First Last" /></div>
@@ -246,6 +279,20 @@
         <div class="avail-wrap"><div id="avail-grid"></div></div>
       </div>
     </div>
+
+    <div class="divider" style="margin:20px 0 16px"></div>
+
+    <!-- All-player calendar -->
+    <div class="card-title" style="margin-bottom:10px">📅 All Players — Next 2 Weeks</div>
+    <div class="card" style="padding:12px 8px">
+      <div id="avail-legend" style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px;padding:0 4px"></div>
+      <div class="avail-cal-wrap"><div id="avail-cal-grid"></div></div>
+    </div>
+
+    <!-- Auto-match suggestions -->
+    <div class="card-title" style="margin-bottom:10px;margin-top:20px">🎾 Match Suggestions</div>
+    <div class="info-box" style="margin-bottom:10px">Matches where all 4 players have overlapping availability in the next 2 weeks.</div>
+    <div id="avail-suggestions"></div>
   </div>
 
   <!-- ── FIXTURES ── -->
@@ -269,6 +316,33 @@
     <div id="league-content"></div>
   </div>
 
+  <!-- ── CHAT ── -->
+  <div id="tab-chat" class="section">
+    <div class="section-title">💬 Group Chat</div>
+    <div class="card">
+      <div class="fg" style="margin-bottom:0">
+        <label class="fl">Your Name</label>
+        <select class="fi" id="chat-sel" onchange="onChatPlayerSelect()">
+          <option value="">— Select your name —</option>
+        </select>
+      </div>
+    </div>
+    <div id="chat-messages" class="chat-messages"><div class="chat-empty">No messages yet — say hello! 👋</div></div>
+    <div class="card" style="padding:12px">
+      <div class="chat-input-row">
+        <input class="fi" id="chat-input" placeholder="Type a message…" style="flex:1;margin-bottom:0" onkeydown="chatKeyDown(event)" />
+        <button class="btn btn-primary" onclick="sendChat()">Send</button>
+      </div>
+      <div id="chat-name-warn" style="font-size:11px;color:#b45309;margin-top:6px;display:none">⚠️ Select your name above before sending</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── FOOTER ── -->
+<div style="text-align:center; padding:16px 20px 24px; color:#9ca3af; font-size:12px;">
+  <a href="mailto:grantdeswardt@gmail.com?subject=Tennis%20League%20App%20Feedback" style="color:#6b7280; text-decoration:none;">💬 Suggestions &amp; Feedback</a>
+  &nbsp;·&nbsp; v1.3
 </div>
 
 <!-- ── FIXTURE MODAL ── -->
@@ -283,17 +357,17 @@
 
 <script>
 /* ── State ─────────────────────────────────────────────────── */
-const SK = 'eg_tennis_v2';
+const SK = 'eg_tennis_v3';
 let S = { teams: [], availability: {}, fixtures: [] };
 
 /* ── Default league data ────────────────────────────────────── */
 const DEFAULT_TEAMS = [
-  { id:'M1', name:'Davis / Perry',       player1:'Mark Davis',       player2:'Mark Perry'      },
-  { id:'M2', name:'Byrne / Martin',      player1:'Sean Byrne',       player2:'Dave Martin'     },
-  { id:'M3', name:'Caldwell / Donohoe',  player1:'Greg Caldwell',    player2:'Peter Donohoe'   },
-  { id:'M4', name:'De Swardt / Payne',   player1:'Grant De Swardt',  player2:'James Payne'     },
-  { id:'M5', name:'North / Burton',      player1:'Stuart North',     player2:'Toby Burton'     },
-  { id:'M6', name:'Pemmasani / Talman',  player1:'Vinay Pemmasani',  player2:'Shaun Talman'    },
+  { id:'M1', name:'Mark & Mark',    player1:'Mark D',  player2:'Mark P'  },
+  { id:'M2', name:'Sean & Dave',    player1:'Sean',    player2:'Dave'    },
+  { id:'M3', name:'Greg & Pete',    player1:'Greg',    player2:'Pete'    },
+  { id:'M4', name:'Grant & James',  player1:'Grant',   player2:'James'   },
+  { id:'M5', name:'Stuart & Toby',  player1:'Stuart',  player2:'Toby'    },
+  { id:'M6', name:'Vinay & Shaun',  player1:'Vinay',   player2:'Shaun'   },
 ];
 
 function initDefaults() {
@@ -319,18 +393,16 @@ function initDefaults() {
   };
 
   // ── Played results (set-based scoring: each set won = 1pt) ──
-  // T1 beat T4: 2 sets to 0
-  set('M1','M4', { status:'played', score:'6-4 6-3|4-6 3-6' });
-  // T4 beat T2: 3 sets to 0
-  set('M2','M4', { status:'played', score:'2-6 1-6 3-6|6-2 6-1 6-3' });
-  // T2 beat T5: 1 set to 0
-  set('M2','M5', { status:'played', score:'6-4|4-6' });
-  // T6 beat T2: 3 sets to 0
-  set('M2','M6', { status:'played', score:'2-6 3-6 4-6|6-2 6-3 6-4' });
-  // T4 beat T3: 3 sets to 1
-  set('M3','M4', { status:'played', score:'6-4 3-6 3-6 3-6|4-6 6-3 6-3 6-3' });
-  // T3 vs T5: 2 sets each (draw — T3 won on match tiebreak)
-  set('M3','M5', { status:'played', score:'6-4 6-3 4-6 3-6|4-6 3-6 6-4 6-3' });
+  // 28/01/2026 — Grant & James beat Greg & Pete 2-0 (6-4, 6-2)
+  set('M3','M4', { status:'played', date:'2026-01-28', score:'4-6 2-6|6-4 6-2' });
+  // 14/02/2026 — Vinay & Shaun beat Sean & Dave 2-0 (6-2, 6-2)
+  set('M2','M6', { status:'played', date:'2026-02-14', score:'2-6 2-6|6-2 6-2' });
+  // 28/02/2026 — Grant & James beat Mark & Mark 2-1 (6-1, 3-6, 10-6 match tiebreak)
+  set('M1','M4', { status:'played', date:'2026-02-28', score:'1-6 6-3 6-10|6-1 3-6 10-6' });
+  // 22/03/2026 — Stuart & Toby beat Greg & Pete 2-1 (no game scores recorded)
+  set('M3','M5', { status:'played', date:'2026-03-22', score:'6-4 4-6 4-6|4-6 6-4 6-4' });
+  // 23/03/2026 — Grant & James beat Stuart & Toby 2-1 (1-6, 7-5, 10-7 match tiebreak)
+  set('M4','M5', { status:'played', date:'2026-03-23', score:'1-6 7-5 10-7|6-1 5-7 7-10' });
 
   // ── This weekend's scheduled matches ──
   // Sat 29 Mar, 09:00–10:30 — Caldwell/Donohoe vs Pemmasani/Talman
@@ -365,15 +437,16 @@ function load() {
 function save() { localStorage.setItem(SK, JSON.stringify(S)); }
 
 /* ── Tabs ───────────────────────────────────────────────────── */
-const TABS = ['teams','availability','fixtures','table'];
+const TABS = ['teams','availability','fixtures','table','chat'];
 function showTab(t) {
   TABS.forEach((tab, i) => {
     document.getElementById('tab-' + tab).classList.toggle('active', tab === t);
     document.querySelectorAll('.nav-tab')[i].classList.toggle('active', tab === t);
   });
-  if (t === 'availability') refreshPlayerSelect();
+  if (t === 'availability') { refreshPlayerSelect(); renderAllAvail(); renderSuggestions(); }
   if (t === 'fixtures') renderFixtures();
   if (t === 'table') renderTable();
+  if (t === 'chat') { refreshChatSelect(); renderChat(); }
 }
 
 /* ── Teams ──────────────────────────────────────────────────── */
@@ -389,10 +462,7 @@ function renderTeams() {
 
   list.innerHTML = S.teams.map(t => `
     <div class="card">
-      <div class="card-hdr">
-        <div class="card-title">${x(t.name)}</div>
-        <button class="btn btn-danger btn-sm" onclick="removeTeam('${t.id}')">Remove</button>
-      </div>
+      <div class="card-title" style="margin-bottom:10px">${x(t.name)}</div>
       <div class="flex gap8 wrap">
         <span class="pchip">🎾 ${x(t.player1)}</span>
         <span class="pchip">🎾 ${x(t.player2)}</span>
@@ -412,7 +482,7 @@ function renderTeams() {
       </div>`;
   } else if (n >= 2) {
     footer.innerHTML = `
-      <div class="card" style="background:#f0fdf4;border:1px solid #bbf7d0">
+      <div class="card" style="background:#eff6ff;border:1px solid #bfdbfe">
         <div class="card-title" style="color:var(--green-dark);margin-bottom:6px">${n === 6 ? '✅ All 6 teams added!' : `${n} / 6 teams`}</div>
         <p class="txt-muted" style="margin-bottom:12px">
           ${n < 6 ? 'Add more teams, or' : 'Ready to'} generate the ${totalPossible}-match round-robin.
@@ -916,16 +986,172 @@ function toast(msg) {
   setTimeout(() => el.classList.remove('show'), 2000);
 }
 
+/* ── Player helpers ─────────────────────────────────────────── */
+const TEAM_COLORS = ['#1d4ed8','#0891b2','#dc2626','#d97706','#7c3aed','#059669'];
+
+function getPlayerColor(playerName) {
+  const idx = S.teams.findIndex(t => t.player1 === playerName || t.player2 === playerName);
+  return TEAM_COLORS[idx >= 0 ? idx % TEAM_COLORS.length : 0];
+}
+
+function getInitials(name) {
+  const parts = name.trim().split(/\s+/);
+  return parts.map(w => w[0].toUpperCase()).join('').slice(0, 2);
+}
+
+function avatarHtml(playerName, large) {
+  const col = getPlayerColor(playerName);
+  const cls = large ? 'avatar avatar-lg' : 'avatar';
+  return `<span class="${cls}" style="background:${col}" title="${x(playerName)}">${x(getInitials(playerName))}</span>`;
+}
+
+/* ── All-player availability calendar ──────────────────────── */
+function renderAllAvail() {
+  const players = getAllPlayers();
+  const legend = document.getElementById('avail-legend');
+  const grid = document.getElementById('avail-cal-grid');
+  if (!legend || !grid) return;
+
+  // Legend
+  legend.innerHTML = players.map(p => `
+    <div style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600">
+      ${avatarHtml(p, false)} ${x(p)}
+    </div>`).join('');
+
+  // 14 days from today
+  const today = new Date(); today.setHours(0,0,0,0);
+  const dates = Array.from({length:14}, (_, i) => { const d = new Date(today); d.setDate(today.getDate()+i); return d; });
+  const slots = ['morning','afternoon','evening'];
+  const slotIcons = { morning:'🌅 Morn', afternoon:'☀️ Aft', evening:'🌙 Eve' };
+  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  let h = `<table class="avail-cal"><thead><tr><th class="slot-col">Slot</th>`;
+  dates.forEach(d => {
+    const isToday = ds(d) === ds(today);
+    h += `<th style="${isToday ? 'color:var(--green);' : ''}">
+      ${dayNames[d.getDay()]}<br><span style="font-size:10px;font-weight:400">${d.getDate()}/${d.getMonth()+1}</span>
+    </th>`;
+  });
+  h += '</tr></thead><tbody>';
+
+  slots.forEach(slot => {
+    h += `<tr><td class="slot-col">${slotIcons[slot]}</td>`;
+    dates.forEach(d => {
+      const isToday = ds(d) === ds(today);
+      const available = players.filter(p => S.availability[avk(p, d, slot)]);
+      h += `<td${isToday ? ' class="today-col"' : ''}><div class="avail-cell">`;
+      available.forEach(p => { h += avatarHtml(p, false); });
+      h += '</div></td>';
+    });
+    h += '</tr>';
+  });
+  h += '</tbody></table>';
+  grid.innerHTML = h;
+}
+
+/* ── Auto-match suggestions ─────────────────────────────────── */
+function renderSuggestions() {
+  const el = document.getElementById('avail-suggestions');
+  if (!el) return;
+  const unplayed = S.fixtures.filter(f => f.status !== 'played');
+
+  const results = unplayed.map(f => {
+    const t1 = S.teams.find(t => t.id === f.t1);
+    const t2 = S.teams.find(t => t.id === f.t2);
+    if (!t1 || !t2) return null;
+    const slots = findSlots(f).slice(0, 4);
+    return { f, t1, t2, slots };
+  }).filter(r => r && r.slots.length > 0);
+
+  if (results.length === 0) {
+    el.innerHTML = `<div class="empty" style="padding:24px 16px"><div class="empty-icon">🔍</div><h3>No overlapping availability found</h3><p>Ask players to add their availability above</p></div>`;
+    return;
+  }
+
+  el.innerHTML = results.map(r => `
+    <div class="sug-item">
+      <div class="sug-match">${x(r.t1.name)} <span style="color:var(--muted);font-weight:400">vs</span> ${x(r.t2.name)}</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:7px">${x(r.t1.player1)}, ${x(r.t1.player2)}, ${x(r.t2.player1)}, ${x(r.t2.player2)} — all free:</div>
+      <div class="sug-slots">
+        ${r.slots.map(s => `<span class="sug-slot">📅 ${fmtFull(s.date)} · ${cap(s.slot)}</span>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+/* ── Chat ───────────────────────────────────────────────────── */
+const CHAT_SK = 'eg_tennis_chat_v1';
+let chatMessages = [];
+
+function loadChat() {
+  try { chatMessages = JSON.parse(localStorage.getItem(CHAT_SK) || '[]'); } catch(e) { chatMessages = []; }
+}
+function saveChat() { localStorage.setItem(CHAT_SK, JSON.stringify(chatMessages)); }
+
+function refreshChatSelect() {
+  const sel = document.getElementById('chat-sel');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">— Select your name —</option>';
+  getAllPlayers().forEach(p => {
+    const o = document.createElement('option');
+    o.value = p; o.textContent = p;
+    if (p === cur) o.selected = true;
+    sel.appendChild(o);
+  });
+}
+
+function onChatPlayerSelect() {
+  renderChat();
+}
+
+function renderChat() {
+  const el = document.getElementById('chat-messages');
+  if (!el) return;
+  const me = document.getElementById('chat-sel').value;
+
+  if (chatMessages.length === 0) {
+    el.innerHTML = '<div class="chat-empty">No messages yet — say hello! 👋</div>';
+    return;
+  }
+
+  el.innerHTML = chatMessages.map(msg => {
+    const isMine = msg.player === me;
+    const ts = new Date(msg.ts).toLocaleString('en-GB', {day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+    return `<div class="chat-msg${isMine ? ' mine' : ''}">
+      ${avatarHtml(msg.player, true)}
+      <div class="chat-bubble${isMine ? ' mine' : ''}">
+        <div class="chat-meta"><span class="chat-name">${x(msg.player)}</span> · ${ts}</div>
+        <div class="chat-text">${x(msg.text)}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Scroll to bottom
+  el.scrollTop = el.scrollHeight;
+}
+
+function sendChat() {
+  const me = document.getElementById('chat-sel').value;
+  const warn = document.getElementById('chat-name-warn');
+  if (!me) { warn.style.display = 'block'; return; }
+  warn.style.display = 'none';
+  const inp = document.getElementById('chat-input');
+  const text = inp.value.trim();
+  if (!text) return;
+  chatMessages.push({ player: me, text, ts: Date.now() });
+  saveChat();
+  inp.value = '';
+  renderChat();
+}
+
+function chatKeyDown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+}
+
 /* ── Boot ───────────────────────────────────────────────────── */
+loadChat();
 load();
 renderDeadline();
 renderTeams();
 </script>
-
-<footer class="aifa-footer">
-  <div class="aifa-footer-brand">⚡ Built by <a href="https://aifusionautomations.com" target="_blank" rel="noopener">AI Fusion Automations</a></div>
-  <div class="aifa-footer-cta">Need a custom app for your club or business? <a href="https://aifusionautomations.com" target="_blank" rel="noopener">Contact us →</a></div>
-</footer>
-
 </body>
 </html>
