@@ -265,7 +265,7 @@
 <div class="tools-bar">
   <a href="https://tools.aifusionautomations.com/" target="_blank" rel="noopener">🛠️ More Free Business Tools →</a>
   <a href="mailto:grantdeswardt@gmail.com?subject=Tennis%20League%20App%20Feedback" class="feedback-link">💬 Suggestions &amp; Feedback</a>
-  <span class="ver">v2.1</span>
+  <span class="ver">v2.2</span>
 </div>
 <div class="hdr">
   <h1>🎾 Men's Doubles League Box 3</h1>
@@ -305,6 +305,23 @@
 
     <div id="teams-list"></div>
     <div id="teams-footer"></div>
+    <div class="divider" style="margin:24px 0 16px"></div>
+    <div class="card-title" style="margin-bottom:12px">💬 Comments &amp; Feedback</div>
+    <div class="card">
+      <div class="fg" style="margin-bottom:0"><label class="fl">Your Name</label>
+        <select class="fi" id="cmt-sel-teams" onchange="renderComments('teams')">
+          <option value="">— Select your name —</option>
+        </select>
+      </div>
+    </div>
+    <div id="cmt-messages-teams" class="chat-messages" style="max-height:280px"><div class="chat-empty">No comments yet — be the first!</div></div>
+    <div class="card" style="padding:12px">
+      <div class="chat-input-row">
+        <input class="fi" id="cmt-input-teams" placeholder="Add a comment…" style="flex:1;margin-bottom:0" onkeydown="commentKeyDown(event,'teams')" />
+        <button class="btn btn-primary" onclick="sendComment('teams')">Send</button>
+      </div>
+      <div id="cmt-warn-teams" style="font-size:11px;color:#b45309;margin-top:6px;display:none">⚠️ Select your name above before sending</div>
+    </div>
   </div>
 
   <!-- ── AVAILABILITY ── -->
@@ -344,6 +361,23 @@
     <div class="card-title" style="margin-bottom:10px;margin-top:20px">🎾 Match Suggestions</div>
     <div class="info-box" style="margin-bottom:10px">Matches where all 4 players have overlapping availability in the next 2 weeks.</div>
     <div id="avail-suggestions"></div>
+    <div class="divider" style="margin:24px 0 16px"></div>
+    <div class="card-title" style="margin-bottom:12px">💬 Comments &amp; Feedback</div>
+    <div class="card">
+      <div class="fg" style="margin-bottom:0"><label class="fl">Your Name</label>
+        <select class="fi" id="cmt-sel-availability" onchange="renderComments('availability')">
+          <option value="">— Select your name —</option>
+        </select>
+      </div>
+    </div>
+    <div id="cmt-messages-availability" class="chat-messages" style="max-height:280px"><div class="chat-empty">No comments yet — be the first!</div></div>
+    <div class="card" style="padding:12px">
+      <div class="chat-input-row">
+        <input class="fi" id="cmt-input-availability" placeholder="Add a comment…" style="flex:1;margin-bottom:0" onkeydown="commentKeyDown(event,'availability')" />
+        <button class="btn btn-primary" onclick="sendComment('availability')">Send</button>
+      </div>
+      <div id="cmt-warn-availability" style="font-size:11px;color:#b45309;margin-top:6px;display:none">⚠️ Select your name above before sending</div>
+    </div>
   </div>
 
   <!-- ── FIXTURES ── -->
@@ -360,6 +394,23 @@
       </select>
     </div>
     <div id="fixtures-list"></div>
+    <div class="divider" style="margin:24px 0 16px"></div>
+    <div class="card-title" style="margin-bottom:12px">💬 Comments &amp; Feedback</div>
+    <div class="card">
+      <div class="fg" style="margin-bottom:0"><label class="fl">Your Name</label>
+        <select class="fi" id="cmt-sel-fixtures" onchange="renderComments('fixtures')">
+          <option value="">— Select your name —</option>
+        </select>
+      </div>
+    </div>
+    <div id="cmt-messages-fixtures" class="chat-messages" style="max-height:280px"><div class="chat-empty">No comments yet — be the first!</div></div>
+    <div class="card" style="padding:12px">
+      <div class="chat-input-row">
+        <input class="fi" id="cmt-input-fixtures" placeholder="Add a comment…" style="flex:1;margin-bottom:0" onkeydown="commentKeyDown(event,'fixtures')" />
+        <button class="btn btn-primary" onclick="sendComment('fixtures')">Send</button>
+      </div>
+      <div id="cmt-warn-fixtures" style="font-size:11px;color:#b45309;margin-top:6px;display:none">⚠️ Select your name above before sending</div>
+    </div>
   </div>
 
   <!-- ── LEAGUE TABLE ── -->
@@ -367,6 +418,23 @@
     <div class="info-box" style="margin-bottom:14px">ℹ️ <strong>Scoring:</strong> 1 point per set won + 1 bonus point for playing. Teams sorted by points, then set difference.</div>
     <div class="section-title">League Table</div>
     <div id="league-content"></div>
+    <div class="divider" style="margin:24px 0 16px"></div>
+    <div class="card-title" style="margin-bottom:12px">💬 Comments &amp; Feedback</div>
+    <div class="card">
+      <div class="fg" style="margin-bottom:0"><label class="fl">Your Name</label>
+        <select class="fi" id="cmt-sel-table" onchange="renderComments('table')">
+          <option value="">— Select your name —</option>
+        </select>
+      </div>
+    </div>
+    <div id="cmt-messages-table" class="chat-messages" style="max-height:280px"><div class="chat-empty">No comments yet — be the first!</div></div>
+    <div class="card" style="padding:12px">
+      <div class="chat-input-row">
+        <input class="fi" id="cmt-input-table" placeholder="Add a comment…" style="flex:1;margin-bottom:0" onkeydown="commentKeyDown(event,'table')" />
+        <button class="btn btn-primary" onclick="sendComment('table')">Send</button>
+      </div>
+      <div id="cmt-warn-table" style="font-size:11px;color:#b45309;margin-top:6px;display:none">⚠️ Select your name above before sending</div>
+    </div>
   </div>
 
   <!-- ── CHAT ── -->
@@ -687,6 +755,7 @@ function showTab(t) {
   if (t === 'fixtures') renderFixtures();
   if (t === 'table') renderTable();
   if (t === 'chat') { refreshChatSelect(); renderChat(); }
+  if (['teams','availability','fixtures','table'].includes(t)) refreshCommentSelect(t);
 }
 
 /* ── Player photos (base64 in localStorage) ─────────────────── */
@@ -1368,6 +1437,76 @@ function renderSuggestions() {
     </div>`).join('');
 }
 
+/* ── Tab Comments ───────────────────────────────────────────── */
+const CMT_TABS = ['teams','availability','fixtures','table'];
+let tabComments = {};
+
+function loadTabComments() {
+  CMT_TABS.forEach(tab => {
+    try { tabComments[tab] = JSON.parse(localStorage.getItem('eg_tennis_comments_' + tab + '_v1') || '[]'); }
+    catch(e) { tabComments[tab] = []; }
+  });
+}
+function saveTabComments(tab) {
+  localStorage.setItem('eg_tennis_comments_' + tab + '_v1', JSON.stringify(tabComments[tab]));
+}
+
+function refreshCommentSelect(tab) {
+  const sel = document.getElementById('cmt-sel-' + tab);
+  if (!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">— Select your name —</option>';
+  getAllPlayers().forEach(p => {
+    const o = document.createElement('option');
+    o.value = p; o.textContent = p;
+    if (p === cur) o.selected = true;
+    sel.appendChild(o);
+  });
+  renderComments(tab);
+}
+
+function renderComments(tab) {
+  const el = document.getElementById('cmt-messages-' + tab);
+  if (!el) return;
+  const me = document.getElementById('cmt-sel-' + tab).value;
+  const msgs = tabComments[tab] || [];
+  if (msgs.length === 0) {
+    el.innerHTML = '<div class="chat-empty">No comments yet — be the first!</div>';
+    return;
+  }
+  el.innerHTML = msgs.map(msg => {
+    const isMine = msg.player === me;
+    const ts = new Date(msg.ts).toLocaleString('en-GB', {day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+    return `<div class="chat-msg${isMine ? ' mine' : ''}">
+      ${avatarHtml(msg.player, true)}
+      <div class="chat-bubble${isMine ? ' mine' : ''}">
+        <div class="chat-meta"><span class="chat-name">${x(msg.player)}</span> · ${ts}</div>
+        <div class="chat-text">${x(msg.text)}</div>
+      </div>
+    </div>`;
+  }).join('');
+  el.scrollTop = el.scrollHeight;
+}
+
+function sendComment(tab) {
+  const me = document.getElementById('cmt-sel-' + tab).value;
+  const warn = document.getElementById('cmt-warn-' + tab);
+  if (!me) { warn.style.display = 'block'; return; }
+  warn.style.display = 'none';
+  const inp = document.getElementById('cmt-input-' + tab);
+  const text = inp.value.trim();
+  if (!text) return;
+  if (!tabComments[tab]) tabComments[tab] = [];
+  tabComments[tab].push({ player: me, text, ts: Date.now() });
+  saveTabComments(tab);
+  inp.value = '';
+  renderComments(tab);
+}
+
+function commentKeyDown(e, tab) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendComment(tab); }
+}
+
 /* ── Chat ───────────────────────────────────────────────────── */
 const CHAT_SK = 'eg_tennis_chat_v1';
 let chatMessages = [];
@@ -1453,9 +1592,11 @@ function helpOverlayClick(e) {
 /* ── Boot ───────────────────────────────────────────────────── */
 loadPhotos();
 loadChat();
+loadTabComments();
 load();
 renderDeadline();
 renderTeams();
+refreshCommentSelect('teams');
 </script>
 </body>
 </html>
