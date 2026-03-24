@@ -265,7 +265,7 @@
 <div class="tools-bar">
   <a href="https://tools.aifusionautomations.com/" target="_blank" rel="noopener">🛠️ More Free Business Tools →</a>
   <a href="mailto:grantdeswardt@gmail.com?subject=Tennis%20League%20App%20Feedback" class="feedback-link">💬 Suggestions &amp; Feedback</a>
-  <span class="ver">v1.9</span>
+  <span class="ver">v2.0</span>
 </div>
 <div class="hdr">
   <h1>🎾 Men's Doubles League Box 3</h1>
@@ -285,6 +285,7 @@
 
   <!-- ── TEAMS ── -->
   <div id="tab-teams" class="section active">
+    <div class="info-box" style="margin-bottom:14px">ℹ️ Your league has 6 doubles teams. Tap a player photo to upload a profile picture.</div>
     <div class="flex gap8" style="align-items:center; margin-bottom:14px; justify-content:space-between">
       <div class="section-title" style="margin-bottom:0">Teams</div>
       <button class="btn btn-primary btn-sm" onclick="showAddTeamForm()" id="btn-add-team">+ Add Team</button>
@@ -307,6 +308,7 @@
 
   <!-- ── AVAILABILITY ── -->
   <div id="tab-availability" class="section">
+    <div class="info-box" style="margin-bottom:14px">ℹ️ <strong>1.</strong> Select your name below. &nbsp;<strong>2.</strong> Tap slots to mark when you're free (green = available). &nbsp;<strong>3.</strong> Your availability shows on the all-players calendar below.</div>
     <div class="section-title">My Availability</div>
     <div class="card">
       <div class="fg" style="margin-bottom:0">
@@ -345,6 +347,7 @@
 
   <!-- ── FIXTURES ── -->
   <div id="tab-fixtures" class="section">
+    <div class="info-box" style="margin-bottom:14px">ℹ️ Tap any fixture to see details or enter a score. Filter by status using the dropdown below.</div>
     <div class="section-title">Fixtures</div>
     <div style="margin-bottom:12px">
       <select class="fi" id="fix-filter" onchange="renderFixtures()">
@@ -360,12 +363,14 @@
 
   <!-- ── LEAGUE TABLE ── -->
   <div id="tab-table" class="section">
+    <div class="info-box" style="margin-bottom:14px">ℹ️ <strong>Scoring:</strong> 1 point per set won + 1 bonus point for playing. Teams sorted by points, then set difference.</div>
     <div class="section-title">League Table</div>
     <div id="league-content"></div>
   </div>
 
   <!-- ── CHAT ── -->
   <div id="tab-chat" class="section">
+    <div class="info-box" style="margin-bottom:14px">ℹ️ Select your name, type a message, and hit Send to chat with your league group.</div>
     <div class="section-title">💬 Group Chat</div>
     <div class="card">
       <div class="fg" style="margin-bottom:0">
