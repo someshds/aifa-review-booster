@@ -791,7 +791,7 @@
 
 <script>
 /* ── State ─────────────────────────────────────────────────── */
-const SK = 'eg_tennis_demo_v1';
+const SK = 'eg_tennis_demo_v2';
 let S = { teams: [], availability: {}, fixtures: [] };
 
 /* ── Default league data ────────────────────────────────────── */
@@ -839,12 +839,19 @@ function initDefaults() {
   save();
 }
 
+function decodeHtml(s) { const t = document.createElement('textarea'); t.innerHTML = s; return t.value; }
 function load() {
   try {
     const d = localStorage.getItem(SK);
     if (d) {
       S = JSON.parse(d);
-      if (!S.teams || S.teams.length === 0) initDefaults();
+      if (!S.teams || S.teams.length === 0) { initDefaults(); return; }
+      // Decode any HTML-encoded team/player names from old data
+      S.teams.forEach(t => {
+        t.name = decodeHtml(t.name);
+        t.player1 = decodeHtml(t.player1);
+        t.player2 = decodeHtml(t.player2);
+      });
     } else {
       initDefaults();
     }
