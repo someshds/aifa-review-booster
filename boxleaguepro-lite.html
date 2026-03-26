@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>BoxLeague Lite — Match Finder</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-light: #60a5fa;
+      --primary-dark: #1e3a8a;
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --text: #1a1a1a;
+      --muted: #6b7280;
+      --border: #e2e8f0;
+      --shadow: 0 2px 8px rgba(0,0,0,0.08);
+      --radius: 12px;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --green: #22c55e;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 20px; }
+
+    /* ── Header ── */
+    .hdr { background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%); color: #fff; padding: 18px 20px 14px; text-align: center; }
+    .hdr h1 { font-size: 19px; font-weight: 700; letter-spacing: -0.3px; }
+    .hdr-league { font-size: 14px; font-weight: 600; opacity: 0.9; margin-top: 2px; }
+    .hdr p { font-size: 12px; opacity: 0.7; margin-top: 2px; }
+
+    /* ── Progress bar ── */
+    .progress-bar-wrap { background: rgba(255,255,255,0.15); padding: 10px 20px 12px; }
+    .progress-label { font-size: 12px; color: rgba(255,255,255,0.85); font-weight: 600; margin-bottom: 6px; display: flex; justify-content: space-between; }
+    .progress-track { height: 8px; background: rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden; }
+    .progress-fill { height: 100%; background: #34d399; border-radius: 4px; transition: width 0.4s ease; }
+
+    /* ── Deadline banner ── */
+    .deadline-banner { background: #fef3c7; border-bottom: 2px solid var(--amber); padding: 10px 16px; text-align: center; font-size: 13px; font-weight: 600; color: #92400e; display: none; }
+    .deadline-banner.urgent { background: #fef2f2; border-color: var(--red); color: #991b1b; }
+
+    /* ── Nav ── */
+    .nav { background: #fff; border-bottom: 1px solid var(--border); display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+    .nav::-webkit-scrollbar { display: none; }
+    .nav-tab { flex: 1; padding: 13px 14px; font-size: 12px; font-weight: 600; color: var(--muted); cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; transition: all 0.18s; text-align: center; }
+    .nav-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .nav-badge { background: var(--red); color: #fff; font-size: 9px; font-weight: 800; padding: 1px 5px; border-radius: 10px; margin-left: 4px; vertical-align: top; }
+
+    /* ── Content ── */
+    .content { padding: 16px; max-width: 680px; margin: 0 auto; }
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* ── Cards ── */
+    .card { background: var(--card); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow); }
+    .card-title { font-size: 15px; font-weight: 700; }
+    .section-title { font-size: 18px; font-weight: 700; margin-bottom: 14px; }
+
+    /* ── Buttons ── */
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 10px 18px; border-radius: 9px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-secondary { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
+    .btn-success { background: #059669; color: #fff; }
+    .btn-success:hover { background: #047857; }
+    .btn-danger { background: #fee2e2; color: var(--red); }
+    .btn-whatsapp { background: #25d366; color: #fff; }
+    .btn-whatsapp:hover { background: #1ebe57; }
+    .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 7px; }
+    .btn-full { width: 100%; margin-top: 8px; }
+
+    /* ── Forms ── */
+    .fg { margin-bottom: 12px; }
+    .fl { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .fi { width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 9px; font-size: 14px; background: #fff; color: var(--text); -webkit-appearance: none; appearance: none; }
+    .fi:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.12); }
+
+    /* ── Badges ── */
+    .badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+    .badge-booked { background: #dcfce7; color: #166534; }
+
+    /* ── Availability Grid ── */
+    .avail-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .avail-tbl { border-collapse: collapse; font-size: 12px; min-width: 100%; }
+    .avail-tbl th { padding: 5px 3px; text-align: center; font-weight: 600; color: var(--muted); border-bottom: 1px solid var(--border); min-width: 40px; }
+    .avail-tbl td { padding: 3px; border-bottom: 1px solid var(--border); }
+    .slot-lbl { font-size: 11px; font-weight: 600; color: var(--muted); text-align: left !important; padding: 4px 8px !important; white-space: nowrap; }
+    .cell { width: 34px; height: 34px; border-radius: 7px; cursor: pointer; background: #f0f0f0; display: flex; align-items: center; justify-content: center; margin: auto; transition: background 0.12s; border: 2px solid transparent; }
+    .cell.on { background: var(--primary); border-color: var(--primary-dark); }
+    .cell.on::after { content: '\2713'; color: #fff; font-size: 14px; font-weight: 700; }
+    .cell:not(.on):active { background: #bfdbfe; }
+
+    /* ── Week nav ── */
+    .wk-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .wk-title { font-size: 13px; font-weight: 700; }
+
+    /* ── All-player availability calendar ── */
+    .avail-cal-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .avail-cal { border-collapse: collapse; font-size: 11px; min-width: 100%; }
+    .avail-cal th { padding: 4px 3px; text-align: center; font-weight: 600; color: var(--muted); border-bottom: 1px solid var(--border); min-width: 52px; }
+    .avail-cal th.slot-col { text-align: left; min-width: 72px; }
+    .avail-cal td { padding: 4px 3px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .avail-cal td.slot-col { font-size: 11px; font-weight: 600; color: var(--muted); padding: 6px 8px; white-space: nowrap; }
+    .avail-cell { display: flex; flex-wrap: wrap; gap: 2px; justify-content: center; min-height: 28px; padding: 2px; }
+    .avail-cal .today-col { background: #eff6ff; }
+
+    /* ── Suggestions ── */
+    .sug-slots { display: flex; flex-wrap: wrap; gap: 6px; }
+    .sug-slot { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 7px; padding: 4px 9px; font-size: 11px; font-weight: 600; color: var(--primary-dark); cursor: pointer; transition: all 0.15s; }
+    .sug-slot:hover { background: #dbeafe; }
+    .sug-slot.booked { background: #dcfce7; border-color: #86efac; color: #166534; cursor: default; }
+
+    /* ── Info box ── */
+    .info-box { background: #eef2ff; border-left: 3px solid #6366f1; padding: 11px 13px; border-radius: 0 8px 8px 0; font-size: 13px; color: #4338ca; margin-bottom: 14px; line-height: 1.5; }
+    .warn-box { background: #fff7ed; border-left: 3px solid var(--amber); padding: 11px 13px; border-radius: 0 8px 8px 0; font-size: 13px; color: #c2410c; margin-bottom: 14px; line-height: 1.5; }
+    .success-box { background: #f0fdf4; border-left: 3px solid var(--green); padding: 11px 13px; border-radius: 0 8px 8px 0; font-size: 13px; color: #15803d; margin-bottom: 14px; line-height: 1.5; }
+
+    /* ── Instructional callout ── */
+    .info-callout {
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+      border: 2px solid #93c5fd;
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 18px;
+      box-shadow: 0 2px 12px rgba(59,130,246,0.1);
+    }
+    .info-callout-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .info-callout-icon { font-size: 26px; flex-shrink: 0; }
+    .info-callout-title { font-size: 16px; font-weight: 800; color: #1e40af; line-height: 1.2; }
+    .info-callout-body { font-size: 13px; color: #1e3a8a; line-height: 1.6; }
+    .info-callout-body strong { color: #1e40af; }
+
+    /* ── Setup banner ── */
+    .setup-banner { background: #fef3c7; border-bottom: 3px solid #f59e0b; padding: 14px 16px; font-size: 13px; color: #78350f; display: none; }
+    .setup-banner strong { color: #92400e; }
+
+    /* ── Empty state ── */
+    .empty { text-align: center; padding: 40px 20px; color: var(--muted); }
+    .empty-icon { font-size: 46px; margin-bottom: 10px; }
+    .empty h3 { font-size: 15px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+    .empty p { font-size: 13px; }
+
+    /* ── Toast ── */
+    .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--primary-dark); color: #fff; padding: 11px 20px; border-radius: 22px; font-size: 13px; font-weight: 600; z-index: 999; opacity: 0; transition: opacity 0.25s; pointer-events: none; white-space: nowrap; }
+    .toast.show { opacity: 1; }
+
+    /* ── Utilities ── */
+    .mt8 { margin-top: 8px; }
+    .mt12 { margin-top: 12px; }
+    .txt-muted { color: var(--muted); font-size: 12px; }
+    .divider { height: 1px; background: var(--border); margin: 14px 0; }
+
+    /* ── Initials avatar ── */
+    .avatar { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; font-size: 9px; font-weight: 800; color: #fff; flex-shrink: 0; }
+
+    /* ── Player chips ── */
+    .player-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 20px; font-size: 13px; font-weight: 600; color: var(--primary-dark); }
+
+    /* ── Setup: group cards ── */
+    .group-card { background: var(--card); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; box-shadow: var(--shadow); border: 1.5px solid transparent; }
+    .group-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .group-name { font-size: 15px; font-weight: 700; }
+    .group-count { font-size: 12px; color: var(--muted); font-weight: 600; }
+    .group-players { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    /* ── Match card ── */
+    .match-card { background: var(--card); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; box-shadow: var(--shadow); }
+    .match-card.has-slots { border-left: 3px solid var(--green); }
+    .match-card.no-slots { border-left: 3px solid #e5e7eb; opacity: 0.7; }
+    .match-card.is-booked { border-left: 3px solid #059669; background: #f0fdf4; opacity: 1; }
+    .match-players { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+    .match-slot-count { font-size: 12px; font-weight: 700; color: #059669; background: #ecfdf5; padding: 3px 9px; border-radius: 20px; }
+
+    /* ── My matches card ── */
+    .my-match { background: var(--card); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; box-shadow: var(--shadow); border-left: 3px solid var(--primary); }
+    .my-match.ready { border-left-color: var(--green); }
+    .my-match.blocked { border-left-color: var(--amber); }
+
+    /* ── Share link cards ── */
+    .share-card { background: #f0fdf4; border: 1.5px solid #86efac; border-radius: var(--radius); padding: 14px 16px; margin-bottom: 12px; }
+
+    /* ── Club branding ── */
+    .brand-preview { display: flex; align-items: center; gap: 10px; padding: 12px; background: var(--bg); border-radius: 9px; margin-bottom: 12px; }
+    .brand-swatch { width: 28px; height: 28px; border-radius: 6px; border: 2px solid rgba(0,0,0,0.1); }
+
+    /* ── Tools bar ── */
+    .tools-bar { background: #0f172a; padding: 8px 14px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; }
+    .tools-bar a { color: #93c5fd; font-size: 12px; font-weight: 600; text-decoration: none; }
+    .tools-bar a:hover { color: #bfdbfe; }
+    .tools-bar .tb-left { justify-self: start; }
+    .tools-bar .tb-centre { justify-self: center; text-align: center; }
+    .tools-bar .tb-right { justify-self: end; }
+    .tools-bar .app-name { color: #f1f5f9; font-size: 15px; font-weight: 800; letter-spacing: -0.3px; display: block; }
+    .tools-bar .ver { color: #64748b; font-size: 10px; font-weight: 500; display: block; }
+
+    /* ── AIFA Footer ── */
+    .aifa-footer { background: #0f172a; color: #64748b; text-align: center; padding: 20px 20px 24px; margin-top: 8px; border-top: 1px solid #1e293b; }
+    .aifa-footer-brand { font-size: 13px; font-weight: 700; color: #94a3b8; margin-bottom: 4px; }
+    .aifa-footer-sub { font-size: 12px; color: #475569; }
+    .aifa-footer a { color: #60a5fa; text-decoration: none; font-weight: 600; }
+
+    /* ── Connection dot ── */
+    #conn-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #6b7280; vertical-align: middle; margin-left: 4px; transition: background 0.3s; }
+    #offline-banner { display: none; background: #fef2f2; border-bottom: 2px solid var(--red); padding: 8px 16px; text-align: center; font-size: 12px; color: #991b1b; font-weight: 600; }
+
+    /* ── Copy feedback ── */
+    .copied { animation: copiedFlash 0.6s ease; }
+    @keyframes copiedFlash { 0%{background:#dcfce7} 100%{background:inherit} }
+
+    @media (min-width: 600px) { .content { padding: 22px; } }
+  </style>
+</head>
+<body>
+
+<!-- ── Top bar ── -->
+<div class="tools-bar">
+  <div class="tb-left">
+    <a href="https://tools.aifusionautomations.com">&#8592; Tools</a>
+  </div>
+  <div class="tb-centre">
+    <span class="app-name">BoxLeague Lite</span>
+    <span class="ver">Match Finder v2.0</span>
+  </div>
+  <div class="tb-right">
+    <span id="conn-dot" title="Checking connection..."></span>
+  </div>
+</div>
+
+<!-- ── Header (dynamic league name + progress) ── -->
+<div class="hdr">
+  <h1 id="hdr-title">Match Finder</h1>
+  <div class="hdr-league" id="hdr-league" style="display:none"></div>
+  <p>Find times when everyone can play</p>
+  <div class="progress-bar-wrap" id="progress-wrap" style="display:none">
+    <div class="progress-label">
+      <span id="progress-text">0 of 0 players submitted</span>
+      <span id="progress-pct">0%</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+</div>
+
+<div id="deadline-banner" class="deadline-banner"></div>
+<div id="setup-banner" class="setup-banner">
+  <strong>Firebase not configured.</strong> Running in local-only mode. Follow the setup instructions in the source code to enable real-time sync.
+</div>
+<div id="offline-banner">Offline — reconnecting...</div>
+
+<!-- ── Navigation ── -->
+<div class="nav">
+  <div class="nav-tab active" onclick="showTab('setup')">Setup</div>
+  <div class="nav-tab" onclick="showTab('availability')">My Availability</div>
+  <div class="nav-tab" onclick="showTab('everyone')">Everyone</div>
+  <div class="nav-tab" onclick="showTab('matches')">Match Finder</div>
+</div>
+
+<div class="content">
+
+  <!-- ═══ SETUP TAB ═══ -->
+  <div id="tab-setup" class="section active">
+
+    <div class="info-callout">
+      <div class="info-callout-header">
+        <div class="info-callout-icon">&#9881;&#65039;</div>
+        <div><div class="info-callout-title">Setup Your League</div></div>
+      </div>
+      <div class="info-callout-body">
+        Add your players into <strong>groups</strong> (teams, pairs, or individuals). The Match Finder will find time slots where everyone in a match is free.
+        <br><br>
+        <strong>Works for:</strong> Doubles pairs, singles players, padel, badminton, squash — any sport where you need to coordinate schedules.
+      </div>
+    </div>
+
+    <!-- Club Branding -->
+    <div class="card">
+      <div class="card-title" style="margin-bottom:10px">League Branding</div>
+      <div class="fg">
+        <label class="fl">League Name</label>
+        <input class="fi" id="inp-league-name" placeholder="e.g. Men's Doubles Box 3" oninput="saveSettings()">
+      </div>
+      <div class="fg" style="margin-bottom:0">
+        <label class="fl">Deadline for availability</label>
+        <input class="fi" type="datetime-local" id="inp-deadline" onchange="saveSettings()">
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-title">Players &amp; Groups</div>
+    <div id="groups-list"></div>
+
+    <div id="add-group-form" style="display:none">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:12px">New Group</div>
+        <div class="fg">
+          <label class="fl">Group Name</label>
+          <input class="fi" id="inp-gname" placeholder="e.g. Grant & James, or just Grant">
+        </div>
+        <div class="fg">
+          <label class="fl">Player Names <span style="font-weight:400;text-transform:none">(comma-separated)</span></label>
+          <input class="fi" id="inp-gplayers" placeholder="e.g. Grant, James">
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary" onclick="addGroup()">Add Group</button>
+          <button class="btn btn-secondary" onclick="hideGroupForm()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary btn-full" id="btn-add-group" onclick="showGroupForm()" style="margin-bottom:16px">+ Add Group</button>
+
+    <div class="divider"></div>
+
+    <!-- Quick setup templates -->
+    <div class="card-title" style="margin-bottom:10px">Quick Setup Templates</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+      <button class="btn btn-secondary btn-sm" onclick="loadTemplate('doubles')">Doubles Pairs (2 per group)</button>
+      <button class="btn btn-secondary btn-sm" onclick="loadTemplate('singles')">Singles (1 per group)</button>
+    </div>
+
+    <div id="template-form" style="display:none">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:8px" id="template-title">Quick Add</div>
+        <div class="info-box" id="template-info"></div>
+        <div class="fg">
+          <label class="fl">Paste names <span style="font-weight:400;text-transform:none">(one group per line)</span></label>
+          <textarea class="fi" id="inp-template" rows="6" style="font-size:13px;line-height:1.6"></textarea>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary" onclick="applyTemplate()">Add All</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('template-form').style.display='none'">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Share links -->
+    <div class="divider" style="margin:20px 0"></div>
+    <div class="card-title" style="margin-bottom:10px">Share Player Links</div>
+    <div class="info-box">Send each player their personal link — it opens straight to their availability grid. No dropdown needed.</div>
+    <div id="share-links"></div>
+
+    <!-- Danger zone -->
+    <div class="divider" style="margin:20px 0"></div>
+    <button class="btn btn-danger btn-sm" onclick="resetAll()">Reset Everything</button>
+  </div>
+
+  <!-- ═══ MY AVAILABILITY TAB ═══ -->
+  <div id="tab-availability" class="section">
+
+    <!-- Welcome card for deep-linked players -->
+    <div id="welcome-card" class="card" style="display:none;background:linear-gradient(135deg,#eff6ff,#dbeafe);border:2px solid #93c5fd">
+      <div style="font-size:15px;font-weight:700;color:#1e40af;margin-bottom:6px" id="welcome-name"></div>
+      <div style="font-size:13px;color:#1e3a8a;line-height:1.5">Tap the green boxes below to mark when you're free to play. That's it — the app figures out the rest.</div>
+    </div>
+
+    <div class="card" id="player-select-card">
+      <div class="fg" style="margin-bottom:0">
+        <label class="fl">Who are you?</label>
+        <select class="fi" id="avail-sel" onchange="onPlayerSelect()">
+          <option value="">— Select your name —</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="avail-body" style="display:none">
+      <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+        <button class="btn btn-secondary btn-sm" onclick="copyLastWeek()">&#128260; Copy last week</button>
+        <button class="btn btn-secondary btn-sm" onclick="clearMyWeek()">&#128465; Clear this week</button>
+      </div>
+      <div class="wk-nav">
+        <button class="btn btn-secondary btn-sm" onclick="changeWeek(-1)">&#9664; Prev</button>
+        <span class="wk-title" id="wk-label"></span>
+        <button class="btn btn-secondary btn-sm" onclick="changeWeek(1)">Next &#9654;</button>
+      </div>
+      <div class="card" style="padding:12px 8px">
+        <div class="avail-wrap"><div id="avail-grid"></div></div>
+      </div>
+
+      <!-- Your matches summary -->
+      <div id="my-matches-card" class="mt12" style="display:none">
+        <div class="card-title" style="margin-bottom:10px">Your matches to arrange</div>
+        <div id="my-matches-body"></div>
+      </div>
+
+      <!-- Quick summary -->
+      <div class="card mt12" id="my-summary" style="display:none">
+        <div class="card-title" style="margin-bottom:8px">Your upcoming availability</div>
+        <div id="my-summary-body" class="txt-muted"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ EVERYONE TAB ═══ -->
+  <div id="tab-everyone" class="section">
+
+    <div class="card-title" style="margin-bottom:10px">Next 2 Weeks</div>
+    <div class="card" style="padding:12px 8px">
+      <div id="avail-legend" style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px;padding:0 4px"></div>
+      <div class="avail-cal-wrap"><div id="avail-cal-grid"></div></div>
+    </div>
+
+    <!-- Who hasn't filled in -->
+    <div class="card mt12" id="missing-card" style="display:none">
+      <div class="card-title" style="margin-bottom:8px;color:var(--amber)">&#9888;&#65039; Still waiting on:</div>
+      <div id="missing-players" style="margin-bottom:12px"></div>
+      <button class="btn btn-whatsapp btn-sm" onclick="chaseWhatsApp()">&#128172; Copy WhatsApp chase message</button>
+    </div>
+
+    <!-- All submitted -->
+    <div class="card mt12" id="all-in-card" style="display:none">
+      <div style="text-align:center;padding:8px 0">
+        <div style="font-size:28px;margin-bottom:6px">&#127881;</div>
+        <div class="card-title" style="color:#059669">Everyone has submitted!</div>
+        <div class="txt-muted mt8">Head to the Match Finder tab to see available times.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ MATCH FINDER TAB ═══ -->
+  <div id="tab-matches" class="section">
+
+    <div id="match-summary" style="margin-bottom:14px"></div>
+    <div id="match-results"></div>
+
+    <!-- Share results -->
+    <div id="share-results" style="display:none;margin-top:16px">
+      <div class="divider"></div>
+      <button class="btn btn-whatsapp btn-full" onclick="shareResults()">&#128172; Copy match summary for WhatsApp</button>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ── Toast ── -->
+<div id="toast" class="toast"></div>
+
+<!-- ── Footer ── -->
+<div class="aifa-footer">
+  <div class="aifa-footer-brand">Built by AI Fusion Automations</div>
+  <div class="aifa-footer-sub">Helping businesses work smarter with AI &nbsp;·&nbsp; <a href="https://aifusionautomations.com">aifusionautomations.com</a></div>
+</div>
+
+<!-- ── FIREBASE SDK ── -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+ *  FIREBASE CONFIG — REPLACE WITH YOUR CLUB'S VALUES
+ *
+ *  SETUP (one-time, ~5 minutes):
+ *  1. Go to https://console.firebase.google.com/
+ *  2. Click "Add project" -> name it -> Continue -> Create
+ *  3. Click the "</>" Web icon -> Register app -> copy config
+ *  4. Paste the config values below
+ *  5. Build -> Realtime Database -> Create database -> test mode
+ *  6. Rules: { "rules": { ".read": true, ".write": true } }
+ *  7. Done! Share the link with your league.
+ * ═══════════════════════════════════════════════════════════════ */
+const FIREBASE_CONFIG = {
+  apiKey:            "REPLACE_WITH_YOUR_API_KEY",
+  authDomain:        "REPLACE.firebaseapp.com",
+  databaseURL:       "https://REPLACE.firebasedatabase.app",
+  projectId:         "REPLACE",
+  storageBucket:     "REPLACE.appspot.com",
+  messagingSenderId: "REPLACE",
+  appId:             "REPLACE"
+};
+
+const FIREBASE_READY = !FIREBASE_CONFIG.apiKey.includes('REPLACE');
+let db = null;
+
+if (FIREBASE_READY) {
+  firebase.initializeApp(FIREBASE_CONFIG);
+  db = firebase.database();
+} else {
+  document.getElementById('setup-banner').style.display = 'block';
+}
+
+/* ── State ── */
+let S = { groups: [], availability: {}, settings: {}, booked: {} };
+let currentTab = 'setup';
+let weekOff = 0;
+
+/* ── URL params: ?player=Grant auto-selects player ── */
+const URL_PARAMS = new URLSearchParams(window.location.search);
+const DEEP_LINK_PLAYER = URL_PARAMS.get('player');
+
+/* ═══ UTILITY ═══ */
+function x(s) { if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function v(id) { return document.getElementById(id).value.trim(); }
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2200);
+}
+function ds(d) { return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function avk(player, date, slot) { return `${player}|${typeof date === 'string' ? date : ds(date)}|${slot}`; }
+function isTd(d) { const t=new Date(); return d.getFullYear()===t.getFullYear()&&d.getMonth()===t.getMonth()&&d.getDate()===t.getDate(); }
+function fmtShort(d) { return d.toLocaleDateString('en-GB', {day:'numeric',month:'short'}); }
+function fmtFull(s) {
+  const d = new Date(s + 'T00:00:00');
+  return d.toLocaleDateString('en-GB', {weekday:'short',day:'numeric',month:'short'});
+}
+function cap(s) { return s ? s[0].toUpperCase()+s.slice(1) : s; }
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => toast('Copied to clipboard!')).catch(() => {
+    const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); toast('Copied!');
+  });
+}
+
+/* ── Player colours ── */
+const GROUP_COLORS = ['#1d4ed8','#0891b2','#dc2626','#d97706','#7c3aed','#059669','#be185d','#0d9488','#9333ea','#ea580c'];
+function getPlayerColor(name) {
+  const idx = S.groups.findIndex(g => g.players.includes(name));
+  return GROUP_COLORS[idx >= 0 ? idx % GROUP_COLORS.length : 0];
+}
+function getInitials(name) {
+  const parts = name.trim().split(/\s+/);
+  return parts.map(w => w[0].toUpperCase()).join('').slice(0, 2);
+}
+function avatarHtml(name) {
+  const col = getPlayerColor(name);
+  return `<span class="avatar" style="background:${col}" title="${x(name)}">${x(getInitials(name))}</span>`;
+}
+function getAllPlayers() { return S.groups.flatMap(g => g.players); }
+
+/* ═══ PERSISTENCE ═══ */
+function localSave() {
+  if (!FIREBASE_READY) localStorage.setItem('blp_lite_state', JSON.stringify(S));
+}
+function fbSetGroups() {
+  const obj = {}; S.groups.forEach(g => { obj[g.id] = g; });
+  if (db) db.ref('/groups').set(obj); else localSave();
+}
+function fbSetAvail(key, val) {
+  if (db) { if (val) db.ref('/availability').child(key).set(true); else db.ref('/availability').child(key).remove(); }
+  else { if(val) S.availability[key]=true; else delete S.availability[key]; localSave(); }
+}
+function fbSetAvailBatch(updates) {
+  if (db) { db.ref('/availability').update(updates); }
+  else { Object.entries(updates).forEach(([k,v]) => { if(v) S.availability[k]=true; else delete S.availability[k]; }); localSave(); }
+}
+function saveSettings() {
+  S.settings.leagueName = v('inp-league-name');
+  S.settings.deadline = document.getElementById('inp-deadline').value;
+  if (db) db.ref('/settings').set(S.settings); else localSave();
+  renderHeader();
+  renderDeadline();
+}
+function fbSetBooked(matchKey, slotData) {
+  if (slotData) { S.booked[matchKey] = slotData; } else { delete S.booked[matchKey]; }
+  if (db) db.ref('/booked').set(S.booked); else localSave();
+}
+
+/* ═══ TABS ═══ */
+const TABS = ['setup','availability','everyone','matches'];
+function showTab(t) {
+  currentTab = t;
+  TABS.forEach((tab, i) => {
+    document.getElementById('tab-' + tab).classList.toggle('active', tab === t);
+    document.querySelectorAll('.nav-tab')[i].classList.toggle('active', tab === t);
+  });
+  if (t === 'availability') { refreshPlayerSelect(); }
+  if (t === 'everyone') { renderAllAvail(); renderMissing(); }
+  if (t === 'matches') { renderMatchFinder(); }
+}
+
+/* ═══ HEADER & PROGRESS ═══ */
+function renderHeader() {
+  const titleEl = document.getElementById('hdr-title');
+  const leagueEl = document.getElementById('hdr-league');
+  if (S.settings.leagueName) {
+    titleEl.textContent = S.settings.leagueName;
+    leagueEl.textContent = 'BoxLeague Lite';
+    leagueEl.style.display = 'block';
+  } else {
+    titleEl.textContent = 'Match Finder';
+    leagueEl.style.display = 'none';
+  }
+}
+
+function renderProgress() {
+  const wrap = document.getElementById('progress-wrap');
+  const players = getAllPlayers();
+  if (players.length === 0) { wrap.style.display = 'none'; return; }
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  const slots = ['morning','afternoon','evening'];
+  let submitted = 0;
+  players.forEach(p => {
+    for (let i = 0; i < 14; i++) {
+      const d = new Date(today); d.setDate(today.getDate()+i);
+      for (const slot of slots) {
+        if (S.availability[avk(p, d, slot)]) { submitted++; return; }
+      }
+    }
+  });
+
+  const pct = Math.round((submitted / players.length) * 100);
+  wrap.style.display = 'block';
+  document.getElementById('progress-text').textContent = `${submitted} of ${players.length} players submitted`;
+  document.getElementById('progress-pct').textContent = `${pct}%`;
+  document.getElementById('progress-fill').style.width = `${pct}%`;
+
+  // Badge on Everyone tab if missing
+  const badge = document.querySelector('.nav-tab:nth-child(3) .nav-badge');
+  const missing = players.length - submitted;
+  if (missing > 0 && !badge) {
+    document.querySelectorAll('.nav-tab')[2].innerHTML = `Everyone <span class="nav-badge">${missing}</span>`;
+  } else if (missing === 0 && badge) {
+    document.querySelectorAll('.nav-tab')[2].textContent = 'Everyone';
+  } else if (badge) {
+    badge.textContent = missing;
+  }
+}
+
+function renderDeadline() {
+  const banner = document.getElementById('deadline-banner');
+  if (!S.settings.deadline) { banner.style.display = 'none'; return; }
+  const dl = new Date(S.settings.deadline);
+  const now = new Date();
+  if (dl < now) { banner.style.display = 'none'; return; }
+
+  const diff = dl - now;
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(hours / 24);
+  const remHours = hours % 24;
+
+  let timeStr = days > 0 ? `${days}d ${remHours}h` : `${hours}h`;
+  banner.textContent = `Availability deadline: ${dl.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})} at ${dl.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})} — ${timeStr} left`;
+  banner.classList.toggle('urgent', hours < 24);
+  banner.style.display = 'block';
+}
+
+/* ═══ SETUP TAB ═══ */
+function renderGroups() {
+  const el = document.getElementById('groups-list');
+  if (S.groups.length === 0) {
+    el.innerHTML = `<div class="empty" style="padding:24px"><div class="empty-icon">&#128101;</div><h3>No groups yet</h3><p>Add your players to get started</p></div>`;
+    renderShareLinks();
+    return;
+  }
+  el.innerHTML = S.groups.map((g, gi) => {
+    const color = GROUP_COLORS[gi % GROUP_COLORS.length];
+    return `<div class="group-card">
+      <div class="group-hdr">
+        <div class="group-name" style="color:${color}">${x(g.name)}</div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <span class="group-count">${g.players.length} player${g.players.length!==1?'s':''}</span>
+          <button class="btn btn-danger btn-sm" onclick="removeGroup('${x(g.id)}')" style="padding:4px 8px;font-size:11px">Remove</button>
+        </div>
+      </div>
+      <div class="group-players">
+        ${g.players.map(p => `<span class="player-chip">${avatarHtml(p)} ${x(p)}</span>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+  renderShareLinks();
+}
+
+function renderShareLinks() {
+  const el = document.getElementById('share-links');
+  const players = getAllPlayers();
+  if (players.length === 0) { el.innerHTML = ''; return; }
+  const baseUrl = window.location.origin + window.location.pathname;
+  el.innerHTML = players.map(p => {
+    const link = `${baseUrl}?player=${encodeURIComponent(p)}`;
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+      ${avatarHtml(p)}
+      <span style="font-size:13px;font-weight:600;flex:1;min-width:0">${x(p)}</span>
+      <button class="btn btn-secondary btn-sm" onclick="copyText('${link}')">Copy link</button>
+    </div>`;
+  }).join('');
+}
+
+function showGroupForm() {
+  document.getElementById('add-group-form').style.display = 'block';
+  document.getElementById('inp-gname').focus();
+}
+function hideGroupForm() {
+  document.getElementById('add-group-form').style.display = 'none';
+  document.getElementById('inp-gname').value = '';
+  document.getElementById('inp-gplayers').value = '';
+}
+
+function addGroup() {
+  const name = v('inp-gname');
+  const playersRaw = v('inp-gplayers');
+  if (!name) { toast('Enter a group name'); return; }
+  if (!playersRaw) { toast('Enter at least one player name'); return; }
+  const players = playersRaw.split(',').map(p => p.trim()).filter(p => p);
+  if (players.length === 0) { toast('Enter at least one player name'); return; }
+  const existing = getAllPlayers();
+  for (const p of players) {
+    if (existing.includes(p)) { toast(`${p} is already in another group`); return; }
+  }
+  S.groups.push({ id: 'G' + Date.now(), name, players });
+  fbSetGroups(); hideGroupForm(); renderGroups(); toast('Group added!');
+}
+
+function removeGroup(id) {
+  if (!confirm('Remove this group?')) return;
+  S.groups = S.groups.filter(g => g.id !== id);
+  fbSetGroups(); renderGroups(); toast('Group removed');
+}
+
+/* ── Templates ── */
+let activeTemplate = null;
+function loadTemplate(type) {
+  activeTemplate = type;
+  const form = document.getElementById('template-form');
+  const title = document.getElementById('template-title');
+  const info = document.getElementById('template-info');
+  const ta = document.getElementById('inp-template');
+  form.style.display = 'block';
+  if (type === 'doubles') {
+    title.textContent = 'Quick Add — Doubles Pairs';
+    info.innerHTML = 'One pair per line, comma-separated.<br><strong>Example:</strong><br>Grant, James<br>Mark, Dave';
+    ta.placeholder = 'Grant, James\nMark, Dave\nSean, Pete';
+  } else {
+    title.textContent = 'Quick Add — Singles Players';
+    info.innerHTML = 'One player per line.<br><strong>Example:</strong><br>Grant<br>Mark<br>Sean';
+    ta.placeholder = 'Grant\nMark\nSean';
+  }
+  ta.value = ''; ta.focus();
+}
+
+function applyTemplate() {
+  const raw = document.getElementById('inp-template').value.trim();
+  if (!raw) { toast('Enter some names first'); return; }
+  const lines = raw.split('\n').map(l => l.trim()).filter(l => l);
+  const existing = getAllPlayers();
+  let added = 0;
+  for (const line of lines) {
+    if (activeTemplate === 'doubles') {
+      const parts = line.split(',').map(p => p.trim()).filter(p => p);
+      if (parts.length < 2) continue;
+      const dup = parts.some(p => existing.includes(p) || getAllPlayers().includes(p));
+      if (dup) continue;
+      S.groups.push({ id: 'G' + Date.now() + added, name: parts.slice(0,2).join(' & '), players: parts.slice(0,2) });
+      added++;
+    } else {
+      if (existing.includes(line) || getAllPlayers().includes(line)) continue;
+      S.groups.push({ id: 'G' + Date.now() + added, name: line, players: [line] });
+      added++;
+    }
+  }
+  if (added === 0) { toast('No new groups added (duplicates?)'); return; }
+  fbSetGroups(); renderGroups();
+  document.getElementById('template-form').style.display = 'none';
+  toast(`${added} group${added!==1?'s':''} added!`);
+}
+
+function resetAll() {
+  if (!confirm('Remove all groups, availability, and bookings? Cannot be undone.')) return;
+  S = { groups: [], availability: {}, settings: {}, booked: {} };
+  if (db) db.ref('/').set({ groups:{}, availability:{}, settings:{}, booked:{} });
+  else localSave();
+  renderGroups(); renderHeader(); renderDeadline(); renderProgress();
+  document.getElementById('inp-league-name').value = '';
+  document.getElementById('inp-deadline').value = '';
+  toast('Reset complete');
+}
+
+/* ═══ MY AVAILABILITY TAB ═══ */
+function refreshPlayerSelect() {
+  const sel = document.getElementById('avail-sel');
+  const cur = sel.value || DEEP_LINK_PLAYER || localStorage.getItem('blp_lite_player') || '';
+  sel.innerHTML = '<option value="">— Select your name —</option>';
+  getAllPlayers().forEach(p => {
+    const o = document.createElement('option');
+    o.value = p; o.textContent = p;
+    if (p === cur) o.selected = true;
+    sel.appendChild(o);
+  });
+  onPlayerSelect();
+}
+
+function onPlayerSelect() {
+  const p = document.getElementById('avail-sel').value;
+  if (p) localStorage.setItem('blp_lite_player', p);
+  document.getElementById('avail-body').style.display = p ? 'block' : 'none';
+
+  // Welcome card for deep-linked players
+  const wc = document.getElementById('welcome-card');
+  if (p && DEEP_LINK_PLAYER && DEEP_LINK_PLAYER === p) {
+    wc.style.display = 'block';
+    document.getElementById('welcome-name').textContent = `Hi ${p}! 👋`;
+    document.getElementById('player-select-card').style.display = 'none';
+  } else {
+    wc.style.display = 'none';
+    document.getElementById('player-select-card').style.display = 'block';
+  }
+
+  if (p) { renderAvailGrid(); renderMySummary(); renderMyMatches(); }
+}
+
+function weekDates() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const dow = today.getDay();
+  const mon = new Date(today);
+  mon.setDate(today.getDate() - (dow === 0 ? 6 : dow - 1) + weekOff * 7);
+  return Array.from({length:7}, (_, i) => { const d = new Date(mon); d.setDate(mon.getDate()+i); return d; });
+}
+
+function renderAvailGrid() {
+  const player = document.getElementById('avail-sel').value;
+  if (!player) return;
+  const dates = weekDates();
+  const slots = ['morning','afternoon','evening'];
+  const slotIcons = { morning:'\u{1F305}', afternoon:'\u2600\uFE0F', evening:'\u{1F319}' };
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+  document.getElementById('wk-label').textContent = `${fmtShort(dates[0])} \u2013 ${fmtShort(dates[6])}`;
+
+  let h = `<table class="avail-tbl"><thead><tr><th style="text-align:left;min-width:80px">Slot</th>`;
+  dates.forEach((d,i) => {
+    const td = isTd(d);
+    h += `<th style="${td?'color:var(--primary);':''}${d.getDay()===0||d.getDay()===6?'background:#fafafa;':''}">
+      ${days[i]}<br><span style="font-size:10px;font-weight:400">${d.getDate()}</span></th>`;
+  });
+  h += '</tr></thead><tbody>';
+  slots.forEach(slot => {
+    h += `<tr><td class="slot-lbl">${slotIcons[slot]} ${cap(slot)}</td>`;
+    dates.forEach(d => {
+      const on = S.availability[avk(player, d, slot)] ? 'on' : '';
+      h += `<td><div class="cell ${on}" data-date="${ds(d)}" data-slot="${slot}" onclick="toggleCell(this)"></div></td>`;
+    });
+    h += '</tr>';
+  });
+  h += '</tbody></table>';
+  document.getElementById('avail-grid').innerHTML = h;
+}
+
+function toggleCell(el) {
+  const player = document.getElementById('avail-sel').value;
+  if (!player) return;
+  const d = new Date(el.dataset.date + 'T00:00:00');
+  const key = avk(player, d, el.dataset.slot);
+  const newVal = !S.availability[key];
+  if (newVal) S.availability[key] = true; else delete S.availability[key];
+  el.classList.toggle('on', newVal);
+  fbSetAvail(key, newVal);
+  renderMySummary(); renderMyMatches(); renderProgress();
+}
+
+function changeWeek(dir) { weekOff += dir; renderAvailGrid(); }
+
+/* ── Copy last week ── */
+function copyLastWeek() {
+  const player = document.getElementById('avail-sel').value;
+  if (!player) return;
+  const dates = weekDates();
+  const slots = ['morning','afternoon','evening'];
+  const updates = {};
+  let copied = 0;
+  dates.forEach(d => {
+    const prevWeek = new Date(d); prevWeek.setDate(prevWeek.getDate() - 7);
+    slots.forEach(slot => {
+      const prevKey = avk(player, prevWeek, slot);
+      const thisKey = avk(player, d, slot);
+      if (S.availability[prevKey] && !S.availability[thisKey]) {
+        updates[thisKey] = true;
+        S.availability[thisKey] = true;
+        copied++;
+      }
+    });
+  });
+  if (copied === 0) { toast('No availability to copy from last week'); return; }
+  fbSetAvailBatch(updates);
+  renderAvailGrid(); renderMySummary(); renderMyMatches(); renderProgress();
+  toast(`Copied ${copied} slot${copied!==1?'s':''} from last week`);
+}
+
+function clearMyWeek() {
+  const player = document.getElementById('avail-sel').value;
+  if (!player) return;
+  if (!confirm('Clear all your availability for this week?')) return;
+  const dates = weekDates();
+  const slots = ['morning','afternoon','evening'];
+  const updates = {};
+  dates.forEach(d => {
+    slots.forEach(slot => {
+      const key = avk(player, d, slot);
+      if (S.availability[key]) {
+        updates[key] = null;
+        delete S.availability[key];
+      }
+    });
+  });
+  if (db) db.ref('/availability').update(updates);
+  else localSave();
+  renderAvailGrid(); renderMySummary(); renderMyMatches(); renderProgress();
+  toast('Week cleared');
+}
+
+/* ── My matches ── */
+function renderMyMatches() {
+  const player = document.getElementById('avail-sel').value;
+  const card = document.getElementById('my-matches-card');
+  const body = document.getElementById('my-matches-body');
+  if (!player || S.groups.length < 2) { card.style.display = 'none'; return; }
+
+  const myGroup = S.groups.find(g => g.players.includes(player));
+  if (!myGroup) { card.style.display = 'none'; return; }
+
+  const opponents = S.groups.filter(g => g.id !== myGroup.id);
+  if (opponents.length === 0) { card.style.display = 'none'; return; }
+
+  card.style.display = 'block';
+  body.innerHTML = opponents.map(opp => {
+    const matchKey = [myGroup.id, opp.id].sort().join('_');
+    const booked = S.booked[matchKey];
+    if (booked) {
+      return `<div class="my-match ready">
+        <div style="font-size:13px;font-weight:700">vs ${x(opp.name)}</div>
+        <div style="font-size:12px;color:#059669;font-weight:600;margin-top:4px">&#9989; Booked: ${fmtFull(booked.date)} &middot; ${cap(booked.slot)}</div>
+      </div>`;
+    }
+    const slots = findSlots(myGroup, opp);
+    const cls = slots.length > 0 ? 'ready' : 'blocked';
+    return `<div class="my-match ${cls}">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:13px;font-weight:700">vs ${x(opp.name)}</span>
+        ${slots.length > 0
+          ? `<span style="font-size:11px;font-weight:700;color:#059669">&#128994; ${slots.length} time${slots.length!==1?'s':''} available</span>`
+          : `<span style="font-size:11px;color:var(--amber);font-weight:600">&#128993; No overlap yet</span>`}
+      </div>
+      ${slots.length > 0 ? `<div class="sug-slots" style="margin-top:6px">${slots.slice(0,3).map(s => `<span class="sug-slot" style="font-size:10px">${fmtFull(s.date)} &middot; ${cap(s.slot)}</span>`).join('')}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function renderMySummary() {
+  const player = document.getElementById('avail-sel').value;
+  const card = document.getElementById('my-summary');
+  const body = document.getElementById('my-summary-body');
+  if (!player) { card.style.display = 'none'; return; }
+  const today = new Date(); today.setHours(0,0,0,0);
+  const slots = ['morning','afternoon','evening'];
+  const slotLabels = { morning:'Morning', afternoon:'Afternoon', evening:'Evening' };
+  let items = [];
+  for (let i = 0; i < 14; i++) {
+    const d = new Date(today); d.setDate(today.getDate()+i);
+    for (const slot of slots) {
+      if (S.availability[avk(player, d, slot)]) items.push(`${fmtFull(ds(d))} \u2014 ${slotLabels[slot]}`);
+    }
+  }
+  if (items.length === 0) { card.style.display = 'none'; return; }
+  card.style.display = 'block';
+  body.innerHTML = `<div style="font-size:12px;color:var(--muted);margin-bottom:4px">${items.length} slot${items.length!==1?'s':''} in the next 2 weeks:</div>` +
+    items.slice(0,8).map(i => `<div style="font-size:13px;padding:2px 0">&#9989; ${i}</div>`).join('') +
+    (items.length > 8 ? `<div class="txt-muted mt8">+ ${items.length - 8} more</div>` : '');
+}
+
+/* ═══ EVERYONE TAB ═══ */
+function renderAllAvail() {
+  const players = getAllPlayers();
+  const legend = document.getElementById('avail-legend');
+  const grid = document.getElementById('avail-cal-grid');
+  if (!legend || !grid) return;
+
+  legend.innerHTML = players.map(p => `
+    <div style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600">
+      ${avatarHtml(p)} ${x(p)}
+    </div>`).join('');
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  const dates = Array.from({length:14}, (_, i) => { const d = new Date(today); d.setDate(today.getDate()+i); return d; });
+  const slots = ['morning','afternoon','evening'];
+  const slotIcons = { morning:'\u{1F305} Morn', afternoon:'\u2600\uFE0F Aft', evening:'\u{1F319} Eve' };
+  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  let h = `<table class="avail-cal"><thead><tr><th class="slot-col">Slot</th>`;
+  dates.forEach(d => {
+    const isToday = ds(d) === ds(today);
+    h += `<th style="${isToday ? 'color:var(--primary);' : ''}">
+      ${dayNames[d.getDay()]}<br><span style="font-size:10px;font-weight:400">${d.getDate()}/${d.getMonth()+1}</span>
+    </th>`;
+  });
+  h += '</tr></thead><tbody>';
+  slots.forEach(slot => {
+    h += `<tr><td class="slot-col">${slotIcons[slot]}</td>`;
+    dates.forEach(d => {
+      const isToday = ds(d) === ds(today);
+      const available = players.filter(p => S.availability[avk(p, d, slot)]);
+      h += `<td${isToday ? ' class="today-col"' : ''}><div class="avail-cell">`;
+      available.forEach(p => { h += avatarHtml(p); });
+      h += '</div></td>';
+    });
+    h += '</tr>';
+  });
+  h += '</tbody></table>';
+  grid.innerHTML = h;
+}
+
+function getMissingPlayers() {
+  const players = getAllPlayers();
+  const today = new Date(); today.setHours(0,0,0,0);
+  const slots = ['morning','afternoon','evening'];
+  return players.filter(p => {
+    for (let i = 0; i < 14; i++) {
+      const d = new Date(today); d.setDate(today.getDate()+i);
+      for (const slot of slots) {
+        if (S.availability[avk(p, d, slot)]) return false;
+      }
+    }
+    return true;
+  });
+}
+
+function renderMissing() {
+  const missingCard = document.getElementById('missing-card');
+  const allInCard = document.getElementById('all-in-card');
+  const body = document.getElementById('missing-players');
+  const players = getAllPlayers();
+  const missing = getMissingPlayers();
+
+  if (players.length === 0) { missingCard.style.display = 'none'; allInCard.style.display = 'none'; return; }
+
+  if (missing.length === 0) {
+    missingCard.style.display = 'none';
+    allInCard.style.display = 'block';
+    return;
+  }
+  allInCard.style.display = 'none';
+  missingCard.style.display = 'block';
+  body.innerHTML = missing.map(p => `<span class="player-chip" style="margin:3px 0">${avatarHtml(p)} ${x(p)}</span>`).join(' ');
+}
+
+/* ── WhatsApp chase message ── */
+function chaseWhatsApp() {
+  const missing = getMissingPlayers();
+  if (missing.length === 0) { toast('Everyone has submitted!'); return; }
+  const league = S.settings.leagueName || 'our league';
+  const deadlineStr = S.settings.deadline ? ` by ${new Date(S.settings.deadline).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})}` : '';
+  const names = missing.join(', ');
+  const link = window.location.origin + window.location.pathname;
+  const msg = `Hi all! Still waiting on availability for ${league} from: ${names}\n\nPlease fill yours in${deadlineStr}: ${link}\n\nTakes 30 seconds — just tap when you're free 🎾`;
+  copyText(msg);
+}
+
+/* ═══ MATCH FINDER TAB ═══ */
+function findSlots(groupA, groupB) {
+  const players = [...groupA.players, ...groupB.players];
+  const result = [];
+  const today = new Date(); today.setHours(0,0,0,0);
+  for (let i = 0; i < 42; i++) {
+    const d = new Date(today); d.setDate(today.getDate()+i);
+    for (const slot of ['morning','afternoon','evening']) {
+      if (players.every(p => S.availability[avk(p, d, slot)])) {
+        result.push({ date: ds(d), slot });
+      }
+    }
+  }
+  return result;
+}
+
+function renderMatchFinder() {
+  const el = document.getElementById('match-results');
+  const shareEl = document.getElementById('share-results');
+  const summaryEl = document.getElementById('match-summary');
+
+  if (S.groups.length < 2) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">&#127934;</div><h3>Need at least 2 groups</h3><p>Add groups in the Setup tab first</p></div>`;
+    shareEl.style.display = 'none';
+    summaryEl.innerHTML = '';
+    return;
+  }
+
+  const matchups = [];
+  for (let i = 0; i < S.groups.length; i++) {
+    for (let j = i+1; j < S.groups.length; j++) {
+      const gA = S.groups[i];
+      const gB = S.groups[j];
+      const matchKey = [gA.id, gB.id].sort().join('_');
+      const booked = S.booked[matchKey];
+      const slots = booked ? [] : findSlots(gA, gB);
+      matchups.push({ gA, gB, slots, matchKey, booked });
+    }
+  }
+
+  const bookedMatches = matchups.filter(m => m.booked);
+  const withSlots = matchups.filter(m => !m.booked && m.slots.length > 0);
+  const without = matchups.filter(m => !m.booked && m.slots.length === 0);
+
+  // Summary
+  summaryEl.innerHTML = `<div style="display:flex;gap:10px;flex-wrap:wrap">
+    ${bookedMatches.length > 0 ? `<span class="badge badge-booked">${bookedMatches.length} booked</span>` : ''}
+    ${withSlots.length > 0 ? `<span class="badge" style="background:#ecfdf5;color:#059669">${withSlots.length} ready to book</span>` : ''}
+    ${without.length > 0 ? `<span class="badge" style="background:#fef3c7;color:#92400e">${without.length} need availability</span>` : ''}
+  </div>`;
+
+  let html = '';
+
+  // Booked matches first
+  if (bookedMatches.length > 0) {
+    html += bookedMatches.map(m => `<div class="match-card is-booked">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <div class="match-players">${x(m.gA.name)} <span style="color:#9ca3af;font-weight:400">vs</span> ${x(m.gB.name)}</div>
+        <span class="badge badge-booked">Booked</span>
+      </div>
+      <div style="font-size:13px;font-weight:600;color:#059669">\u{1F4C5} ${fmtFull(m.booked.date)} &middot; ${cap(m.booked.slot)}</div>
+      <button class="btn btn-secondary btn-sm mt8" onclick="unbookMatch('${x(m.matchKey)}')" style="font-size:11px">Cancel booking</button>
+    </div>`).join('');
+    html += '<div class="divider" style="margin:16px 0"></div>';
+  }
+
+  // Matches with slots
+  if (withSlots.length > 0) {
+    html += withSlots.map(m => {
+      const allPlayers = [...m.gA.players, ...m.gB.players];
+      const topSlots = m.slots.slice(0, 5);
+      return `<div class="match-card has-slots">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <div class="match-players">${x(m.gA.name)} <span style="color:#9ca3af;font-weight:400">vs</span> ${x(m.gB.name)}</div>
+          <span class="match-slot-count">${m.slots.length} slot${m.slots.length!==1?'s':''}</span>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:8px">${allPlayers.map(p => x(p)).join(', ')}</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:600">Tap a slot to book it:</div>
+        <div class="sug-slots">
+          ${topSlots.map(s => `<span class="sug-slot" onclick="bookMatch('${x(m.matchKey)}','${s.date}','${s.slot}')">\u{1F4C5} ${fmtFull(s.date)} &middot; ${cap(s.slot)}</span>`).join('')}
+          ${m.slots.length > 5 ? `<span class="sug-slot" style="background:#f3f4f6;color:var(--muted);border-color:#e5e7eb;cursor:default">+${m.slots.length - 5} more</span>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // Matches without slots
+  if (without.length > 0) {
+    if (withSlots.length > 0 || bookedMatches.length > 0) html += '<div class="divider" style="margin:16px 0"></div>';
+    html += `<div class="txt-muted" style="margin-bottom:10px;font-weight:600">${without.length} match${without.length!==1?'es':''} — no overlapping availability yet:</div>`;
+    html += without.map(m => {
+      const allPlayers = [...m.gA.players, ...m.gB.players];
+      return `<div class="match-card no-slots">
+        <div class="match-players">${x(m.gA.name)} <span style="color:#9ca3af;font-weight:400">vs</span> ${x(m.gB.name)}</div>
+        <div style="font-size:11px;color:var(--muted)">${allPlayers.map(p => x(p)).join(', ')}</div>
+      </div>`;
+    }).join('');
+  }
+
+  el.innerHTML = html;
+  shareEl.style.display = (bookedMatches.length > 0 || withSlots.length > 0) ? 'block' : 'none';
+}
+
+function bookMatch(matchKey, date, slot) {
+  fbSetBooked(matchKey, { date, slot });
+  renderMatchFinder();
+  renderMyMatches();
+  toast('Match booked!');
+}
+
+function unbookMatch(matchKey) {
+  if (!confirm('Cancel this booking?')) return;
+  fbSetBooked(matchKey, null);
+  renderMatchFinder();
+  renderMyMatches();
+  toast('Booking cancelled');
+}
+
+/* ── Share results to WhatsApp ── */
+function shareResults() {
+  const league = S.settings.leagueName || 'Match Finder';
+  let msg = `\u{1F3BE} ${league} — Match Schedule\n\n`;
+
+  // Booked
+  S.groups.forEach((gA, i) => {
+    for (let j = i+1; j < S.groups.length; j++) {
+      const gB = S.groups[j];
+      const matchKey = [gA.id, gB.id].sort().join('_');
+      const booked = S.booked[matchKey];
+      if (booked) {
+        msg += `\u2705 ${gA.name} vs ${gB.name} — ${fmtFull(booked.date)}, ${cap(booked.slot)}\n`;
+      }
+    }
+  });
+
+  // Ready to book
+  let readyCount = 0;
+  S.groups.forEach((gA, i) => {
+    for (let j = i+1; j < S.groups.length; j++) {
+      const gB = S.groups[j];
+      const matchKey = [gA.id, gB.id].sort().join('_');
+      if (S.booked[matchKey]) continue;
+      const slots = findSlots(gA, gB);
+      if (slots.length > 0) {
+        if (readyCount === 0) msg += '\nReady to book:\n';
+        msg += `\u{1F7E2} ${gA.name} vs ${gB.name} — ${slots.length} times available\n`;
+        readyCount++;
+      }
+    }
+  });
+
+  // Still need availability
+  const missing = getMissingPlayers();
+  if (missing.length > 0) {
+    msg += `\nStill waiting on: ${missing.join(', ')}\n`;
+  }
+
+  msg += `\nUpdate your availability: ${window.location.origin + window.location.pathname}`;
+  copyText(msg);
+}
+
+/* ═══ FIREBASE LISTENERS & INIT ═══ */
+function setupListeners() {
+  db.ref('/groups').on('value', snap => {
+    S.groups = Object.values(snap.val() || {});
+    renderGroups(); refreshPlayerSelect(); renderProgress();
+  });
+  db.ref('/availability').on('value', snap => {
+    S.availability = snap.val() || {};
+    if (currentTab === 'availability') { renderAvailGrid(); renderMySummary(); renderMyMatches(); }
+    if (currentTab === 'everyone') { renderAllAvail(); renderMissing(); }
+    if (currentTab === 'matches') renderMatchFinder();
+    renderProgress();
+  });
+  db.ref('/settings').on('value', snap => {
+    S.settings = snap.val() || {};
+    document.getElementById('inp-league-name').value = S.settings.leagueName || '';
+    document.getElementById('inp-deadline').value = S.settings.deadline || '';
+    renderHeader(); renderDeadline();
+  });
+  db.ref('/booked').on('value', snap => {
+    S.booked = snap.val() || {};
+    if (currentTab === 'matches') renderMatchFinder();
+    if (currentTab === 'availability') renderMyMatches();
+  });
+  db.ref('.info/connected').on('value', snap => {
+    const connected = snap.val() === true;
+    const dot = document.getElementById('conn-dot');
+    const banner = document.getElementById('offline-banner');
+    if (dot) dot.style.background = connected ? '#22c55e' : '#ef4444';
+    if (dot) dot.title = connected ? 'Connected — live sync active' : 'Offline — reconnecting...';
+    if (banner) banner.style.display = connected ? 'none' : 'block';
+  });
+}
+
+function initApp() {
+  if (!FIREBASE_READY) {
+    try { const d = localStorage.getItem('blp_lite_state'); if (d) S = JSON.parse(d); } catch(e) {}
+    if (!S.settings) S.settings = {};
+    if (!S.booked) S.booked = {};
+    document.getElementById('inp-league-name').value = S.settings.leagueName || '';
+    document.getElementById('inp-deadline').value = S.settings.deadline || '';
+    renderGroups(); renderHeader(); renderDeadline(); renderProgress();
+    // Auto-navigate deep-linked player to availability
+    if (DEEP_LINK_PLAYER) { showTab('availability'); }
+    return;
+  }
+  db.ref('/groups').once('value', snap => {
+    setupListeners();
+    // Auto-navigate deep-linked player to availability
+    if (DEEP_LINK_PLAYER) { setTimeout(() => showTab('availability'), 300); }
+  });
+}
+
+// Refresh deadline every minute
+setInterval(renderDeadline, 60000);
+
+initApp();
+</script>
+
+</body>
+</html>
