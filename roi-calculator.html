@@ -737,16 +737,37 @@ async function sendToGHL(name, email) {
     }
   };
   try {
-    await fetch(GHL_WEBHOOK_URL, {
+    // Try cors mode first (GHL webhooks typically support CORS)
+    const response = await fetch(GHL_WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-      mode: 'no-cors'
+      body: JSON.stringify(payload)
     });
     leadData.submitted = true;
-    console.log('Lead sent to GHL:', payload);
+    console.log('Lead sent to GHL:', payload, 'Status:', response.status);
   } catch (err) {
-    console.error('GHL webhook error:', err);
+    // Fallback: send as form-urlencoded (works with no-cors)
+    console.warn('CORS failed, trying form-urlencoded fallback:', err);
+    try {
+      const formBody = new URLSearchParams();
+      formBody.append('firstName', payload.firstName);
+      formBody.append('lastName', payload.lastName);
+      formBody.append('email', payload.email);
+      formBody.append('source', payload.source);
+      Object.entries(payload.customField).forEach(([k, v]) => {
+        formBody.append('customField.' + k, v);
+      });
+      await fetch(GHL_WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: formBody.toString(),
+        mode: 'no-cors'
+      });
+      leadData.submitted = true;
+      console.log('Lead sent to GHL via fallback:', payload);
+    } catch (err2) {
+      console.error('GHL webhook error (both methods failed):', err2);
+    }
   }
 }
 
