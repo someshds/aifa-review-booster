@@ -211,10 +211,32 @@
   .toast.show{transform:translateX(-50%) translateY(0)}
   .toast.error{border-color:var(--danger)}
 
-  /* PDF-specific styles */
+  /* PDF-specific styles — hardcoded colours for html2canvas (CSS vars don't render) */
   .pdf-mode .gradient-bg,.pdf-mode .particles{display:none!important}
-  .pdf-mode body{background:#0f0f1a}
   .pdf-mode .action-btns,.pdf-mode .btn-secondary,.pdf-mode .cta-box{display:none!important}
+  .pdf-mode{background:#0f0f1a!important;color:#f1f5f9!important}
+  .pdf-mode .results{background:#0f0f1a!important}
+  .pdf-mode .results-header h2,.pdf-mode .breakdown h3,.pdf-mode h2,.pdf-mode h3{color:#f1f5f9!important}
+  .pdf-mode .calc-section,.pdf-mode .breakdown,.pdf-mode .result-card{background:#1a1a2e!important;border-color:#2d2d4a!important;color:#f1f5f9!important}
+  .pdf-mode .hero-metric{background:linear-gradient(135deg,rgba(16,185,129,.12),rgba(6,182,212,.08))!important;border-color:rgba(16,185,129,.3)!important}
+  .pdf-mode .hero-label{color:#94a3b8!important}
+  .pdf-mode .hero-value{color:#34d399!important;-webkit-text-fill-color:#34d399!important;background:none!important}
+  .pdf-mode .hero-sub{color:#94a3b8!important}
+  .pdf-mode .lbl{color:#94a3b8!important}
+  .pdf-mode .val{color:#f1f5f9!important}
+  .pdf-mode .val-pos{color:#34d399!important}
+  .pdf-mode .val-neg{color:#ef4444!important}
+  .pdf-mode .value-green{color:#34d399!important}
+  .pdf-mode .value-blue{color:#22d3ee!important}
+  .pdf-mode .value-amber{color:#f59e0b!important}
+  .pdf-mode .label{color:#94a3b8!important}
+  .pdf-mode .result-card .value{color:#f1f5f9!important}
+  .pdf-mode .result-card .card-icon{color:#f1f5f9!important}
+  .pdf-mode .breakdown-row{border-bottom-color:rgba(255,255,255,.06)!important}
+  .pdf-mode .progress-section{background:#1a1a2e!important;border-color:#2d2d4a!important}
+  .pdf-mode .rec-card{background:#131325!important;border-color:#2d2d4a!important;color:#f1f5f9!important}
+  .pdf-mode .rec-card p{color:#94a3b8!important}
+  .pdf-mode .results-header p{color:#94a3b8!important}
 
   /* Consent checkbox */
   .consent-field{max-width:380px;margin:0 auto 1rem;text-align:left;position:relative}
@@ -1143,6 +1165,9 @@ function downloadPDF() {
   const ctaBox = document.querySelector('.cta-box');
   const resetBtn = resultsEl.querySelector('.btn-secondary');
 
+  // Add pdf-mode class for hardcoded colours (CSS vars don't render in html2canvas)
+  resultsEl.classList.add('pdf-mode');
+
   // Temporarily hide non-PDF elements
   if (actionBtns) actionBtns.style.display = 'none';
   if (ctaBox) ctaBox.style.display = 'none';
@@ -1154,7 +1179,7 @@ function downloadPDF() {
   const opt = {
     margin: [10, 10, 10, 10],
     filename: 'AI-ROI-Report-' + new Date().toISOString().split('T')[0] + '.pdf',
-    image: { type: 'jpeg', quality: 0.95 },
+    image: { type: 'jpeg', quality: 0.98 },
     html2canvas: {
       scale: 2,
       useCORS: true,
@@ -1168,12 +1193,13 @@ function downloadPDF() {
   showToast('&#128196; Generating PDF...');
 
   html2pdf().set(opt).from(resultsEl).save().then(() => {
-    // Restore hidden elements
+    resultsEl.classList.remove('pdf-mode');
     if (actionBtns) actionBtns.style.display = '';
     if (ctaBox) ctaBox.style.display = '';
     if (resetBtn) resetBtn.style.display = '';
     showToast('&#9989; PDF downloaded successfully');
   }).catch(err => {
+    resultsEl.classList.remove('pdf-mode');
     if (actionBtns) actionBtns.style.display = '';
     if (ctaBox) ctaBox.style.display = '';
     if (resetBtn) resetBtn.style.display = '';
