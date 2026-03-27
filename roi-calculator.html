@@ -1141,20 +1141,71 @@ function showResults(){
     document.querySelectorAll('.progress-fill').forEach(bar=>{ bar.style.width=bar.dataset.width+'%'; });
   },200);
 
-  // --- Recommendations (dynamic based on mode) ---
+  // --- Industry-specific recommendation text ---
+  const industryRecs={
+    trades:{
+      chatbot:'Deploy a missed-call text-back bot — when you\'re on a job and can\'t answer, it instantly texts the caller to keep them warm until you\'re free.',
+      followup:'Send automatic quote follow-ups 24h, 72h, and 7 days after sending — most trades businesses win an extra 15–25% of jobs this way.',
+      review:'After every completed job, trigger a Google review request automatically. Trades businesses with 50+ Google reviews win 3× more enquiries.'
+    },
+    health:{
+      chatbot:'An AI receptionist answers new patient enquiries 24/7, books appointments directly into your calendar, and handles FAQs — no more calls going to voicemail.',
+      followup:'Automated appointment reminders (SMS + email, 48h and 2h before) reduce no-shows by up to 40% — saving the average practice thousands per month.',
+      review:'Send review requests automatically after each appointment. Practices with strong Google ratings get 60% more self-referrals.'
+    },
+    retail:{
+      chatbot:'An AI chatbot handles product questions, stock queries, and order status 24/7 — freeing your team to focus on complex issues and sales.',
+      followup:'Automated abandoned basket emails (1h, 24h, 72h) recover an average of 15% of abandoned orders — typically the highest-ROI retail automation.',
+      review:'Post-purchase review requests triggered automatically after delivery increase your review volume 5× with zero extra effort.'
+    },
+    hospitality:{
+      chatbot:'An AI chatbot handles table availability, menu queries, and booking modifications around the clock — even when your team is in full service.',
+      followup:'Post-visit follow-ups with a special return offer drive repeat bookings. Automated loyalty campaigns keep regulars coming back more often.',
+      review:'Trigger a review request the morning after a visit. Restaurants with strong ratings rank higher on Google Maps and get more walk-in traffic.'
+    },
+    property:{
+      chatbot:'Respond to Rightmove and Zoopla leads instantly — even at midnight. Agents that respond within 5 minutes book 8× more viewings.',
+      followup:'Automated valuation follow-up sequences keep warm leads engaged over weeks and months without manual effort from your negotiators.',
+      review:'After every sale or let, automatically request a Google and Trustpilot review. Agencies with strong reviews win more instruction pitches.'
+    },
+    professional:{
+      chatbot:'An AI assistant handles new enquiry intake, answers common questions, and qualifies leads before they reach a fee earner — saving hours of partner time.',
+      followup:'Automated client onboarding sequences ensure new clients submit documents, complete forms, and feel engaged from day one — reducing admin back-and-forth.',
+      review:'After matter completion, trigger a review request and referral ask automatically. Professional services firms get 40% of new business from referrals.'
+    },
+    finance:{
+      chatbot:'An AI assistant pre-qualifies new enquiries, explains your services, and books discovery calls — 24/7, without a compliance risk.',
+      followup:'Annual review reminders and product update sequences keep your clients engaged and surface upsell opportunities passively.',
+      review:'After each successful case or review meeting, trigger a referral request sequence. Financial advisors who ask get 3× more referrals.'
+    },
+    legal:{
+      chatbot:'An AI intake assistant gathers initial matter details, answers general queries, and books consultations — freeing fee earners from screening calls.',
+      followup:'Document chase sequences automatically remind clients to submit required information — cutting the average matter timeline by days.',
+      review:'Post-matter review and referral sequences generate a steady flow of word-of-mouth instructions on autopilot.'
+    },
+    default:{
+      chatbot:'An AI chatbot handles routine enquiries 24/7, responds instantly to new leads, and qualifies prospects before they reach your team.',
+      followup:'Automated follow-up sequences keep leads warm for weeks after initial contact — most businesses close 20–30% more deals with proper follow-up.',
+      review:'Automated review requests after each positive interaction build your online reputation passively, generating more inbound enquiries over time.'
+    }
+  };
+  const iRec=industryRecs[r.industry]||industryRecs.default;
+
+  // --- Recommendations (industry-tailored) ---
   const recs=[];
   if(r.automationRate>=0.4) recs.push({icon:'&#129302;',color:'rgba(124,58,237,.12)',text:'<strong>Workflow Automation</strong> &mdash; Automate '+r.hoursSavedPerWeek+' hours of repetitive work per week. Your team focuses on high-value tasks instead of manual processes.'});
 
   if(r.customerFacing){
-    if(r.responseTime>0.25) recs.push({icon:'&#9889;',color:'rgba(6,182,212,.12)',text:'<strong>AI-Powered Instant Response</strong> &mdash; Deploy an AI chatbot that responds to every enquiry in under 60 seconds, 24/7. Businesses that respond within 5 minutes are 21x more likely to convert leads.'});
+    if(r.responseTime>0.25) recs.push({icon:'&#9889;',color:'rgba(6,182,212,.12)',text:'<strong>AI-Powered Instant Response</strong> &mdash; '+iRec.chatbot});
     if(r.autoablePct>=0.3) recs.push({icon:'&#128172;',color:'rgba(16,185,129,.12)',text:'<strong>Smart Customer Support</strong> &mdash; An AI assistant could auto-resolve '+Math.round(r.autoablePct*100)+'% of your enquiries instantly, handling FAQs, booking confirmations, and status updates.'});
-    recs.push({icon:'&#128200;',color:'rgba(245,158,11,.12)',text:'<strong>Automated Follow-Up Sequences</strong> &mdash; Never lose a lead again. Set up intelligent follow-up sequences that trigger automatically based on customer behaviour.'});
-    recs.push({icon:'&#11088;',color:'rgba(236,72,153,.12)',text:'<strong>Automated Review Collection</strong> &mdash; After every interaction, automatically request Google reviews from satisfied customers.'});
+    recs.push({icon:'&#128200;',color:'rgba(245,158,11,.12)',text:'<strong>Automated Follow-Up Sequences</strong> &mdash; '+iRec.followup});
+    recs.push({icon:'&#11088;',color:'rgba(236,72,153,.12)',text:'<strong>Automated Review Collection</strong> &mdash; '+iRec.review});
   } else {
     recs.push({icon:'&#128196;',color:'rgba(6,182,212,.12)',text:'<strong>Intelligent Document Processing</strong> &mdash; AI can extract, validate, and route '+formatNum(r.docsAutomatable)+' documents per month automatically — invoices, purchase orders, contracts, and reports processed in seconds instead of minutes.'});
     if(r.dataEntryHours>=3) recs.push({icon:'&#128187;',color:'rgba(16,185,129,.12)',text:'<strong>Automated Data Entry &amp; Transfers</strong> &mdash; Eliminate '+Math.round(r.dataEntryHours*r.automationRate*10)/10+' hours per week of manual data entry. AI reads, validates, and syncs data across your systems automatically.'});
     recs.push({icon:'&#128202;',color:'rgba(245,158,11,.12)',text:'<strong>Automated Reporting</strong> &mdash; Generate dashboards and reports automatically from your data sources. Real-time visibility without the manual effort.'});
     recs.push({icon:'&#128270;',color:'rgba(236,72,153,.12)',text:'<strong>Smart Search &amp; Knowledge Base</strong> &mdash; AI-powered search across documents, emails, and databases. Your team finds answers in seconds, not hours.'});
+    recs.push({icon:'&#128200;',color:'rgba(245,158,11,.12)',text:'<strong>Client Follow-Up Automation</strong> &mdash; '+iRec.followup});
   }
 
   if(r.employees>=3) recs.push({icon:'&#128202;',color:'rgba(239,68,68,.12)',text:'<strong>AI Analytics Dashboard</strong> &mdash; Get real-time visibility into team performance and key metrics. Make data-driven decisions instead of guessing.'});
