@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BoxLeague Pro — Doubles Box League Scheduling Made Simple</title>
+    <meta name="description" content="BoxLeague Pro automates fixture scheduling, fair matchups, real-time standings, and player communication for tennis, padel, badminton, and squash box leagues.">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0f0f1a;
+            --card: #1a1a2e;
+            --card-hover: #222240;
+            --primary: #7c3aed;
+            --primary-hover: #6d28d9;
+            --accent: #06b6d4;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --text-bright: #ffffff;
+            --border: #2d2d4a;
+            --success: #10b981;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(15, 15, 26, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 0;
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-bright);
+        }
+
+        .nav-logo span {
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-bright);
+        }
+
+        .nav-cta {
+            background: var(--primary);
+            color: var(--text-bright) !important;
+            padding: 0.5rem 1.25rem;
+            border-radius: 8px;
+            transition: background 0.2s !important;
+        }
+
+        .nav-cta:hover {
+            background: var(--primary-hover);
+        }
+
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Sections */
+        section {
+            padding: 5rem 1.5rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-label {
+            display: inline-block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+        }
+
+        .section-title {
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: var(--text-bright);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin-bottom: 3rem;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-center .section-subtitle {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Hero */
+        .hero {
+            padding-top: 8rem;
+            padding-bottom: 5rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 600px;
+            background: radial-gradient(ellipse, rgba(124, 58, 237, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: var(--text-bright);
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 620px;
+            margin: 0 auto 2.5rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 2rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--text-bright);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(124, 58, 237, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--text-bright);
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 0.4rem 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .hero-badge .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse-dot 2s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* Features */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .feature-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            background: var(--card-hover);
+            border-color: var(--primary);
+            transform: translateY(-4px);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .feature-icon.purple { background: rgba(124, 58, 237, 0.15); }
+        .feature-icon.cyan { background: rgba(6, 182, 212, 0.15); }
+        .feature-icon.green { background: rgba(16, 185, 129, 0.15); }
+        .feature-icon.amber { background: rgba(245, 158, 11, 0.15); }
+
+        .feature-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-bright);
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* How It Works */
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            position: relative;
+        }
+
+        .step {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            position: relative;
+        }
+
+        .step-number {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-bright);
+            margin: 0 auto 1.25rem;
+        }
+
+        .step h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-bright);
+            margin-bottom: 0.5rem;
+        }
+
+        .step p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Pricing */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            position: relative;
+        }
+
+        .pricing-card.featured {
+            border-color: var(--primary);
+            box-shadow: 0 0 40px rgba(124, 58, 237, 0.15);
+        }
+
+        .pricing-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: var(--text-bright);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.3rem 1rem;
+            border-radius: 100px;
+        }
+
+        .pricing-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-bright);
+            margin-bottom: 0.25rem;
+        }
+
+        .pricing-card .price {
+            font-size: 2.75rem;
+            font-weight: 900;
+            color: var(--text-bright);
+            margin: 1rem 0 0.25rem;
+        }
+
+        .pricing-card .price span {
+            font-size: 1rem;
+            font-weight: 400;
+            color: var(--text-muted);
+        }
+
+        .pricing-card .price-note {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-features li {
+            padding: 0.4rem 0;
+            font-size: 0.95rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pricing-features .check {
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        .pricing-card .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* Testimonials */
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .testimonial-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .testimonial-card .stars {
+            color: #f59e0b;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .testimonial-card blockquote {
+            font-size: 0.95rem;
+            color: var(--text);
+            line-height: 1.6;
+            margin-bottom: 1.25rem;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-bright);
+        }
+
+        .testimonial-role {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* FAQ */
+        .faq-list {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .faq-question {
+            width: 100%;
+            background: none;
+            border: none;
+            padding: 1.5rem 0;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text-bright);
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: inherit;
+        }
+
+        .faq-question:hover {
+            color: var(--accent);
+        }
+
+        .faq-question .icon {
+            font-size: 1.25rem;
+            transition: transform 0.3s;
+            color: var(--primary);
+        }
+
+        .faq-item.open .faq-question .icon {
+            transform: rotate(45deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-answer p {
+            padding-bottom: 1.5rem;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .faq-item.open .faq-answer {
+            max-height: 300px;
+        }
+
+        /* Final CTA */
+        .final-cta {
+            text-align: center;
+            background: linear-gradient(180deg, var(--bg) 0%, #12122a 100%);
+        }
+
+        .final-cta-box {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 4rem 2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .final-cta-box::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        .final-cta-box h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-bright);
+            margin-bottom: 1rem;
+        }
+
+        .final-cta-box p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.25rem;
+            }
+
+            .hero p {
+                font-size: 1.05rem;
+            }
+
+            .section-title {
+                font-size: 1.75rem;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(15, 15, 26, 0.98);
+                flex-direction: column;
+                padding: 1rem 1.5rem;
+                gap: 0.75rem;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .nav-links.open {
+                display: flex;
+            }
+
+            .nav-toggle {
+                display: block;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .final-cta-box {
+                padding: 3rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+    <div class="nav-inner">
+        <div class="nav-logo">BoxLeague <span>Pro</span></div>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="https://tools.aifusionautomations.com/boxleague-pro-demo.html" class="nav-cta">Try Demo</a></li>
+        </ul>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">&#9776;</button>
+    </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-badge">
+            <span class="dot"></span>
+            Now in Beta — Free Early Access
+        </div>
+        <h1>Stop Scheduling Matches <span class="highlight">by Hand</span></h1>
+        <p>BoxLeague Pro automates fixture scheduling, tracks standings in real time, and keeps your entire league organised — for tennis, padel, badminton, and squash.</p>
+        <div class="btn-group">
+            <a href="https://tools.aifusionautomations.com/boxleague-pro-demo.html" class="btn btn-primary">Try the Live Demo</a>
+            <a href="#features" class="btn btn-outline">See Features</a>
+        </div>
+    </div>
+</section>
+
+<!-- Features -->
+<section id="features">
+    <div class="container text-center">
+        <span class="section-label">Features</span>
+        <h2 class="section-title">Everything Your Box League Needs</h2>
+        <p class="section-subtitle">No more spreadsheets, WhatsApp chaos, or missed matches. One app handles it all.</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon purple">&#128197;</div>
+                <h3>Automated Scheduling</h3>
+                <p>Round-robin fixtures generated instantly. Full season of matches created in seconds — no manual effort needed.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon cyan">&#9878;</div>
+                <h3>Fair Matchups</h3>
+                <p>Every team plays every other team. Balanced scheduling ensures no one gets an unfair advantage or plays too many back-to-back matches.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon green">&#128200;</div>
+                <h3>Real-Time Standings</h3>
+                <p>League tables update automatically as scores are entered. Points, sets won, matches played — all calculated for you.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon amber">&#128241;</div>
+                <h3>Mobile Friendly</h3>
+                <p>Works beautifully on phones and tablets. Players can check fixtures, enter scores, and view standings from the court.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon purple">&#128197;</div>
+                <h3>Availability Tracking</h3>
+                <p>Players mark when they can play. The app auto-suggests matches based on mutual availability — no more chasing people.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon cyan">&#128172;</div>
+                <h3>League Communication</h3>
+                <p>Built-in group chat and per-section comments keep all league discussions in one place. No more scattered messages.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section id="how-it-works" style="background: linear-gradient(180deg, var(--bg) 0%, #12122a 50%, var(--bg) 100%);">
+    <div class="container text-center">
+        <span class="section-label">How It Works</span>
+        <h2 class="section-title">Up and Running in 3 Steps</h2>
+        <p class="section-subtitle">Get your box league organised in minutes, not hours.</p>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>Set Up Your League</h3>
+                <p>Enter your teams and players. Choose your sport, match format, and scoring system. Takes less than 5 minutes.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>Fixtures Are Generated</h3>
+                <p>BoxLeague Pro creates a complete round-robin schedule automatically. Every team plays every other team — perfectly balanced.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>Play and Track</h3>
+                <p>Players enter scores after each match. Standings update in real time. You manage the league from your phone.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing -->
+<section id="pricing">
+    <div class="container text-center">
+        <span class="section-label">Pricing</span>
+        <h2 class="section-title">Simple, Honest Pricing</h2>
+        <p class="section-subtitle">Start free. Upgrade when your league grows.</p>
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <h3>Free</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Perfect for trying it out</p>
+                <div class="price">&pound;0 <span>/ month</span></div>
+                <p class="price-note">Free forever</p>
+                <ul class="pricing-features">
+                    <li><span class="check">&#10003;</span> 1 active league</li>
+                    <li><span class="check">&#10003;</span> Up to 8 teams</li>
+                    <li><span class="check">&#10003;</span> Automated scheduling</li>
+                    <li><span class="check">&#10003;</span> Real-time standings</li>
+                    <li><span class="check">&#10003;</span> Mobile access</li>
+                </ul>
+                <a href="https://tools.aifusionautomations.com/boxleague-pro-demo.html" class="btn btn-outline">Try Free Demo</a>
+            </div>
+            <div class="pricing-card featured">
+                <div class="pricing-badge">Most Popular</div>
+                <h3>Pro</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">For clubs running multiple leagues</p>
+                <div class="price">&pound;9 <span>/ month</span></div>
+                <p class="price-note">Per league organiser</p>
+                <ul class="pricing-features">
+                    <li><span class="check">&#10003;</span> Unlimited leagues</li>
+                    <li><span class="check">&#10003;</span> Unlimited teams</li>
+                    <li><span class="check">&#10003;</span> Player ratings &amp; stats</li>
+                    <li><span class="check">&#10003;</span> Availability coordination</li>
+                    <li><span class="check">&#10003;</span> Club admin tools</li>
+                    <li><span class="check">&#10003;</span> Priority support</li>
+                </ul>
+                <a href="mailto:grant@aifusionautomations.com?subject=BoxLeague%20Pro%20—%20Pro%20Plan%20Interest" class="btn btn-primary">Get Early Access</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section id="testimonials" style="background: linear-gradient(180deg, var(--bg) 0%, #12122a 50%, var(--bg) 100%);">
+    <div class="container text-center">
+        <span class="section-label">Testimonials</span>
+        <h2 class="section-title">What League Organisers Say</h2>
+        <p class="section-subtitle">Early feedback from people who have tried BoxLeague Pro.</p>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <blockquote>"I used to spend an hour every week sorting fixtures in a spreadsheet. BoxLeague Pro does it in seconds. Absolute game changer."</blockquote>
+                <div class="testimonial-author">Club Organiser</div>
+                <div class="testimonial-role">Tennis Club, East Sussex</div>
+            </div>
+            <div class="testimonial-card">
+                <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <blockquote>"The availability feature alone is worth it. No more group messages trying to find a date that works. Players just mark when they're free."</blockquote>
+                <div class="testimonial-author">League Coordinator</div>
+                <div class="testimonial-role">Padel League, Surrey</div>
+            </div>
+            <div class="testimonial-card">
+                <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <blockquote>"Clean, simple, and it just works. Our players love being able to check standings on their phones right after a match."</blockquote>
+                <div class="testimonial-author">Committee Member</div>
+                <div class="testimonial-role">Badminton Club, Kent</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+    <div class="container">
+        <div class="text-center">
+            <span class="section-label">FAQ</span>
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <p class="section-subtitle">Got questions? We have answers.</p>
+        </div>
+        <div class="faq-list">
+            <div class="faq-item">
+                <button class="faq-question">
+                    What sports does BoxLeague Pro support?
+                    <span class="icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    <p>BoxLeague Pro works with any racquet sport that uses a box league format — tennis, padel, badminton, squash, table tennis, and more. The match format and scoring system are fully configurable.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">
+                    Do players need to create accounts?
+                    <span class="icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    <p>In the current demo, no accounts are needed. The full version will include optional player accounts for entering scores, updating availability, and accessing personal stats. The league organiser manages everything.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">
+                    How does the scoring system work?
+                    <span class="icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    <p>The default scoring awards 1 point per set won plus 1 bonus point for playing (both teams). For example, a 2-1 win gives the winner 3 points and the loser 2 points. This keeps the league competitive and rewards participation. Matches use best-of-3 sets with a championship tiebreak for the deciding set.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">
+                    Can I use this for singles leagues?
+                    <span class="icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    <p>Currently BoxLeague Pro is optimised for doubles box leagues (teams of 2). Singles support is on the roadmap and will be added in a future update.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">
+                    Is my data secure?
+                    <span class="icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    <p>Yes. The demo stores data locally in your browser. The full version uses secure cloud storage with encrypted connections. We collect only the minimum data needed to run your league and never share it with third parties.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">
+                    Can I try it before committing?
+                    <span class="icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    <p>Absolutely. The free tier is free forever with no credit card required. You can also explore the full demo right now — it is pre-loaded with sample data from a real doubles tennis league so you can see exactly how everything works.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Final CTA -->
+<section class="final-cta">
+    <div class="container">
+        <div class="final-cta-box">
+            <h2>Ready to Simplify Your Box League?</h2>
+            <p>Join the early access programme and be one of the first clubs to run a fully automated box league.</p>
+            <div class="btn-group">
+                <a href="https://tools.aifusionautomations.com/boxleague-pro-demo.html" class="btn btn-primary">Try the Live Demo</a>
+                <a href="mailto:grant@aifusionautomations.com?subject=BoxLeague%20Pro%20—%20Early%20Access" class="btn btn-outline">Contact Us</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <p style="margin-bottom: 0.5rem;"><strong>BoxLeague Pro</strong> by <a href="https://aifusionautomations.com">AI Fusion Automations</a></p>
+        <p>Questions? Email <a href="mailto:grant@aifusionautomations.com">grant@aifusionautomations.com</a></p>
+    </div>
+</footer>
+
+<script>
+    // Mobile nav toggle
+    document.getElementById('navToggle').addEventListener('click', function() {
+        document.getElementById('navLinks').classList.toggle('open');
+    });
+
+    // FAQ accordion
+    document.querySelectorAll('.faq-question').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var item = this.parentElement;
+            var isOpen = item.classList.contains('open');
+            // Close all
+            document.querySelectorAll('.faq-item').forEach(function(i) {
+                i.classList.remove('open');
+            });
+            // Toggle clicked
+            if (!isOpen) {
+                item.classList.add('open');
+            }
+        });
+    });
+
+    // Close mobile nav when clicking a link
+    document.querySelectorAll('.nav-links a').forEach(function(link) {
+        link.addEventListener('click', function() {
+            document.getElementById('navLinks').classList.remove('open');
+        });
+    });
+</script>
+
+</body>
+</html>
