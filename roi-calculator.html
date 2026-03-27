@@ -296,44 +296,85 @@
         </div>
         <div class="field">
           <label>Number of Employees
-            <span class="tooltip-wrap"><span class="tip-icon">?</span><span class="tip-text">Include all team members who handle admin, customer service, or repetitive tasks.</span></span>
+            <span class="tooltip-wrap"><span class="tip-icon">?</span><span class="tip-text">Include all team members who handle repetitive or automatable tasks.</span></span>
           </label>
           <input type="number" id="employees" value="5" min="1" max="500" placeholder="e.g. 5" />
         </div>
       </div>
       <div class="row">
         <div class="field">
+          <label>Pay Basis</label>
+          <select id="payBasis" onchange="togglePayInput()">
+            <option value="hourly">Hourly Rate</option>
+            <option value="salary">Annual Salary</option>
+          </select>
+        </div>
+        <div class="field" id="hourlyField">
           <label>Average Hourly Rate (<span class="currency-symbol">&pound;</span>)
             <span class="tooltip-wrap"><span class="tip-icon">?</span><span class="tip-text">The average cost per hour for the employees doing these tasks, including overheads.</span></span>
           </label>
           <input type="number" id="hourlyRate" value="25" min="5" max="500" placeholder="e.g. 25" />
+        </div>
+        <div class="field hidden" id="salaryField">
+          <label>Average Annual Salary (<span class="currency-symbol">&pound;</span>)
+            <span class="tooltip-wrap"><span class="tip-icon">?</span><span class="tip-text">Average gross salary per employee. We'll convert to an hourly cost using a 37.5-hour week.</span></span>
+          </label>
+          <input type="number" id="annualSalary" value="30000" min="10000" max="500000" step="1000" placeholder="e.g. 30000" />
         </div>
       </div>
       <div class="slider-field">
         <label>Hours per employee on repetitive tasks each week <span id="repHoursLabel">10</span></label>
         <input type="range" id="repHours" min="1" max="40" value="10" step="1" />
       </div>
-      <div class="field">
-        <label>Industry</label>
-        <select id="industry">
-          <option value="trades">Trades &amp; Home Services</option>
-          <option value="professional" selected>Professional Services</option>
-          <option value="health">Health &amp; Wellness</option>
-          <option value="retail">Retail / E-commerce</option>
-          <option value="hospitality">Hospitality &amp; Food</option>
-          <option value="property">Property &amp; Lettings</option>
-          <option value="automotive">Automotive</option>
-          <option value="technology">Technology / SaaS</option>
-          <option value="other">Other</option>
-        </select>
+      <div class="row">
+        <div class="field">
+          <label>Industry</label>
+          <select id="industry" onchange="updateRoleDefaults()">
+            <option value="trades">Trades &amp; Home Services</option>
+            <option value="professional" selected>Professional Services</option>
+            <option value="health">Health &amp; Wellness</option>
+            <option value="retail">Retail / E-commerce</option>
+            <option value="hospitality">Hospitality &amp; Food</option>
+            <option value="property">Property &amp; Lettings</option>
+            <option value="automotive">Automotive</option>
+            <option value="technology">Technology / SaaS</option>
+            <option value="manufacturing">Manufacturing</option>
+            <option value="finance">Finance &amp; Accounting</option>
+            <option value="logistics">Logistics &amp; Distribution</option>
+            <option value="education">Education &amp; Training</option>
+            <option value="construction">Construction</option>
+            <option value="legal">Legal</option>
+            <option value="media">Media &amp; Creative</option>
+            <option value="nonprofit">Non-Profit / Charity</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Primary Staff Role
+            <span class="tooltip-wrap"><span class="tip-icon">?</span><span class="tip-text">The main role of the employees you're calculating for. This tailors the questions to your situation.</span></span>
+          </label>
+          <select id="staffRole" onchange="updatePage2Preview()">
+            <option value="customer-service">Customer Service / Support</option>
+            <option value="sales">Sales / Business Development</option>
+            <option value="admin" selected>Administration / Office</option>
+            <option value="operations">Operations / Logistics</option>
+            <option value="finance">Finance / Accounting</option>
+            <option value="marketing">Marketing / Content</option>
+            <option value="management">Management / Directors</option>
+            <option value="technical">Technical / Engineering</option>
+            <option value="mixed">Mixed / Multiple Roles</option>
+          </select>
+        </div>
       </div>
     </div>
     <button class="btn btn-primary" onclick="goToPage2()">Continue &rarr;</button>
   </div>
 
-  <!-- FORM PAGE 2: Customer Operations -->
+  <!-- FORM PAGE 2: Dynamic based on role/industry -->
   <div id="page2" class="form-page hidden">
-    <div class="calc-section">
+
+    <!-- Customer-facing section (shown for customer-facing roles) -->
+    <div class="calc-section" id="section-customer">
       <h2>
         <span class="section-icon" style="background:rgba(6,182,212,.12)">&#128222;</span>
         Customer Operations
@@ -355,22 +396,53 @@
           <input type="number" id="enquiries" value="100" min="1" max="100000" placeholder="e.g. 100" />
         </div>
       </div>
-    </div>
-
-    <div class="calc-section">
-      <h2>
-        <span class="section-icon" style="background:rgba(245,158,11,.12)">&#9881;&#65039;</span>
-        Current Processes
-      </h2>
       <div class="slider-field">
-        <label>What % of customer queries could be answered automatically? <span id="autoablePctLabel">40%</span></label>
+        <label>What % of queries could be answered automatically? <span id="autoablePctLabel">40%</span></label>
         <input type="range" id="autoablePct" min="10" max="80" value="40" step="5" />
       </div>
+    </div>
+
+    <!-- Back-office section (shown for non-customer-facing roles) -->
+    <div class="calc-section hidden" id="section-backoffice">
+      <h2>
+        <span class="section-icon" style="background:rgba(245,158,11,.12)">&#128196;</span>
+        Process &amp; Data Operations
+      </h2>
+      <div class="row">
+        <div class="field">
+          <label>Documents / Reports Processed per Month
+            <span class="tooltip-wrap"><span class="tip-icon">?</span><span class="tip-text">Invoices, purchase orders, reports, contracts, forms — anything manually handled.</span></span>
+          </label>
+          <input type="number" id="docsPerMonth" value="200" min="1" max="100000" placeholder="e.g. 200" />
+        </div>
+        <div class="field">
+          <label>Avg. Minutes per Document
+            <span class="tooltip-wrap"><span class="tip-icon">?</span><span class="tip-text">Time to process, check, file or action each document.</span></span>
+          </label>
+          <input type="number" id="minsPerDoc" value="15" min="1" max="120" placeholder="e.g. 15" />
+        </div>
+      </div>
+      <div class="slider-field">
+        <label>What % of this processing could be automated? <span id="docAutoPctLabel">50%</span></label>
+        <input type="range" id="docAutoPct" min="10" max="80" value="50" step="5" />
+      </div>
+      <div class="field">
+        <label>Hours per Week on Manual Data Entry / Transfers</label>
+        <input type="number" id="dataEntryHours" value="5" min="0" max="40" placeholder="e.g. 5" />
+      </div>
+    </div>
+
+    <!-- Universal section -->
+    <div class="calc-section">
+      <h2>
+        <span class="section-icon" style="background:rgba(124,58,237,.12)">&#9881;&#65039;</span>
+        Current Automation
+      </h2>
       <div class="field">
         <label>Do you currently use any automation?</label>
         <select id="currentAutomation">
           <option value="none">No automation at all</option>
-          <option value="basic" selected>Basic (email autoresponders, etc.)</option>
+          <option value="basic" selected>Basic (email autoresponders, simple templates, etc.)</option>
           <option value="moderate">Moderate (some workflows automated)</option>
           <option value="advanced">Advanced (significant automation in place)</option>
         </select>
@@ -439,38 +511,7 @@
     </div>
 
     <!-- Key metrics cards -->
-    <div class="result-cards">
-      <div class="result-card">
-        <div class="card-icon">&#128176;</div>
-        <div class="value value-green" id="r-savings">&pound;0</div>
-        <div class="label">Annual Cost Savings</div>
-      </div>
-      <div class="result-card">
-        <div class="card-icon">&#9201;</div>
-        <div class="value value-blue" id="r-hours">0</div>
-        <div class="label">Hours Saved Per Year</div>
-      </div>
-      <div class="result-card">
-        <div class="card-icon">&#128200;</div>
-        <div class="value value-amber" id="r-productivity">0%</div>
-        <div class="label">Productivity Increase</div>
-      </div>
-      <div class="result-card">
-        <div class="card-icon">&#11088;</div>
-        <div class="value value-pink" id="r-csat">+0%</div>
-        <div class="label">Customer Satisfaction Uplift</div>
-      </div>
-      <div class="result-card">
-        <div class="card-icon">&#128640;</div>
-        <div class="value value-purple" id="r-roi">0%</div>
-        <div class="label">Return on Investment</div>
-      </div>
-      <div class="result-card">
-        <div class="card-icon">&#128197;</div>
-        <div class="value value-green" id="r-payback">0</div>
-        <div class="label">Payback Period</div>
-      </div>
-    </div>
+    <div class="result-cards" id="result-cards"></div>
 
     <!-- Impact progress bars -->
     <div class="progress-section">
@@ -478,7 +519,7 @@
       <div id="impact-bars"></div>
     </div>
 
-    <!-- Detailed breakdown -->
+    <!-- Detailed breakdown — labour savings (always shown) -->
     <div class="breakdown">
       <h3>&#128176; Savings Breakdown</h3>
       <div class="breakdown-row"><span class="lbl">Employees affected</span><span class="val" id="b-employees">0</span></div>
@@ -490,7 +531,8 @@
       <div class="breakdown-row"><span class="lbl">Annual labour cost savings</span><span class="val val-pos" id="b-labourSaved">&pound;0</span></div>
     </div>
 
-    <div class="breakdown">
+    <!-- Customer response breakdown (only for customer-facing) -->
+    <div class="breakdown hidden" id="results-customer">
       <h3>&#128172; Customer Response Improvement</h3>
       <div class="breakdown-row"><span class="lbl">Current response time</span><span class="val val-neg" id="b-currentResp">0</span></div>
       <div class="breakdown-row"><span class="lbl">AI-assisted response time</span><span class="val val-pos" id="b-aiResp">Under 1 minute</span></div>
@@ -499,6 +541,18 @@
       <div class="breakdown-row"><span class="lbl">Estimated CSAT improvement</span><span class="val val-pos" id="b-csatDetail">+0%</span></div>
     </div>
 
+    <!-- Process efficiency breakdown (only for back-office) -->
+    <div class="breakdown hidden" id="results-backoffice">
+      <h3>&#128196; Process Efficiency Gains</h3>
+      <div class="breakdown-row"><span class="lbl">Documents processed per month</span><span class="val" id="b-docs">0</span></div>
+      <div class="breakdown-row"><span class="lbl">Time per document (current)</span><span class="val val-neg" id="b-minsPerDoc">0 min</span></div>
+      <div class="breakdown-row"><span class="lbl">Documents automatable</span><span class="val val-pos" id="b-docsAuto">0</span></div>
+      <div class="breakdown-row"><span class="lbl">Document processing time saved per year</span><span class="val val-pos" id="b-docHoursSaved">0 hrs</span></div>
+      <div class="breakdown-row"><span class="lbl">Data entry hours eliminated per week</span><span class="val val-pos" id="b-dataEntry">0 hrs</span></div>
+      <div class="breakdown-row"><span class="lbl">Annual process efficiency savings</span><span class="val val-pos" id="b-processSavings">&pound;0</span></div>
+    </div>
+
+    <!-- Investment & returns (always shown) -->
     <div class="breakdown">
       <h3>&#128176; Investment &amp; Returns</h3>
       <div class="breakdown-row"><span class="lbl">Estimated annual AI investment</span><span class="val" id="b-investment">&pound;0</span></div>
@@ -583,13 +637,70 @@ document.getElementById('repHours').addEventListener('input',function(){
 document.getElementById('autoablePct').addEventListener('input',function(){
   document.getElementById('autoablePctLabel').textContent=this.value+'%';
 });
+document.getElementById('docAutoPct').addEventListener('input',function(){
+  document.getElementById('docAutoPctLabel').textContent=this.value+'%';
+});
+
+// ----- Pay basis toggle -----
+function togglePayInput(){
+  const basis=document.getElementById('payBasis').value;
+  document.getElementById('hourlyField').classList.toggle('hidden',basis!=='hourly');
+  document.getElementById('salaryField').classList.toggle('hidden',basis!=='salary');
+}
+
+// ----- Derive hourly rate from whichever input is active -----
+function getHourlyRate(){
+  if(document.getElementById('payBasis').value==='salary'){
+    const salary=Math.max(10000,parseFloat(document.getElementById('annualSalary').value)||30000);
+    return Math.round((salary/(52*37.5))*100)/100; // 37.5 hr week, 52 weeks
+  }
+  return Math.max(5,parseFloat(document.getElementById('hourlyRate').value)||25);
+}
+
+// ----- Is the selected role/industry customer-facing? -----
+function isCustomerFacing(){
+  const role=document.getElementById('staffRole').value;
+  const industry=document.getElementById('industry').value;
+  // Roles that always involve customer interaction
+  const customerRoles=['customer-service','sales'];
+  if(customerRoles.includes(role)) return true;
+  // Industries where most roles involve some customer interaction
+  const customerIndustries=['trades','health','retail','hospitality','property','automotive'];
+  if(customerIndustries.includes(industry) && role==='mixed') return true;
+  return false;
+}
+
+// ----- Update role defaults when industry changes -----
+function updateRoleDefaults(){
+  const industry=document.getElementById('industry').value;
+  const roleEl=document.getElementById('staffRole');
+  // Set a sensible default role for the industry
+  const defaults={
+    trades:'mixed', health:'customer-service', retail:'customer-service',
+    hospitality:'customer-service', property:'sales', automotive:'sales',
+    professional:'admin', technology:'technical', manufacturing:'operations',
+    finance:'finance', logistics:'operations', education:'admin',
+    construction:'operations', legal:'admin', media:'marketing',
+    nonprofit:'admin', other:'admin'
+  };
+  roleEl.value=defaults[industry]||'admin';
+}
+
+// ----- Show/hide page 2 sections based on role -----
+function updatePage2Sections(){
+  const cf=isCustomerFacing();
+  document.getElementById('section-customer').classList.toggle('hidden',!cf);
+  document.getElementById('section-backoffice').classList.toggle('hidden',cf);
+}
+function updatePage2Preview(){ /* called on role change while still on page 1 */ }
 
 // ----- Page navigation -----
 function goToPage2(){
   const emp=parseInt(document.getElementById('employees').value);
-  const rate=parseInt(document.getElementById('hourlyRate').value);
   if(!emp||emp<1){alert('Please enter the number of employees.');return}
-  if(!rate||rate<1){alert('Please enter an average hourly rate.');return}
+  const rate=getHourlyRate();
+  if(!rate||rate<1){alert('Please enter a valid pay rate or salary.');return}
+  updatePage2Sections();
   document.getElementById('page1').classList.add('hidden');
   document.getElementById('page2').classList.remove('hidden');
   document.getElementById('step1').classList.remove('active');
@@ -614,13 +725,12 @@ let calcResults={};
 // ----- Core calculation -----
 function calculate(){
   const employees=Math.max(1,parseInt(document.getElementById('employees').value)||5);
-  const hourlyRate=Math.max(5,parseFloat(document.getElementById('hourlyRate').value)||25);
+  const hourlyRate=getHourlyRate();
   const repHours=parseInt(document.getElementById('repHours').value)||10;
-  const responseTime=parseFloat(document.getElementById('responseTime').value)||4;
-  const enquiries=Math.max(1,parseInt(document.getElementById('enquiries').value)||100);
-  const autoablePct=parseInt(document.getElementById('autoablePct').value)/100;
   const currentAutomation=document.getElementById('currentAutomation').value;
   const industry=document.getElementById('industry').value;
+  const staffRole=document.getElementById('staffRole').value;
+  const customerFacing=isCustomerFacing();
 
   // Automation rate depends on current state
   let automationRate;
@@ -632,60 +742,87 @@ function calculate(){
     default: automationRate=0.55;
   }
 
-  // Time savings
+  // Time savings from repetitive tasks
   const totalRepHoursPerWeek=employees*repHours;
   const hoursSavedPerWeek=Math.round(totalRepHoursPerWeek*automationRate*10)/10;
   const hoursSavedPerYear=Math.round(hoursSavedPerWeek*50);
   const annualLabourSavings=Math.round(hoursSavedPerYear*hourlyRate);
 
-  // Customer response improvement
-  let responseLabel;
-  if(responseTime<=0.08) responseLabel='Under 5 minutes';
-  else if(responseTime<=0.25) responseLabel='5-15 minutes';
-  else if(responseTime<=1) responseLabel='About 1 hour';
-  else if(responseTime<=4) responseLabel='A few hours';
-  else if(responseTime<=24) responseLabel='Next day';
-  else responseLabel='2+ days';
-
-  // CSAT improvement estimate based on response time reduction
-  let csatImprovement;
-  if(responseTime>=24) csatImprovement=35;
-  else if(responseTime>=4) csatImprovement=25;
-  else if(responseTime>=1) csatImprovement=15;
-  else if(responseTime>=0.25) csatImprovement=8;
-  else csatImprovement=3;
-
-  // Auto-resolved enquiries value (saved agent time)
-  const autoResolved=Math.round(enquiries*autoablePct);
-  const avgHandleTimeHours=0.25; // 15 min per enquiry
-  const enquirySavingsPerYear=Math.round(autoResolved*12*avgHandleTimeHours*hourlyRate);
-
   // Productivity increase
   const totalWorkHoursPerWeek=employees*40;
   const productivityIncrease=Math.round((hoursSavedPerWeek/totalWorkHoursPerWeek)*100);
 
+  // --- Customer-facing metrics (only if relevant) ---
+  let responseTime=0, enquiries=0, autoablePct=0, responseLabel='N/A';
+  let csatImprovement=0, autoResolved=0, enquirySavingsPerYear=0;
+
+  if(customerFacing){
+    responseTime=parseFloat(document.getElementById('responseTime').value)||4;
+    enquiries=Math.max(1,parseInt(document.getElementById('enquiries').value)||100);
+    autoablePct=parseInt(document.getElementById('autoablePct').value)/100;
+
+    if(responseTime<=0.08) responseLabel='Under 5 minutes';
+    else if(responseTime<=0.25) responseLabel='5-15 minutes';
+    else if(responseTime<=1) responseLabel='About 1 hour';
+    else if(responseTime<=4) responseLabel='A few hours';
+    else if(responseTime<=24) responseLabel='Next day';
+    else responseLabel='2+ days';
+
+    if(responseTime>=24) csatImprovement=35;
+    else if(responseTime>=4) csatImprovement=25;
+    else if(responseTime>=1) csatImprovement=15;
+    else if(responseTime>=0.25) csatImprovement=8;
+    else csatImprovement=3;
+
+    autoResolved=Math.round(enquiries*autoablePct);
+    const avgHandleTimeHours=0.25;
+    enquirySavingsPerYear=Math.round(autoResolved*12*avgHandleTimeHours*hourlyRate);
+  }
+
+  // --- Back-office metrics (only if not customer-facing) ---
+  let docsPerMonth=0, minsPerDoc=0, docAutoPct=0, docsAutomatable=0;
+  let docHoursSavedPerYear=0, dataEntryHours=0, dataEntryHoursSavedPerYear=0, processSavings=0;
+
+  if(!customerFacing){
+    docsPerMonth=Math.max(1,parseInt(document.getElementById('docsPerMonth').value)||200);
+    minsPerDoc=Math.max(1,parseInt(document.getElementById('minsPerDoc').value)||15);
+    docAutoPct=parseInt(document.getElementById('docAutoPct').value)/100;
+    dataEntryHours=Math.max(0,parseInt(document.getElementById('dataEntryHours').value)||5);
+
+    docsAutomatable=Math.round(docsPerMonth*docAutoPct);
+    const docMinsSavedPerMonth=docsAutomatable*minsPerDoc*0.8; // AI handles 80% of each doc's time
+    docHoursSavedPerYear=Math.round((docMinsSavedPerMonth*12)/60);
+    dataEntryHoursSavedPerYear=Math.round(dataEntryHours*automationRate*50);
+    processSavings=Math.round((docHoursSavedPerYear+dataEntryHoursSavedPerYear)*hourlyRate);
+  }
+
   // Total annual value
-  const totalAnnualValue=annualLabourSavings+enquirySavingsPerYear;
+  const totalAnnualValue=annualLabourSavings+enquirySavingsPerYear+processSavings;
 
   // Investment estimate (scales with team size)
   let annualInvestment;
-  if(employees<=2) annualInvestment=3600;       // 300/mo
-  else if(employees<=10) annualInvestment=7200;  // 600/mo
-  else if(employees<=25) annualInvestment=14400; // 1200/mo
-  else if(employees<=50) annualInvestment=24000; // 2000/mo
-  else annualInvestment=36000;                    // 3000/mo
+  if(employees<=2) annualInvestment=3600;
+  else if(employees<=10) annualInvestment=7200;
+  else if(employees<=25) annualInvestment=14400;
+  else if(employees<=50) annualInvestment=24000;
+  else annualInvestment=36000;
 
   const netBenefit=totalAnnualValue-annualInvestment;
   const roi=annualInvestment>0?Math.round((netBenefit/annualInvestment)*100):0;
   const paybackMonths=totalAnnualValue>0?Math.max(1,Math.round((annualInvestment/totalAnnualValue)*12)):0;
 
   calcResults={
-    employees,hourlyRate,repHours,responseTime,enquiries,autoablePct,
-    currentAutomation,industry,automationRate,totalRepHoursPerWeek,
-    hoursSavedPerWeek,hoursSavedPerYear,annualLabourSavings,
-    responseLabel,csatImprovement,autoResolved,enquirySavingsPerYear,
-    productivityIncrease,totalAnnualValue,annualInvestment,
-    netBenefit,roi,paybackMonths
+    employees,hourlyRate,repHours,currentAutomation,industry,staffRole,customerFacing,
+    automationRate,totalRepHoursPerWeek,hoursSavedPerWeek,hoursSavedPerYear,
+    annualLabourSavings,productivityIncrease,
+    // Customer-facing
+    responseTime,enquiries,autoablePct,responseLabel,csatImprovement,
+    autoResolved,enquirySavingsPerYear,
+    // Back-office
+    docsPerMonth,minsPerDoc,docAutoPct,docsAutomatable,docHoursSavedPerYear,
+    dataEntryHours,dataEntryHoursSavedPerYear,processSavings,
+    // Totals
+    totalAnnualValue,annualInvestment,netBenefit,roi,paybackMonths
   };
 
   // Show email gate
@@ -752,6 +889,8 @@ async function sendToGHL(name, email) {
       roi_investment: r.annualInvestment,
       roi_employees: r.employees,
       roi_industry: r.industry,
+      roi_staff_role: r.staffRole,
+      roi_mode: r.customerFacing ? 'customer-facing' : 'back-office',
       roi_date: new Date().toISOString().split('T')[0]
     }
   };
@@ -816,67 +955,137 @@ function showResults(){
   document.getElementById('email-gate').classList.add('hidden');
   document.getElementById('results').classList.add('show');
 
-  // Animate counters
   const cs = getCurrencySymbol();
+  const paybackText=r.paybackMonths<=1?'< 1 month':r.paybackMonths+' months';
+
+  // --- Build dynamic metric cards ---
+  let cardsHtml=`
+    <div class="result-card"><div class="card-icon">&#128176;</div>
+      <div class="value value-green" id="r-savings">${cs}0</div>
+      <div class="label">Annual Cost Savings</div></div>
+    <div class="result-card"><div class="card-icon">&#9201;</div>
+      <div class="value value-blue" id="r-hours">0</div>
+      <div class="label">Hours Saved Per Year</div></div>
+    <div class="result-card"><div class="card-icon">&#128200;</div>
+      <div class="value value-amber" id="r-productivity">0%</div>
+      <div class="label">Productivity Increase</div></div>`;
+
+  if(r.customerFacing){
+    cardsHtml+=`
+    <div class="result-card"><div class="card-icon">&#11088;</div>
+      <div class="value value-pink" id="r-csat">+0%</div>
+      <div class="label">Customer Satisfaction Uplift</div></div>`;
+  } else {
+    cardsHtml+=`
+    <div class="result-card"><div class="card-icon">&#128196;</div>
+      <div class="value value-pink" id="r-docsAuto">0</div>
+      <div class="label">Documents Auto-Processed / Month</div></div>`;
+  }
+
+  cardsHtml+=`
+    <div class="result-card"><div class="card-icon">&#128640;</div>
+      <div class="value value-purple" id="r-roi">0%</div>
+      <div class="label">Return on Investment</div></div>
+    <div class="result-card"><div class="card-icon">&#128197;</div>
+      <div class="value value-green" id="r-payback">${paybackText}</div>
+      <div class="label">Payback Period</div></div>`;
+
+  document.getElementById('result-cards').innerHTML=cardsHtml;
+
+  // Animate counters
   animateValue('r-total',cs+formatNum(r.totalAnnualValue),r.totalAnnualValue,1200);
   animateValue('r-savings',cs+formatNum(r.annualLabourSavings),r.annualLabourSavings,1000);
   animateValue('r-hours',formatNum(r.hoursSavedPerYear)+' hrs',r.hoursSavedPerYear,1000);
   animateValue('r-productivity',r.productivityIncrease+'%',r.productivityIncrease,800);
-  animateValue('r-csat','+'+r.csatImprovement+'%',r.csatImprovement,800);
   animateValue('r-roi',r.roi+'%',r.roi,1000);
 
-  const paybackText=r.paybackMonths<=1?'< 1 month':r.paybackMonths+' months';
-  document.getElementById('r-payback').textContent=paybackText;
+  if(r.customerFacing){
+    animateValue('r-csat','+'+r.csatImprovement+'%',r.csatImprovement,800);
+  } else {
+    animateValue('r-docsAuto',formatNum(r.docsAutomatable)+'/mo',r.docsAutomatable,800);
+  }
 
-  // Breakdown
+  // --- Labour savings breakdown (always shown) ---
   document.getElementById('b-employees').textContent=r.employees;
   document.getElementById('b-repHours').textContent=r.totalRepHoursPerWeek+' hrs';
   document.getElementById('b-autoRate').textContent=Math.round(r.automationRate*100)+'%';
   document.getElementById('b-savedWk').textContent=r.hoursSavedPerWeek+' hrs';
   document.getElementById('b-savedYr').textContent=formatNum(r.hoursSavedPerYear)+' hrs';
-  document.getElementById('b-costHr').textContent=cs+r.hourlyRate;
+  document.getElementById('b-costHr').textContent=cs+Math.round(r.hourlyRate*100)/100;
   document.getElementById('b-labourSaved').textContent=cs+formatNum(r.annualLabourSavings);
-  document.getElementById('b-currentResp').textContent=r.responseLabel;
-  document.getElementById('b-enquiries').textContent=formatNum(r.enquiries)+' /month';
-  document.getElementById('b-autoResolved').textContent=formatNum(r.autoResolved)+' /month ('+Math.round(r.autoablePct*100)+'%)';
-  document.getElementById('b-csatDetail').textContent='+'+r.csatImprovement+'%';
+
+  // --- Customer-facing breakdown ---
+  document.getElementById('results-customer').classList.toggle('hidden',!r.customerFacing);
+  if(r.customerFacing){
+    document.getElementById('b-currentResp').textContent=r.responseLabel;
+    document.getElementById('b-enquiries').textContent=formatNum(r.enquiries)+' /month';
+    document.getElementById('b-autoResolved').textContent=formatNum(r.autoResolved)+' /month ('+Math.round(r.autoablePct*100)+'%)';
+    document.getElementById('b-csatDetail').textContent='+'+r.csatImprovement+'%';
+  }
+
+  // --- Back-office breakdown ---
+  document.getElementById('results-backoffice').classList.toggle('hidden',r.customerFacing);
+  if(!r.customerFacing){
+    document.getElementById('b-docs').textContent=formatNum(r.docsPerMonth)+' /month';
+    document.getElementById('b-minsPerDoc').textContent=r.minsPerDoc+' min';
+    document.getElementById('b-docsAuto').textContent=formatNum(r.docsAutomatable)+' /month ('+Math.round(r.docAutoPct*100)+'%)';
+    document.getElementById('b-docHoursSaved').textContent=formatNum(r.docHoursSavedPerYear)+' hrs';
+    document.getElementById('b-dataEntry').textContent=Math.round(r.dataEntryHours*r.automationRate*10)/10+' hrs';
+    document.getElementById('b-processSavings').textContent=cs+formatNum(r.processSavings);
+  }
+
+  // --- Investment breakdown ---
   document.getElementById('b-investment').textContent=cs+formatNum(r.annualInvestment)+' /year';
   document.getElementById('b-totalValue').textContent=cs+formatNum(r.totalAnnualValue)+' /year';
   document.getElementById('b-netBenefit').textContent=cs+formatNum(r.netBenefit)+' /year';
   document.getElementById('b-roi').textContent=r.roi+'%';
   document.getElementById('b-payback').textContent=paybackText;
 
-  // Impact bars
+  // --- Impact bars (dynamic based on mode) ---
   const impacts=[
     {label:'Time on Repetitive Tasks',pct:Math.round(r.automationRate*100),color:'#10b981',desc:'reduction'},
-    {label:'Customer Response Speed',pct:r.responseTime>1?Math.min(95,Math.round(90-(r.responseTime<4?20:0))):40,color:'#06b6d4',desc:'faster'},
-    {label:'Productivity Gain',pct:Math.min(r.productivityIncrease+10,95),color:'#7c3aed',desc:'improvement'},
-    {label:'Customer Satisfaction',pct:Math.min(r.csatImprovement+15,95),color:'#ec4899',desc:'uplift'},
-    {label:'Enquiry Auto-Resolution',pct:Math.round(r.autoablePct*100),color:'#f59e0b',desc:'automated'}
+    {label:'Productivity Gain',pct:Math.min(r.productivityIncrease+10,95),color:'#7c3aed',desc:'improvement'}
   ];
-  const barsHtml=impacts.map(i=>`
+  if(r.customerFacing){
+    impacts.push(
+      {label:'Customer Response Speed',pct:r.responseTime>1?Math.min(95,Math.round(90-(r.responseTime<4?20:0))):40,color:'#06b6d4',desc:'faster'},
+      {label:'Customer Satisfaction',pct:Math.min(r.csatImprovement+15,95),color:'#ec4899',desc:'uplift'},
+      {label:'Enquiry Auto-Resolution',pct:Math.round(r.autoablePct*100),color:'#f59e0b',desc:'automated'}
+    );
+  } else {
+    impacts.push(
+      {label:'Document Processing',pct:Math.round(r.docAutoPct*100),color:'#06b6d4',desc:'automated'},
+      {label:'Data Entry Reduction',pct:Math.round(r.automationRate*100),color:'#f59e0b',desc:'reduction'},
+      {label:'Process Efficiency',pct:Math.min(Math.round((r.processSavings/(r.totalAnnualValue||1))*100)+15,95),color:'#ec4899',desc:'improvement'}
+    );
+  }
+  document.getElementById('impact-bars').innerHTML=impacts.map(i=>`
     <div class="progress-bar-row">
       <div class="progress-label"><span>${i.label}</span><span style="color:${i.color}">${i.pct}% ${i.desc}</span></div>
       <div class="progress-track"><div class="progress-fill" data-width="${i.pct}" style="background:${i.color}"></div></div>
     </div>
   `).join('');
-  document.getElementById('impact-bars').innerHTML=barsHtml;
-
-  // Animate progress bars after a short delay
   setTimeout(()=>{
-    document.querySelectorAll('.progress-fill').forEach(bar=>{
-      bar.style.width=bar.dataset.width+'%';
-    });
+    document.querySelectorAll('.progress-fill').forEach(bar=>{ bar.style.width=bar.dataset.width+'%'; });
   },200);
 
-  // Recommendations
+  // --- Recommendations (dynamic based on mode) ---
   const recs=[];
-  if(r.responseTime>0.25) recs.push({icon:'&#9889;',color:'rgba(6,182,212,.12)',text:'<strong>AI-Powered Instant Response</strong> &mdash; Deploy an AI chatbot that responds to every enquiry in under 60 seconds, 24/7. Businesses that respond within 5 minutes are 21x more likely to convert leads.'});
-  if(r.automationRate>=0.4) recs.push({icon:'&#129302;',color:'rgba(124,58,237,.12)',text:'<strong>Workflow Automation</strong> &mdash; Automate '+r.hoursSavedPerWeek+' hours of repetitive work per week: data entry, scheduling, follow-ups, reporting, and invoicing. Your team focuses on high-value tasks instead.'});
-  if(r.autoablePct>=0.3) recs.push({icon:'&#128172;',color:'rgba(16,185,129,.12)',text:'<strong>Smart Customer Support</strong> &mdash; An AI assistant could auto-resolve '+Math.round(r.autoablePct*100)+'% of your enquiries instantly, handling FAQs, booking confirmations, and status updates without human intervention.'});
-  recs.push({icon:'&#128200;',color:'rgba(245,158,11,.12)',text:'<strong>Automated Follow-Up Sequences</strong> &mdash; Never lose a lead again. Set up intelligent SMS and email follow-up sequences that trigger automatically based on customer behaviour.'});
-  if(r.employees>=3) recs.push({icon:'&#128202;',color:'rgba(239,68,68,.12)',text:'<strong>AI Analytics Dashboard</strong> &mdash; Get real-time visibility into team performance, customer patterns, and revenue metrics. Make data-driven decisions instead of guessing.'});
-  recs.push({icon:'&#11088;',color:'rgba(236,72,153,.12)',text:'<strong>Automated Review Collection</strong> &mdash; After every interaction, automatically request Google reviews from satisfied customers. More reviews means more trust and more leads.'});
+  if(r.automationRate>=0.4) recs.push({icon:'&#129302;',color:'rgba(124,58,237,.12)',text:'<strong>Workflow Automation</strong> &mdash; Automate '+r.hoursSavedPerWeek+' hours of repetitive work per week. Your team focuses on high-value tasks instead of manual processes.'});
+
+  if(r.customerFacing){
+    if(r.responseTime>0.25) recs.push({icon:'&#9889;',color:'rgba(6,182,212,.12)',text:'<strong>AI-Powered Instant Response</strong> &mdash; Deploy an AI chatbot that responds to every enquiry in under 60 seconds, 24/7. Businesses that respond within 5 minutes are 21x more likely to convert leads.'});
+    if(r.autoablePct>=0.3) recs.push({icon:'&#128172;',color:'rgba(16,185,129,.12)',text:'<strong>Smart Customer Support</strong> &mdash; An AI assistant could auto-resolve '+Math.round(r.autoablePct*100)+'% of your enquiries instantly, handling FAQs, booking confirmations, and status updates.'});
+    recs.push({icon:'&#128200;',color:'rgba(245,158,11,.12)',text:'<strong>Automated Follow-Up Sequences</strong> &mdash; Never lose a lead again. Set up intelligent follow-up sequences that trigger automatically based on customer behaviour.'});
+    recs.push({icon:'&#11088;',color:'rgba(236,72,153,.12)',text:'<strong>Automated Review Collection</strong> &mdash; After every interaction, automatically request Google reviews from satisfied customers.'});
+  } else {
+    recs.push({icon:'&#128196;',color:'rgba(6,182,212,.12)',text:'<strong>Intelligent Document Processing</strong> &mdash; AI can extract, validate, and route '+formatNum(r.docsAutomatable)+' documents per month automatically — invoices, purchase orders, contracts, and reports processed in seconds instead of minutes.'});
+    if(r.dataEntryHours>=3) recs.push({icon:'&#128187;',color:'rgba(16,185,129,.12)',text:'<strong>Automated Data Entry &amp; Transfers</strong> &mdash; Eliminate '+Math.round(r.dataEntryHours*r.automationRate*10)/10+' hours per week of manual data entry. AI reads, validates, and syncs data across your systems automatically.'});
+    recs.push({icon:'&#128202;',color:'rgba(245,158,11,.12)',text:'<strong>Automated Reporting</strong> &mdash; Generate dashboards and reports automatically from your data sources. Real-time visibility without the manual effort.'});
+    recs.push({icon:'&#128270;',color:'rgba(236,72,153,.12)',text:'<strong>Smart Search &amp; Knowledge Base</strong> &mdash; AI-powered search across documents, emails, and databases. Your team finds answers in seconds, not hours.'});
+  }
+
+  if(r.employees>=3) recs.push({icon:'&#128202;',color:'rgba(239,68,68,.12)',text:'<strong>AI Analytics Dashboard</strong> &mdash; Get real-time visibility into team performance and key metrics. Make data-driven decisions instead of guessing.'});
 
   document.getElementById('recommendations').innerHTML=recs.map(r=>`
     <div class="rec-item">
