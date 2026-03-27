@@ -7,7 +7,7 @@
 <meta name="description" content="Calculate how much time and money AI automation could save your business. Free interactive ROI calculator from AI Fusion Automations." />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  /* Inter font loaded locally to avoid GDPR issues with Google Fonts CDN */
   *{margin:0;padding:0;box-sizing:border-box}
   :root{
     --primary:#7c3aed;--primary-light:#a78bfa;--primary-dark:#5b21b6;
@@ -18,7 +18,7 @@
     --warning:#f59e0b;--danger:#ef4444;
     --pink:#ec4899;
   }
-  body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6;overflow-x:hidden}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6;overflow-x:hidden}
 
   /* Background effects */
   .gradient-bg{position:fixed;top:0;left:0;right:0;bottom:0;background:
@@ -216,6 +216,13 @@
   .pdf-mode body{background:#0f0f1a}
   .pdf-mode .action-btns,.pdf-mode .btn-secondary,.pdf-mode .cta-box{display:none!important}
 
+  /* Consent checkbox */
+  .consent-field{max-width:380px;margin:0 auto 1rem;text-align:left;position:relative}
+  .consent-field label{display:flex;align-items:flex-start;gap:.6rem;font-size:.78rem;color:var(--text-muted);line-height:1.5;cursor:pointer}
+  .consent-field input[type="checkbox"]{margin-top:.2rem;flex-shrink:0;width:16px;height:16px;accent-color:var(--primary)}
+  .consent-field a{color:var(--primary-light);text-decoration:underline}
+  .consent-field a:hover{color:var(--accent-light)}
+
   /* GHL sending indicator */
   .sending-spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;margin-right:.5rem}
   @keyframes spin{to{transform:rotate(360deg)}}
@@ -399,9 +406,15 @@
         <label>Work Email</label>
         <input type="email" id="gateEmail" placeholder="e.g. sarah@company.com" />
       </div>
+      <div class="consent-field">
+        <label>
+          <input type="checkbox" id="gdprConsent" />
+          I agree to AI Fusion Automations processing my name and email to send my ROI report and occasional AI automation tips. I can withdraw consent at any time by emailing <a href="mailto:grant@aifusionautomations.com">grant@aifusionautomations.com</a>. See our <a href="privacy-policy.html" target="_blank">Privacy Policy</a>.
+        </label>
+      </div>
       <button class="btn btn-primary" onclick="unlockResults()" style="max-width:380px">Unlock My ROI Report &rarr;</button>
       <span class="skip-link" onclick="skipGate()">Skip &mdash; show me the results without signing up</span>
-      <p style="font-size:.7rem;color:var(--text-muted);margin-top:.75rem;opacity:.6;position:relative">No spam. Unsubscribe anytime. We respect your privacy.</p>
+      <p style="font-size:.7rem;color:var(--text-muted);margin-top:.75rem;opacity:.6;position:relative">Your data is processed under GDPR Article 6(1)(a) — consent. We never sell or share your data with third parties. <a href="privacy-policy.html" target="_blank" style="color:var(--primary-light)">Privacy Policy</a></p>
     </div>
   </div>
 
@@ -526,6 +539,7 @@
     </a>
     <p>Free tools powered by <a href="https://aifusionautomations.com" target="_blank">AI Fusion Automations</a></p>
     <p style="margin-top:.5rem;font-size:.74rem">AI-powered automation, chatbots, and CRM solutions for growing businesses.</p>
+    <p style="margin-top:.5rem;font-size:.72rem"><a href="privacy-policy.html">Privacy Policy</a></p>
     <p style="margin-top:.3rem;font-size:.68rem;opacity:.4">&copy; 2026 AI Fusion Automations. All rights reserved.</p>
   </div>
 
@@ -696,9 +710,11 @@ let leadData = { name: '', email: '', submitted: false };
 function unlockResults(){
   const name=document.getElementById('gateName').value.trim();
   const email=document.getElementById('gateEmail').value.trim();
+  const consent=document.getElementById('gdprConsent').checked;
   if(!name){alert('Please enter your name.');return}
   if(!email||!email.includes('@')){alert('Please enter a valid email address.');return}
-  leadData = { name, email, submitted: false };
+  if(!consent){alert('Please tick the consent box to continue. We need your permission to process your data under GDPR.');return}
+  leadData = { name, email, submitted: false, gdprConsent: true, consentTimestamp: new Date().toISOString() };
   sendToGHL(name, email);
   showResults();
 }
@@ -719,6 +735,9 @@ async function sendToGHL(name, email) {
     email,
     tags: ['roi-calculator-lead'],
     source: 'ROI Calculator',
+    gdpr_consent: true,
+    gdpr_consent_timestamp: leadData.consentTimestamp || new Date().toISOString(),
+    gdpr_consent_text: 'Agreed to processing name and email for ROI report and AI automation tips. Consent given via ROI Calculator tool.',
     customField: {
       roi_currency: getCurrencyCode(),
       roi_currency_symbol: getCurrencySymbol(),
