@@ -389,7 +389,7 @@
         </div>
         <div class="field hidden" id="salaryField">
           <label>Average Annual Salary (<span class="currency-symbol">&pound;</span>)
-            <span class="tooltip-wrap"><span class="tip-icon">?</span><span class="tip-text">Average gross salary per employee. We'll convert to an hourly cost using a 37.5-hour week.</span></span>
+            <span class="tooltip-wrap"><span class="tip-icon">?</span><span class="tip-text">Average gross salary per employee. We convert to hourly cost using 47 working weeks (25 days holiday) at 37.5 hours/week.</span></span>
           </label>
           <input type="number" id="annualSalary" value="30000" min="10000" max="500000" step="1000" placeholder="e.g. 30000" />
         </div>
@@ -724,7 +724,7 @@ function togglePayInput(){
 function getHourlyRate(){
   if(document.getElementById('payBasis').value==='salary'){
     const salary=Math.max(10000,parseFloat(document.getElementById('annualSalary').value)||30000);
-    return Math.round((salary/(52*37.5))*100)/100; // 37.5 hr week, 52 weeks
+    return Math.round((salary/(47*37.5))*100)/100; // 37.5 hr week, 47 working weeks (25 days holiday)
   }
   return Math.max(5,parseFloat(document.getElementById('hourlyRate').value)||25);
 }
