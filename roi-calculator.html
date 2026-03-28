@@ -13,7 +13,7 @@
     --primary:#7c3aed;--primary-light:#a78bfa;--primary-dark:#5b21b6;
     --accent:#06b6d4;--accent-light:#22d3ee;
     --bg:#0f0f1a;--bg-card:#1a1a2e;--bg-card-hover:#1e1e35;--bg-input:#131325;
-    --text:#f1f5f9;--text-muted:#94a3b8;--border:#2d2d4a;
+    --text:#f1f5f9;--text-muted:#b0bec5;--border:#2d2d4a;
     --success:#10b981;--success-light:#34d399;
     --warning:#f59e0b;--danger:#ef4444;
     --pink:#ec4899;
@@ -219,24 +219,24 @@
   .pdf-mode .results-header h2,.pdf-mode .breakdown h3,.pdf-mode h2,.pdf-mode h3{color:#f1f5f9!important}
   .pdf-mode .calc-section,.pdf-mode .breakdown,.pdf-mode .result-card{background:#1a1a2e!important;border-color:#2d2d4a!important;color:#f1f5f9!important}
   .pdf-mode .hero-metric{background:linear-gradient(135deg,rgba(16,185,129,.12),rgba(6,182,212,.08))!important;border-color:rgba(16,185,129,.3)!important}
-  .pdf-mode .hero-label{color:#94a3b8!important}
+  .pdf-mode .hero-label{color:#b0bec5!important}
   .pdf-mode .hero-value{color:#34d399!important;-webkit-text-fill-color:#34d399!important;background:none!important}
-  .pdf-mode .hero-sub{color:#94a3b8!important}
-  .pdf-mode .lbl{color:#94a3b8!important}
+  .pdf-mode .hero-sub{color:#b0bec5!important}
+  .pdf-mode .lbl{color:#b0bec5!important}
   .pdf-mode .val{color:#f1f5f9!important}
   .pdf-mode .val-pos{color:#34d399!important}
   .pdf-mode .val-neg{color:#ef4444!important}
   .pdf-mode .value-green{color:#34d399!important}
   .pdf-mode .value-blue{color:#22d3ee!important}
   .pdf-mode .value-amber{color:#f59e0b!important}
-  .pdf-mode .label{color:#94a3b8!important}
+  .pdf-mode .label{color:#b0bec5!important}
   .pdf-mode .result-card .value{color:#f1f5f9!important}
   .pdf-mode .result-card .card-icon{color:#f1f5f9!important}
   .pdf-mode .breakdown-row{border-bottom-color:rgba(255,255,255,.06)!important}
   .pdf-mode .progress-section{background:#1a1a2e!important;border-color:#2d2d4a!important}
   .pdf-mode .rec-card{background:#131325!important;border-color:#2d2d4a!important;color:#f1f5f9!important}
-  .pdf-mode .rec-card p{color:#94a3b8!important}
-  .pdf-mode .results-header p{color:#94a3b8!important}
+  .pdf-mode .rec-card p{color:#b0bec5!important}
+  .pdf-mode .results-header p{color:#b0bec5!important}
 
   /* Consent checkbox */
   .consent-field{max-width:380px;margin:0 auto 1rem;text-align:left;position:relative}
@@ -269,7 +269,7 @@
   .aifa-site-nav-logo-icon{width:32px;height:32px;background:linear-gradient(135deg,#7c3aed,#06b6d4);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0}
   .aifa-site-nav-logo-text{font-size:.9rem;font-weight:700;background:linear-gradient(135deg,#a78bfa,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap}
   .aifa-site-nav-links{display:flex;align-items:center;gap:1.25rem;list-style:none;margin:0;padding:0}
-  .aifa-site-nav-links a{color:#94a3b8;text-decoration:none;font-size:.83rem;font-weight:500;transition:color .2s;white-space:nowrap}
+  .aifa-site-nav-links a{color:#b0bec5;text-decoration:none;font-size:.83rem;font-weight:500;transition:color .2s;white-space:nowrap}
   .aifa-site-nav-links a:hover{color:#f1f5f9}
   .aifa-site-nav-cta{background:linear-gradient(135deg,#7c3aed,#06b6d4)!important;color:#fff!important;padding:.4rem 1rem!important;border-radius:7px!important;font-weight:600!important}
   .aifa-site-nav-cta:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(124,58,237,.4)}
@@ -357,8 +357,8 @@
       </h2>
       <div class="row">
         <div class="field">
-          <label>Currency</label>
-          <select id="currency" onchange="updateCurrencyLabels()">
+          <label for="currency">Currency</label>
+          <select id="currency" aria-label="Currency" onchange="updateCurrencyLabels()">
             <option value="GBP" data-symbol="£" selected>£ GBP — British Pound</option>
             <option value="USD" data-symbol="$">$ USD — US Dollar</option>
             <option value="EUR" data-symbol="€">€ EUR — Euro</option>
@@ -375,8 +375,8 @@
       </div>
       <div class="row">
         <div class="field">
-          <label>Pay Basis</label>
-          <select id="payBasis" onchange="togglePayInput()">
+          <label for="payBasis">Pay Basis</label>
+          <select id="payBasis" aria-label="Pay basis" onchange="togglePayInput()">
             <option value="hourly">Hourly Rate</option>
             <option value="salary">Annual Salary</option>
           </select>
@@ -395,13 +395,13 @@
         </div>
       </div>
       <div class="slider-field">
-        <label>Hours per employee on repetitive tasks each week <span id="repHoursLabel">10</span></label>
-        <input type="range" id="repHours" min="1" max="40" value="10" step="1" />
+        <label for="repHours">Hours per employee on repetitive tasks each week <span id="repHoursLabel">10</span></label>
+        <input type="range" id="repHours" min="1" max="40" value="10" step="1" aria-label="Hours per employee on repetitive tasks each week" />
       </div>
       <div class="row">
         <div class="field">
-          <label>Industry</label>
-          <select id="industry" onchange="updateRoleDefaults()">
+          <label for="industry">Industry</label>
+          <select id="industry" aria-label="Industry" onchange="updateRoleDefaults()">
             <option value="trades">Trades &amp; Home Services</option>
             <option value="professional" selected>Professional Services</option>
             <option value="health">Health &amp; Wellness</option>
@@ -425,7 +425,7 @@
           <label>Primary Staff Role
             <span class="tooltip-wrap"><span class="tip-icon">?</span><span class="tip-text">The main role of the employees you're calculating for. This tailors the questions to your situation.</span></span>
           </label>
-          <select id="staffRole" onchange="updatePage2Preview()">
+          <select id="staffRole" aria-label="Primary staff role" onchange="updatePage2Preview()">
             <option value="customer-service">Customer Service / Support</option>
             <option value="sales">Sales / Business Development</option>
             <option value="admin" selected>Administration / Office</option>
@@ -453,8 +453,8 @@
       </h2>
       <div class="row">
         <div class="field">
-          <label>Current Response Time to Enquiries</label>
-          <select id="responseTime">
+          <label for="responseTime">Current Response Time to Enquiries</label>
+          <select id="responseTime" aria-label="Current response time to enquiries">
             <option value="0.08">Under 5 minutes</option>
             <option value="0.25">5 &ndash; 15 minutes</option>
             <option value="1">About 1 hour</option>
@@ -469,8 +469,8 @@
         </div>
       </div>
       <div class="slider-field">
-        <label>What % of queries could be answered automatically? <span id="autoablePctLabel">40%</span></label>
-        <input type="range" id="autoablePct" min="10" max="80" value="40" step="5" />
+        <label for="autoablePct">What % of queries could be answered automatically? <span id="autoablePctLabel">40%</span></label>
+        <input type="range" id="autoablePct" min="10" max="80" value="40" step="5" aria-label="Percentage of queries that could be answered automatically" />
       </div>
     </div>
 
@@ -495,8 +495,8 @@
         </div>
       </div>
       <div class="slider-field">
-        <label>What % of this processing could be automated? <span id="docAutoPctLabel">50%</span></label>
-        <input type="range" id="docAutoPct" min="10" max="80" value="50" step="5" />
+        <label for="docAutoPct">What % of this processing could be automated? <span id="docAutoPctLabel">50%</span></label>
+        <input type="range" id="docAutoPct" min="10" max="80" value="50" step="5" aria-label="Percentage of document processing that could be automated" />
       </div>
       <div class="field">
         <label>Hours per Week on Manual Data Entry / Transfers</label>
@@ -511,8 +511,8 @@
         Current Automation
       </h2>
       <div class="field">
-        <label>Do you currently use any automation?</label>
-        <select id="currentAutomation">
+        <label for="currentAutomation">Do you currently use any automation?</label>
+        <select id="currentAutomation" aria-label="Current automation level">
           <option value="none">No automation at all</option>
           <option value="basic" selected>Basic (email autoresponders, simple templates, etc.)</option>
           <option value="moderate">Moderate (some workflows automated)</option>
@@ -543,12 +543,12 @@
       <h2>Your Results Are Ready</h2>
       <p>Enter your details below to unlock your full personalised ROI report. We'll also send a copy to your inbox.</p>
       <div class="field">
-        <label>Your Name</label>
-        <input type="text" id="gateName" placeholder="e.g. Sarah Johnson" />
+        <label for="gateName">Your Name</label>
+        <input type="text" id="gateName" placeholder="e.g. Sarah Johnson" aria-label="Your name" />
       </div>
       <div class="field">
-        <label>Work Email</label>
-        <input type="email" id="gateEmail" placeholder="e.g. sarah@company.com" />
+        <label for="gateEmail">Work Email</label>
+        <input type="email" id="gateEmail" placeholder="e.g. sarah@company.com" aria-label="Work email address" />
       </div>
       <div class="consent-field">
         <label>
