@@ -1,1572 +1,956 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>BoxLeague Pro — DEMO</title>
-  <style>
-    :root {
-      --green: #2563eb;
-      --green-light: #60a5fa;
-      --green-dark: #1e3a8a;
-      --bg: #f1f5f9;
-      --card: #ffffff;
-      --text: #1a1a1a;
-      --muted: #6b7280;
-      --border: #e2e8f0;
-      --shadow: 0 2px 8px rgba(0,0,0,0.08);
-      --radius: 12px;
-      --amber: #f59e0b;
-      --red: #ef4444;
-      --blue: #6366f1;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 60px; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BoxLeague Pro — Doubles Box League Scheduling Made Simple</title>
+    <meta name="description" content="BoxLeague Pro automates fixture scheduling, fair matchups, real-time standings, and player communication for tennis, padel, badminton, and squash box leagues.">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    /* ── Header ── */
-    .hdr { background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color: #fff; padding: 18px 20px 14px; text-align: center; }
-    .hdr h1 { font-size: 19px; font-weight: 700; letter-spacing: -0.3px; }
-    .hdr p { font-size: 12px; opacity: 0.75; margin-top: 2px; }
+        :root {
+            --bg: #0f0f1a;
+            --card: #1a1a2e;
+            --card-hover: #222240;
+            --primary: #7c3aed;
+            --primary-hover: #6d28d9;
+            --accent: #06b6d4;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --text-bright: #ffffff;
+            --border: #2d2d4a;
+            --success: #10b981;
+        }
 
-    /* ── Deadline banner ── */
-    .deadline-banner { background: #1e3a8a; color: #bfdbfe; padding: 9px 16px; text-align: center; font-size: 13px; font-weight: 600; display: none; }
-    .deadline-banner.urgent { background: #1e40af; }
+        html {
+            scroll-behavior: smooth;
+        }
 
-    /* ── Nav ── */
-    .nav { background: #fff; border-bottom: 1px solid var(--border); display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
-    .nav::-webkit-scrollbar { display: none; }
-    .nav-tab { flex: 0 0 auto; padding: 13px 18px; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; transition: all 0.18s; }
-    .nav-tab.active { color: var(--green); border-bottom-color: var(--green); }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
 
-    /* ── Content ── */
-    .content { padding: 16px; max-width: 680px; margin: 0 auto; }
-    .section { display: none; }
-    .section.active { display: block; }
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(15, 15, 26, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 0;
+        }
 
-    /* ── Cards ── */
-    .card { background: var(--card); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow); }
-    .card-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .card-title { font-size: 15px; font-weight: 700; }
-    .section-title { font-size: 18px; font-weight: 700; margin-bottom: 14px; }
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    /* ── Buttons ── */
-    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 10px 18px; border-radius: 9px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
-    .btn:active { transform: scale(0.97); }
-    .btn-primary { background: var(--green); color: #fff; }
-    .btn-primary:hover { background: var(--green-dark); }
-    .btn-secondary { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
-    .btn-danger { background: #fee2e2; color: var(--red); }
-    .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 7px; }
-    .btn-full { width: 100%; margin-top: 8px; }
+        .nav-logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-bright);
+        }
 
-    /* ── Forms ── */
-    .fg { margin-bottom: 12px; }
-    .fl { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .fi { width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 9px; font-size: 14px; background: #fff; color: var(--text); -webkit-appearance: none; appearance: none; }
-    .fi:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(37,99,235,0.12); }
+        .nav-logo span {
+            color: var(--primary);
+        }
 
-    /* ── Badges ── */
-    .badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
-    .b-unscheduled { background: #f3f4f6; color: #9ca3af; }
-    .b-proposed { background: #fef3c7; color: #b45309; }
-    .b-confirmed { background: #ede9fe; color: #5b21b6; }
-    .b-played { background: #d1fae5; color: #065f46; }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
 
-    /* ── Availability Grid ── */
-    .avail-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .avail-tbl { border-collapse: collapse; font-size: 12px; min-width: 100%; }
-    .avail-tbl th { padding: 5px 3px; text-align: center; font-weight: 600; color: var(--muted); border-bottom: 1px solid var(--border); min-width: 40px; }
-    .avail-tbl td { padding: 3px; border-bottom: 1px solid var(--border); }
-    .slot-lbl { font-size: 11px; font-weight: 600; color: var(--muted); text-align: left !important; padding: 4px 8px !important; white-space: nowrap; }
-    .cell { width: 34px; height: 34px; border-radius: 7px; cursor: pointer; background: #f0f0f0; display: flex; align-items: center; justify-content: center; margin: auto; transition: background 0.12s; border: 2px solid transparent; }
-    .cell.on { background: var(--green); border-color: var(--green-dark); }
-    .cell.on::after { content: '✓'; color: #fff; font-size: 14px; font-weight: 700; }
-    .cell:not(.on):active { background: #bfdbfe; }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
 
-    /* ── Week nav ── */
-    .wk-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-    .wk-title { font-size: 13px; font-weight: 700; }
+        .nav-links a:hover {
+            color: var(--text-bright);
+        }
 
-    /* ── Fixture items ── */
-    .fix-item { background: var(--card); border-radius: var(--radius); padding: 14px 15px; margin-bottom: 8px; box-shadow: var(--shadow); cursor: pointer; border: 1.5px solid transparent; transition: border-color 0.15s; }
-    .fix-item:active { border-color: var(--green); }
-    .fix-item.fix-confirmed { border-left: 3px solid var(--blue); }
-    .fix-item.fix-proposed { border-left: 3px solid var(--amber); }
-    .fix-teams { font-size: 15px; font-weight: 700; margin-bottom: 3px; }
-    .fix-players { font-size: 12px; color: var(--muted); margin-bottom: 7px; }
-    .fix-meta { display: flex; gap: 7px; align-items: center; flex-wrap: wrap; }
-    .fix-time { font-size: 12px; color: var(--muted); margin-top: 6px; }
-    .fix-court { font-size: 12px; color: var(--green-dark); font-weight: 600; margin-top: 2px; }
-    .fix-note { font-size: 12px; color: #b45309; font-weight: 600; margin-top: 2px; }
-    .fix-score { font-size: 14px; font-weight: 700; color: var(--green-dark); margin-top: 6px; }
-    .slot-count { font-size: 11px; font-weight: 700; color: var(--green-dark); background: #dbeafe; padding: 3px 8px; border-radius: 20px; }
+        .nav-cta {
+            background: var(--primary);
+            color: var(--text-bright) !important;
+            padding: 0.5rem 1.25rem;
+            border-radius: 8px;
+            transition: background 0.2s !important;
+        }
 
-    /* ── Modal ── */
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; align-items: flex-end; justify-content: center; }
-    .modal-overlay.open { display: flex; }
-    .modal { background: #fff; border-radius: 20px 20px 0 0; padding: 20px; width: 100%; max-width: 680px; max-height: 88vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-    .modal-handle { width: 40px; height: 4px; background: #e0e0e0; border-radius: 2px; margin: 0 auto 16px; }
-    .modal-title { font-size: 17px; font-weight: 700; margin-bottom: 14px; }
+        .nav-cta:hover {
+            background: var(--primary-hover);
+        }
 
-    /* ── League table ── */
-    .ltbl { width: 100%; border-collapse: collapse; font-size: 13px; }
-    .ltbl th { background: var(--green-dark); color: #fff; padding: 10px 8px; text-align: center; font-weight: 600; }
-    .ltbl th:first-child { text-align: left; padding-left: 12px; border-radius: 9px 0 0 0; }
-    .ltbl th:last-child { border-radius: 0 9px 0 0; }
-    .ltbl td { padding: 10px 8px; text-align: center; border-bottom: 1px solid var(--border); }
-    .ltbl td:first-child { text-align: left; padding-left: 12px; }
-    .ltbl tr:nth-child(1) td { background: #fef9ee; }
-    .rank { display: inline-flex; width: 22px; height: 22px; align-items: center; justify-content: center; border-radius: 50%; font-size: 11px; font-weight: 700; margin-right: 6px; }
-    .r1 { background: #fbbf24; color: #78350f; }
-    .r2 { background: #d1d5db; color: #374151; }
-    .r3 { background: #f97316; color: #fff; }
-    .rx { background: #f3f4f6; color: #6b7280; }
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
 
-    /* ── Suggested time slots ── */
-    .ts { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 9px; margin-bottom: 7px; }
-    .ts-info { font-size: 13px; font-weight: 600; }
-    .ts-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+        /* Sections */
+        section {
+            padding: 5rem 1.5rem;
+        }
 
-    /* ── Score display ── */
-    .score-summary { display: flex; align-items: center; justify-content: center; gap: 16px; background: #eff6ff; border-radius: 10px; padding: 14px 12px; margin-bottom: 12px; }
-    .score-team { text-align: center; }
-    .score-team-name { font-size: 12px; color: var(--muted); font-weight: 600; }
-    .score-team-sets { font-size: 32px; font-weight: 800; color: var(--green-dark); line-height: 1; }
-    .score-sep { font-size: 22px; color: var(--muted); font-weight: 300; }
-    .score-detail { font-size: 12px; color: var(--muted); text-align: center; margin-bottom: 12px; }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
-    /* ── Player chips ── */
-    .pchip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: #eff6ff; color: var(--green-dark); border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .section-label {
+            display: inline-block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+        }
 
-    /* ── Info box ── */
-    .info-box { background: #eef2ff; border-left: 3px solid var(--blue); padding: 11px 13px; border-radius: 0 8px 8px 0; font-size: 13px; color: #4338ca; margin-bottom: 14px; line-height: 1.5; }
-    .warn-box { background: #fff7ed; border-left: 3px solid var(--amber); padding: 11px 13px; border-radius: 0 8px 8px 0; font-size: 13px; color: #c2410c; margin-bottom: 14px; line-height: 1.5; }
+        .section-title {
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: var(--text-bright);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
 
-    /* ── DEMO callout box ── */
-    .demo-callout {
-      background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%);
-      border: 2px solid #fbbf24;
-      border-radius: 14px;
-      padding: 16px 18px;
-      margin-bottom: 18px;
-      box-shadow: 0 2px 12px rgba(251,191,36,0.18);
-    }
-    .demo-callout-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-    .demo-callout-icon { font-size: 26px; flex-shrink: 0; }
-    .demo-callout-title { font-size: 16px; font-weight: 800; color: #92400e; line-height: 1.2; }
-    .demo-callout-subtitle { font-size: 11px; font-weight: 600; color: #b45309; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 1px; }
-    .demo-callout-body { font-size: 13px; color: #78350f; line-height: 1.6; }
-    .demo-callout-body strong { color: #92400e; }
-    .demo-callout-note {
-      margin-top: 10px;
-      background: rgba(255,255,255,0.7);
-      border-radius: 8px;
-      padding: 8px 11px;
-      font-size: 12px;
-      color: #b45309;
-      font-weight: 600;
-      display: flex;
-      align-items: flex-start;
-      gap: 6px;
-    }
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin-bottom: 3rem;
+        }
 
-    /* ── Coming Soon block ── */
-    .coming-soon-block {
-      background: #f8fafc;
-      border: 2px dashed #cbd5e1;
-      border-radius: 14px;
-      padding: 22px 18px;
-      text-align: center;
-      margin-bottom: 12px;
-    }
-    .coming-soon-icon { font-size: 36px; margin-bottom: 10px; opacity: 0.55; }
-    .coming-soon-title { font-size: 15px; font-weight: 800; color: #64748b; margin-bottom: 6px; }
-    .coming-soon-body { font-size: 13px; color: #b0bec5; line-height: 1.5; }
-    .coming-soon-badge { display: inline-block; background: #e0f2fe; color: #0369a1; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; margin-top: 10px; border: 1px solid #bae6fd; }
+        .text-center {
+            text-align: center;
+        }
 
-    /* ── Empty state ── */
-    .empty { text-align: center; padding: 40px 20px; color: var(--muted); }
-    .empty-icon { font-size: 46px; margin-bottom: 10px; }
-    .empty h3 { font-size: 15px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
-    .empty p { font-size: 13px; }
+        .text-center .section-subtitle {
+            margin-left: auto;
+            margin-right: auto;
+        }
 
-    /* ── Score inputs ── */
-    .score-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-    .score-row label { flex: 1; font-size: 13px; font-weight: 600; }
-    .score-in { width: 130px; padding: 8px 10px; border: 1.5px solid var(--border); border-radius: 7px; font-size: 13px; text-align: center; }
+        /* Hero */
+        .hero {
+            padding-top: 8rem;
+            padding-bottom: 5rem;
+            text-align: center;
+            position: relative;
+        }
 
-    /* ── Toast ── */
-    .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #1e3a8a; color: #fff; padding: 11px 20px; border-radius: 22px; font-size: 13px; font-weight: 600; z-index: 999; opacity: 0; transition: opacity 0.25s; pointer-events: none; white-space: nowrap; }
-    .toast.show { opacity: 1; }
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 600px;
+            background: radial-gradient(ellipse, rgba(124, 58, 237, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
 
-    /* ── Utilities ── */
-    .flex { display: flex; }
-    .gap8 { gap: 8px; }
-    .wrap { flex-wrap: wrap; }
-    .mt8 { margin-top: 8px; }
-    .mt12 { margin-top: 12px; }
-    .mt16 { margin-top: 16px; }
-    .txt-muted { color: var(--muted); font-size: 12px; }
-    .divider { height: 1px; background: var(--border); margin: 14px 0; }
-    .fw700 { font-weight: 700; }
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: var(--text-bright);
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
 
-    /* ── Players grid in modal ── */
-    .players-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
-    .players-box { background: #f8faff; padding: 10px 12px; border-radius: 9px; border: 1px solid #e0e7ff; }
-    .players-box-label { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
-    .players-box-name { font-size: 13px; line-height: 1.6; }
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
-    @media (min-width: 600px) { .content { padding: 22px; } }
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 620px;
+            margin: 0 auto 2.5rem;
+        }
 
-    /* ── Business tools bar ── */
-    .tools-bar { background: #0f172a; padding: 8px 14px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; }
-    .tools-bar a { color: #93c5fd; font-size: 12px; font-weight: 600; text-decoration: none; letter-spacing: 0.2px; white-space: nowrap; }
-    .tools-bar a:hover { color: #bfdbfe; }
-    .tools-bar .tb-left { justify-self: start; }
-    .tools-bar .tb-centre { justify-self: center; text-align: center; }
-    .tools-bar .tb-right { justify-self: end; }
-    .tools-bar .app-name { color: #f1f5f9; font-size: 15px; font-weight: 800; letter-spacing: -0.3px; display: block; line-height: 1.2; }
-    .tools-bar .ver { color: #64748b; font-size: 10px; font-weight: 500; display: block; }
-    .tools-bar .feedback-link { color: #fbbf24 !important; background: rgba(251,191,36,0.12); padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(251,191,36,0.3); }
-    .tools-bar .feedback-link:hover { color: #fde68a !important; }
-    .demo-badge { display: inline-block; background: #fbbf24; color: #78350f; font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.6px; vertical-align: middle; margin-left: 5px; }
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
 
-    /* ── AIFA Footer ── */
-    .aifa-footer { background: #0f172a; color: #64748b; text-align: center; padding: 20px 20px 24px; margin-top: 8px; border-top: 1px solid #1e293b; }
-    .aifa-footer-brand { font-size: 13px; font-weight: 700; color: #b0bec5; margin-bottom: 4px; letter-spacing: 0.2px; }
-    .aifa-footer-sub { font-size: 12px; color: #475569; }
-    .aifa-footer a { color: #60a5fa; text-decoration: none; font-weight: 600; }
-    .aifa-footer a:hover { color: #93c5fd; }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 2rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
 
-    /* ── Initials avatar ── */
-    .avatar { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; font-size: 9px; font-weight: 800; color: #fff; flex-shrink: 0; }
-    .avatar-lg { width: 32px; height: 32px; font-size: 11px; }
+        .btn-primary {
+            background: var(--primary);
+            color: var(--text-bright);
+        }
 
-    /* ── All-player availability calendar ── */
-    .avail-cal-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .avail-cal { border-collapse: collapse; font-size: 11px; min-width: 100%; }
-    .avail-cal th { padding: 4px 3px; text-align: center; font-weight: 600; color: var(--muted); border-bottom: 1px solid var(--border); min-width: 52px; }
-    .avail-cal th.slot-col { text-align: left; min-width: 72px; }
-    .avail-cal td { padding: 4px 3px; border-bottom: 1px solid var(--border); vertical-align: top; }
-    .avail-cal td.slot-col { font-size: 11px; font-weight: 600; color: var(--muted); padding: 6px 8px; white-space: nowrap; }
-    .avail-cell { display: flex; flex-wrap: wrap; gap: 2px; justify-content: center; min-height: 28px; padding: 2px; }
-    .avail-cal .today-col { background: #eff6ff; }
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(124, 58, 237, 0.3);
+        }
 
-    /* ── Suggestions ── */
-    .sug-item { background: var(--card); border-radius: var(--radius); padding: 13px 14px; margin-bottom: 8px; box-shadow: var(--shadow); border-left: 3px solid var(--green); }
-    .sug-match { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
-    .sug-slots { display: flex; flex-wrap: wrap; gap: 6px; }
-    .sug-slot { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 7px; padding: 4px 9px; font-size: 11px; font-weight: 600; color: var(--green-dark); }
+        .btn-outline {
+            background: transparent;
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
 
-    /* ── Team player cards ── */
-    .team-players-row { display: flex; align-items: flex-start; justify-content: center; gap: 0; }
-    .player-col { display: flex; flex-direction: column; align-items: center; flex: 1; padding: 4px 6px; }
-    .player-photo-wrap { position: relative; cursor: pointer; }
-    .player-photo { width: 76px; height: 76px; border-radius: 50%; background-size: cover; background-position: center; background-color: #e2e8f0; border: 3px solid var(--border); transition: border-color 0.15s, transform 0.15s; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-    .player-photo:hover { border-color: var(--green); transform: scale(1.04); }
-    .player-photo .initials { font-size: 24px; font-weight: 800; color: #fff; pointer-events: none; }
-    .player-photo-upload { position: absolute; bottom: 0; right: 0; background: var(--green); border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 11px; border: 2px solid #fff; cursor: pointer; }
-    .player-col-name { font-size: 14px; font-weight: 700; margin-top: 8px; text-align: center; }
-    .team-divider { width: 1px; background: var(--border); align-self: stretch; margin: 6px 0; }
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--text-bright);
+        }
 
-    /* ── Help drawer ── */
-    .help-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 300; }
-    .help-overlay.open { display: block; }
-    .help-drawer { position: fixed; top: 0; right: -100%; width: min(420px, 100vw); height: 100%; background: #fff; z-index: 301; transition: right 0.28s cubic-bezier(0.4,0,0.2,1); display: flex; flex-direction: column; box-shadow: -4px 0 24px rgba(0,0,0,0.18); }
-    .help-overlay.open .help-drawer { right: 0; }
-    .help-drawer-hdr { background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color: #fff; padding: 18px 18px 16px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-    .help-drawer-title { font-size: 17px; font-weight: 800; letter-spacing: -0.3px; }
-    .help-drawer-sub { font-size: 12px; opacity: 0.75; margin-top: 2px; }
-    .help-close { background: rgba(255,255,255,0.18); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s; }
-    .help-close:hover { background: rgba(255,255,255,0.3); }
-    .help-body { flex: 1; overflow-y: auto; padding: 0 0 20px; -webkit-overflow-scrolling: touch; }
-    .help-section { padding: 16px 18px 14px; border-bottom: 1px solid var(--border); }
-    .help-section:last-child { border-bottom: none; }
-    .help-section-hdr { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
-    .help-section-icon { font-size: 22px; flex-shrink: 0; }
-    .help-section-title { font-size: 15px; font-weight: 800; color: var(--green-dark); }
-    .help-step { display: flex; gap: 10px; margin-bottom: 8px; align-items: flex-start; }
-    .help-step-num { background: var(--green); color: #fff; font-size: 11px; font-weight: 800; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
-    .help-step-text { font-size: 13px; line-height: 1.5; color: var(--text); flex: 1; }
-    .help-step-text strong { color: var(--green-dark); }
-    .help-tip { background: #eff6ff; border-left: 3px solid var(--green); border-radius: 0 7px 7px 0; padding: 8px 11px; font-size: 12px; color: #1e40af; margin-top: 8px; line-height: 1.5; }
-    .help-badge-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 4px; }
-    .help-badge { padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 700; }
-    .help-footer { padding: 14px 18px; border-top: 1px solid var(--border); flex-shrink: 0; }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 0.4rem 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
 
-    /* ── Chat ── */
-    .chat-messages { background: #f8faff; border-radius: var(--radius); padding: 12px; min-height: 200px; max-height: 420px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; border: 1px solid #e0e7ff; }
-    .chat-msg { display: flex; gap: 9px; align-items: flex-start; }
-    .chat-bubble { background: #fff; border-radius: 0 10px 10px 10px; padding: 8px 11px; box-shadow: 0 1px 3px rgba(0,0,0,0.07); flex: 1; min-width: 0; border: 1px solid var(--border); }
-    .chat-bubble.mine { background: #dbeafe; border-color: #bfdbfe; border-radius: 10px 0 10px 10px; }
-    .chat-meta { font-size: 11px; color: var(--muted); margin-bottom: 3px; }
-    .chat-name { font-weight: 700; color: var(--text); }
-    .chat-text { font-size: 13px; line-height: 1.45; word-break: break-word; }
-    .chat-input-row { display: flex; gap: 8px; align-items: center; }
-    .chat-empty { text-align: center; padding: 30px; color: var(--muted); font-size: 13px; }
-    .chat-msg.mine { flex-direction: row-reverse; }
+        .hero-badge .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse-dot 2s infinite;
+        }
 
-    /* ── Demo bottom banner ── */
-    .demo-bottom-banner {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      background: linear-gradient(90deg, #1e3a8a 0%, #2563eb 60%, #7c3aed 100%);
-      color: #fff;
-      padding: 10px 16px;
-      text-align: center;
-      font-size: 13px;
-      font-weight: 600;
-      z-index: 500;
-      box-shadow: 0 -2px 12px rgba(0,0,0,0.18);
-      line-height: 1.4;
-    }
-    .demo-bottom-banner a { color: #fbbf24; text-decoration: none; font-weight: 700; }
-    .demo-bottom-banner a:hover { color: #fde68a; }
-  </style>
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* Features */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .feature-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            background: var(--card-hover);
+            border-color: var(--primary);
+            transform: translateY(-4px);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .feature-icon.purple { background: rgba(124, 58, 237, 0.15); }
+        .feature-icon.cyan { background: rgba(6, 182, 212, 0.15); }
+        .feature-icon.green { background: rgba(16, 185, 129, 0.15); }
+        .feature-icon.amber { background: rgba(245, 158, 11, 0.15); }
+
+        .feature-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-bright);
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* How It Works */
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            position: relative;
+        }
+
+        .step {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            position: relative;
+        }
+
+        .step-number {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-bright);
+            margin: 0 auto 1.25rem;
+        }
+
+        .step h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-bright);
+            margin-bottom: 0.5rem;
+        }
+
+        .step p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Pricing */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            position: relative;
+        }
+
+        .pricing-card.featured {
+            border-color: var(--primary);
+            box-shadow: 0 0 40px rgba(124, 58, 237, 0.15);
+        }
+
+        .pricing-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: var(--text-bright);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.3rem 1rem;
+            border-radius: 100px;
+        }
+
+        .pricing-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-bright);
+            margin-bottom: 0.25rem;
+        }
+
+        .pricing-card .price {
+            font-size: 2.75rem;
+            font-weight: 900;
+            color: var(--text-bright);
+            margin: 1rem 0 0.25rem;
+        }
+
+        .pricing-card .price span {
+            font-size: 1rem;
+            font-weight: 400;
+            color: var(--text-muted);
+        }
+
+        .pricing-card .price-note {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-features li {
+            padding: 0.4rem 0;
+            font-size: 0.95rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pricing-features .check {
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        .pricing-card .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* Testimonials */
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .testimonial-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .testimonial-card .stars {
+            color: #f59e0b;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .testimonial-card blockquote {
+            font-size: 0.95rem;
+            color: var(--text);
+            line-height: 1.6;
+            margin-bottom: 1.25rem;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-bright);
+        }
+
+        .testimonial-role {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* FAQ */
+        .faq-list {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .faq-question {
+            width: 100%;
+            background: none;
+            border: none;
+            padding: 1.5rem 0;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text-bright);
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: inherit;
+        }
+
+        .faq-question:hover {
+            color: var(--accent);
+        }
+
+        .faq-question .icon {
+            font-size: 1.25rem;
+            transition: transform 0.3s;
+            color: var(--primary);
+        }
+
+        .faq-item.open .faq-question .icon {
+            transform: rotate(45deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-answer p {
+            padding-bottom: 1.5rem;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .faq-item.open .faq-answer {
+            max-height: 300px;
+        }
+
+        /* Final CTA */
+        .final-cta {
+            text-align: center;
+            background: linear-gradient(180deg, var(--bg) 0%, #12122a 100%);
+        }
+
+        .final-cta-box {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 4rem 2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .final-cta-box::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        .final-cta-box h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-bright);
+            margin-bottom: 1rem;
+        }
+
+        .final-cta-box p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.25rem;
+            }
+
+            .hero p {
+                font-size: 1.05rem;
+            }
+
+            .section-title {
+                font-size: 1.75rem;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(15, 15, 26, 0.98);
+                flex-direction: column;
+                padding: 1rem 1.5rem;
+                gap: 0.75rem;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .nav-links.open {
+                display: flex;
+            }
+
+            .nav-toggle {
+                display: block;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .final-cta-box {
+                padding: 3rem 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<!-- ── DEMO BOTTOM BANNER ── -->
-<div class="demo-bottom-banner">
-  🎾 <strong>DEMO VERSION</strong> — Exploring BoxLeague Pro? The full collaborative version is coming soon! &nbsp;·&nbsp; <a href="mailto:grant@aifusionautomations.com?subject=BoxLeague%20Pro%20Interest">Express interest →</a>
-</div>
-
-<div class="tools-bar">
-  <div class="tb-left">
-    <a href="https://aifusionautomations.com" target="_blank" rel="noopener">⚡ AI Fusion Automations</a>
-    &nbsp;·&nbsp;
-    <a href="https://tools.aifusionautomations.com/" target="_blank" rel="noopener">🛠️ Free Tools</a>
-  </div>
-  <div class="tb-centre">
-    <span class="app-name">BoxLeague Pro <span class="demo-badge">DEMO</span></span>
-    <span class="ver">DEMO v1.1</span>
-  </div>
-  <div class="tb-right">
-    <a href="mailto:grant@aifusionautomations.com?subject=BoxLeague%20Pro%20Feedback" class="feedback-link">💬 Feedback</a>
-  </div>
-</div>
-<div class="hdr">
-  <h1>🎾 BoxLeague Pro — DEMO</h1>
-  <p style="font-size:11px;opacity:0.55;margin-top:5px">Men's Doubles League Box 3 · Demo data pre-loaded</p>
-</div>
-<div id="deadline-banner" class="deadline-banner"></div>
-
-<!-- ── CHATBOT FEEDBACK CALLOUT ── -->
-<div style="background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);color:#fff;text-align:center;padding:10px 16px;font-size:13px;font-weight:600;letter-spacing:0.1px;">
-  💬 Got feedback? Use the <strong>chat widget in the bottom-right corner</strong> to share your thoughts!
-</div>
-
-<nav class="nav">
-  <div class="nav-tab active" onclick="showTab('teams')">Teams</div>
-  <div class="nav-tab" onclick="showTab('availability')">Availability</div>
-  <div class="nav-tab" onclick="showTab('fixtures')">Fixtures</div>
-  <div class="nav-tab" onclick="showTab('table')">League Table</div>
-  <div class="nav-tab" onclick="showTab('chat')">💬 Chat</div>
-  <div class="nav-tab" onclick="openHelp()" style="color:#2563eb;margin-left:auto;border-left:1px solid var(--border)">❓ Help</div>
+<!-- Navigation -->
+<nav>
+    <div class="nav-inner">
+        <div class="nav-logo">BoxLeague <span>Pro</span></div>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="https://boxleaguepro.com" class="nav-cta">Try Demo</a></li>
+        </ul>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">&#9776;</button>
+    </div>
 </nav>
 
-<div class="content">
-
-  <!-- ── TEAMS ── -->
-  <div id="tab-teams" class="section active">
-
-    <!-- DEMO CALLOUT -->
-    <div class="demo-callout">
-      <div class="demo-callout-header">
-        <div class="demo-callout-icon">👥</div>
-        <div>
-          <div class="demo-callout-title">Teams Tab</div>
-          <div class="demo-callout-subtitle">Demo Version 1.1</div>
+<!-- Hero -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-badge">
+            <span class="dot"></span>
+            100% Free — No Catch
         </div>
-      </div>
-      <div class="demo-callout-body">
-        This tab shows all <strong>6 doubles teams</strong> in your box league. Each card displays both players side by side — tap a photo circle to upload a profile picture (stored on your device).
-        <br><br>
-        You can <strong>add teams</strong> (up to 6), then generate the full round-robin fixture list. In the live version, team additions and photo updates sync instantly across all league members' devices.
-      </div>
-      <div class="demo-callout-note">
-        🔒 Demo note: All data is stored <strong>locally on your device only</strong> and will not sync with other users. In the full live version, all changes are shared in real-time.
-      </div>
+        <h1>Stop Managing Your Box League. <span class="highlight">Start Playing.</span></h1>
+        <p>BoxLeague Pro handles availability, match booking, and player coordination for tennis, padel, badminton, and squash clubs. Completely free.</p>
+        <div class="btn-group">
+            <a href="https://boxleaguepro.com" class="btn btn-primary">Start Using It Free</a>
+            <a href="#features" class="btn btn-outline">See Features</a>
+        </div>
     </div>
+</section>
 
-    <div class="info-box" style="margin-bottom:14px">ℹ️ Your league has 6 doubles teams. Tap a player photo to upload a profile picture.</div>
-    <div class="flex gap8" style="align-items:center; margin-bottom:14px; justify-content:space-between">
-      <div class="section-title" style="margin-bottom:0">Teams</div>
-      <button class="btn btn-primary btn-sm" onclick="showAddTeamForm()" id="btn-add-team">+ Add Team</button>
+<!-- Features -->
+<section id="features">
+    <div class="container text-center">
+        <span class="section-label">Features</span>
+        <h2 class="section-title">Everything Your Box League Needs</h2>
+        <p class="section-subtitle">No more spreadsheets, WhatsApp chaos, or missed matches. One app handles it all.</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon purple">&#128197;</div>
+                <h3>Automated Scheduling</h3>
+                <p>Round-robin fixtures generated instantly. Full season of matches created in seconds — no manual effort needed.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon cyan">&#9878;</div>
+                <h3>Fair Matchups</h3>
+                <p>Every team plays every other team. Balanced scheduling ensures no one gets an unfair advantage or plays too many back-to-back matches.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon green">&#128200;</div>
+                <h3>Real-Time Standings</h3>
+                <p>League tables update automatically as scores are entered. Points, sets won, matches played — all calculated for you.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon amber">&#128241;</div>
+                <h3>Mobile Friendly</h3>
+                <p>Works beautifully on phones and tablets. Players can check fixtures, enter scores, and view standings from the court.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon purple">&#128197;</div>
+                <h3>Availability Tracking</h3>
+                <p>Players mark when they can play. The app auto-suggests matches based on mutual availability — no more chasing people.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon cyan">&#128172;</div>
+                <h3>League Communication</h3>
+                <p>Built-in group chat and per-section comments keep all league discussions in one place. No more scattered messages.</p>
+            </div>
+        </div>
     </div>
+</section>
 
-    <div id="add-team-form" class="card" style="display:none; border:2px solid var(--green); background:#f8faff;">
-      <div class="card-title" style="margin-bottom:12px">New Team</div>
-      <div class="fg"><label class="fl">Team Name</label><input class="fi" id="inp-tname" placeholder="e.g. The Aces" /></div>
-      <div class="fg"><label class="fl">Player 1</label><input class="fi" id="inp-p1" placeholder="First Last" /></div>
-      <div class="fg"><label class="fl">Player 2</label><input class="fi" id="inp-p2" placeholder="First Last" /></div>
-      <div class="flex gap8 mt8">
-        <button class="btn btn-secondary" style="flex:1" onclick="hideAddTeamForm()">Cancel</button>
-        <button class="btn btn-primary" style="flex:1" onclick="addTeam()">Add Team</button>
-      </div>
+<!-- How It Works -->
+<section id="how-it-works" style="background: linear-gradient(180deg, var(--bg) 0%, #12122a 50%, var(--bg) 100%);">
+    <div class="container text-center">
+        <span class="section-label">How It Works</span>
+        <h2 class="section-title">Up and Running in 3 Steps</h2>
+        <p class="section-subtitle">Get your box league organised in minutes, not hours.</p>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>Set Up Your League</h3>
+                <p>Enter your teams and players. Choose your sport, match format, and scoring system. Takes less than 5 minutes.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>Fixtures Are Generated</h3>
+                <p>BoxLeague Pro creates a complete round-robin schedule automatically. Every team plays every other team — perfectly balanced.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>Play and Track</h3>
+                <p>Players enter scores after each match. Standings update in real time. You manage the league from your phone.</p>
+            </div>
+        </div>
     </div>
+</section>
 
-    <div id="teams-list"></div>
-    <div id="teams-footer"></div>
-
-    <!-- COMING SOON: Comments -->
-    <div class="divider" style="margin:24px 0 16px"></div>
-    <div class="card-title" style="margin-bottom:12px">💬 Comments &amp; Feedback</div>
-    <div class="coming-soon-block">
-      <div class="coming-soon-icon">🔒</div>
-      <div class="coming-soon-title">Comments — Coming in Live Version</div>
-      <div class="coming-soon-body">
-        In the full collaborative version, all league members can leave comments on the Teams tab — discussing players, confirming rosters, or just sharing banter. Comments sync in real-time across all users.
-      </div>
-      <div><span class="coming-soon-badge">✨ Available in Full Version</span></div>
+<!-- Pricing -->
+<section id="pricing">
+    <div class="container text-center">
+        <span class="section-label">Pricing</span>
+        <h2 class="section-title">Completely Free. No Catch.</h2>
+        <p class="section-subtitle">BoxLeague Pro is 100% free to use. No trial. No paywall. No credit card. Just use it.</p>
+        <div class="pricing-grid">
+            <div class="pricing-card featured">
+                <div class="pricing-badge">Free Forever</div>
+                <h3>Full Access</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Everything you need to run your box league</p>
+                <div class="price">&pound;0 <span>/ forever</span></div>
+                <p class="price-note">No limits. No upgrade required.</p>
+                <ul class="pricing-features">
+                    <li><span class="check">&#10003;</span> Unlimited leagues</li>
+                    <li><span class="check">&#10003;</span> Unlimited players</li>
+                    <li><span class="check">&#10003;</span> Availability tracking</li>
+                    <li><span class="check">&#10003;</span> Match booking</li>
+                    <li><span class="check">&#10003;</span> Mobile-first design</li>
+                    <li><span class="check">&#10003;</span> Google &amp; email sign-in</li>
+                    <li><span class="check">&#10003;</span> Works for any racquet sport</li>
+                </ul>
+                <a href="https://boxleaguepro.com" class="btn btn-primary">Start Using It Free</a>
+            </div>
+            <div class="pricing-card">
+                <h3>Club Branding</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Want your club's identity on the app?</p>
+                <div class="price">from &pound;99 <span>one-off</span></div>
+                <p class="price-note">Custom branding package</p>
+                <ul class="pricing-features">
+                    <li><span class="check">&#10003;</span> Your club logo on the app</li>
+                    <li><span class="check">&#10003;</span> Custom colour scheme</li>
+                    <li><span class="check">&#10003;</span> Club name in the header</li>
+                    <li><span class="check">&#10003;</span> Custom welcome message</li>
+                    <li><span class="check">&#10003;</span> Priority support</li>
+                </ul>
+                <a href="mailto:grant@aifusionautomations.com?subject=BoxLeague%20Pro%20—%20Club%20Branding%20Enquiry" class="btn btn-outline">Get a Quote</a>
+            </div>
+        </div>
     </div>
-  </div>
+</section>
 
-  <!-- ── AVAILABILITY ── -->
-  <div id="tab-availability" class="section">
-
-    <!-- DEMO CALLOUT -->
-    <div class="demo-callout">
-      <div class="demo-callout-header">
-        <div class="demo-callout-icon">📅</div>
-        <div>
-          <div class="demo-callout-title">Availability Tab</div>
-          <div class="demo-callout-subtitle">Demo Version 1.1</div>
+<!-- Testimonials -->
+<section id="testimonials" style="background: linear-gradient(180deg, var(--bg) 0%, #12122a 50%, var(--bg) 100%);">
+    <div class="container text-center">
+        <span class="section-label">Testimonials</span>
+        <h2 class="section-title">What League Organisers Say</h2>
+        <p class="section-subtitle">Early feedback from people who have tried BoxLeague Pro.</p>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <blockquote>"I used to spend an hour every week sorting fixtures in a spreadsheet. BoxLeague Pro does it in seconds. Absolute game changer."</blockquote>
+                <div class="testimonial-author">Club Organiser</div>
+                <div class="testimonial-role">Tennis Club, East Sussex</div>
+            </div>
+            <div class="testimonial-card">
+                <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <blockquote>"The availability feature alone is worth it. No more group messages trying to find a date that works. Players just mark when they're free."</blockquote>
+                <div class="testimonial-author">League Coordinator</div>
+                <div class="testimonial-role">Padel League, Surrey</div>
+            </div>
+            <div class="testimonial-card">
+                <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <blockquote>"Clean, simple, and it just works. Our players love being able to check standings on their phones right after a match."</blockquote>
+                <div class="testimonial-author">Committee Member</div>
+                <div class="testimonial-role">Badminton Club, Kent</div>
+            </div>
         </div>
-      </div>
-      <div class="demo-callout-body">
-        Each player selects their name from the dropdown, then <strong>taps grid slots</strong> (morning / afternoon / evening) to mark when they're free. Green = available.
-        <br><br>
-        The <strong>All Players calendar</strong> below shows everyone's availability overlaid, with coloured initials. The <strong>Match Suggestions</strong> section automatically finds slots where all 4 players in an unplayed fixture are free at the same time.
-      </div>
-      <div class="demo-callout-note">
-        🔒 Demo note: Your availability is saved <strong>locally on this device only</strong>. In the full live version, each player's availability syncs instantly — so the suggestions update for everyone in real-time.
-      </div>
     </div>
+</section>
 
-    <div class="info-box" style="margin-bottom:14px">ℹ️ <strong>1.</strong> Select your name below. &nbsp;<strong>2.</strong> Tap slots to mark when you're free (green = available). &nbsp;<strong>3.</strong> Your availability shows on the all-players calendar below.</div>
-    <div class="section-title">My Availability</div>
-    <div class="card">
-      <div class="fg" style="margin-bottom:0">
-        <label class="fl">Your Name</label>
-        <select class="fi" id="avail-sel" onchange="onPlayerSelect()">
-          <option value="">— Select your name —</option>
-        </select>
-      </div>
+<!-- FAQ -->
+<section id="faq">
+    <div class="container">
+        <div class="text-center">
+            <span class="section-label">FAQ</span>
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <p class="section-subtitle">Got questions? We have answers.</p>
+        </div>
+        <div class="faq-list">
+            <div class="faq-item">
+                <button class="faq-question">
+                    What sports does BoxLeague Pro support?
+                    <span class="icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    <p>BoxLeague Pro works with any racquet sport that uses a box league format — tennis, padel, badminton, squash, table tennis, and more. The match format and scoring system are fully configurable.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">
+                    Do players need to create accounts?
+                    <span class="icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    <p>Yes — players sign in with Google or email to mark their availability and book matches. It takes seconds and means the organiser does not have to chase anyone.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">
+                    How does the scoring system work?
+                    <span class="icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    <p>The default scoring awards 1 point per set won plus 1 bonus point for playing (both teams). For example, a 2-1 win gives the winner 3 points and the loser 2 points. This keeps the league competitive and rewards participation. Matches use best-of-3 sets with a championship tiebreak for the deciding set.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">
+                    Can I use this for singles leagues?
+                    <span class="icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    <p>Yes! BoxLeague Pro supports both doubles and singles leagues. When creating a singles league (squash, singles tennis, etc.), the partner step is automatically skipped.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">
+                    Is my data secure?
+                    <span class="icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    <p>Yes. BoxLeague Pro uses Firebase with encrypted connections and authentication. We collect only the minimum data needed to run your league (name and email) and never share it with third parties. Full GDPR compliance with consent tracking built in.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">
+                    Can I try it before committing?
+                    <span class="icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    <p>There is nothing to try — it is completely free. Just go to boxleaguepro.com, sign up, create your club and league, and start using it. No trial period, no credit card, no limits.</p>
+                </div>
+            </div>
+        </div>
     </div>
-    <div id="avail-body" style="display:none">
-      <div class="info-box">Tap a slot to toggle your availability. <strong>Green = available</strong>. Use the arrows to navigate weeks.</div>
-      <div class="wk-nav">
-        <button class="btn btn-secondary btn-sm" onclick="changeWeek(-1)">◀ Prev</button>
-        <span class="wk-title" id="wk-label"></span>
-        <button class="btn btn-secondary btn-sm" onclick="changeWeek(1)">Next ▶</button>
-      </div>
-      <div class="card" style="padding:12px 8px">
-        <div class="avail-wrap"><div id="avail-grid"></div></div>
-      </div>
+</section>
+
+<!-- Final CTA -->
+<section class="final-cta">
+    <div class="container">
+        <div class="final-cta-box">
+            <h2>Ready to Simplify Your Box League?</h2>
+            <p>It is completely free. No trial. No paywall. Just sign up and start organising.</p>
+            <div class="btn-group">
+                <a href="https://boxleaguepro.com" class="btn btn-primary">Start Using It Free</a>
+                <a href="mailto:grant@aifusionautomations.com?subject=BoxLeague%20Pro%20—%20Club%20Branding%20Enquiry" class="btn btn-outline">Ask About Club Branding</a>
+            </div>
+        </div>
     </div>
+</section>
 
-    <div class="divider" style="margin:20px 0 16px"></div>
-
-    <!-- All-player calendar -->
-    <div class="card-title" style="margin-bottom:10px">📅 All Players — Next 2 Weeks</div>
-    <div class="card" style="padding:12px 8px">
-      <div id="avail-legend" style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px;padding:0 4px"></div>
-      <div class="avail-cal-wrap"><div id="avail-cal-grid"></div></div>
+<!-- AIFA Agency CTA -->
+<section style="background: linear-gradient(180deg, var(--bg) 0%, #0a0a18 100%); padding: 4rem 1.5rem;">
+    <div class="container text-center">
+        <div style="max-width: 640px; margin: 0 auto;">
+            <span style="font-size: 2.5rem; display: block; margin-bottom: 1rem;">&#128161;</span>
+            <h2 class="section-title">Got an Idea for an App?</h2>
+            <p class="section-subtitle" style="margin-left: auto; margin-right: auto;">BoxLeague Pro is just one of several free tools we are building at AI Fusion Automations. We build software, automations, and AI systems for businesses of all sizes.</p>
+            <p style="color: var(--text-muted); font-size: 1.05rem; margin-bottom: 2rem;">Need help developing an app or a piece of software? Just curious how much it would cost? We would love to hear from you.</p>
+            <div class="btn-group">
+                <a href="mailto:grant@aifusionautomations.com?subject=App%20Idea%20%2F%20Software%20Enquiry" class="btn btn-primary">Get in Touch</a>
+                <a href="https://tools.aifusionautomations.com" class="btn btn-outline">See What We Build</a>
+            </div>
+        </div>
     </div>
+</section>
 
-    <!-- Auto-match suggestions -->
-    <div class="card-title" style="margin-bottom:10px;margin-top:20px">🎾 Match Suggestions</div>
-    <div class="info-box" style="margin-bottom:10px">Matches where all 4 players have overlapping availability in the next 2 weeks.</div>
-    <div id="avail-suggestions"></div>
-
-    <!-- COMING SOON: Comments -->
-    <div class="divider" style="margin:24px 0 16px"></div>
-    <div class="card-title" style="margin-bottom:12px">💬 Comments &amp; Feedback</div>
-    <div class="coming-soon-block">
-      <div class="coming-soon-icon">🔒</div>
-      <div class="coming-soon-title">Comments — Coming in Live Version</div>
-      <div class="coming-soon-body">
-        In the full version, players can comment on availability — e.g. "I'm away the week of the 14th" or "Can do any weekend morning." All comments sync in real-time across the league.
-      </div>
-      <div><span class="coming-soon-badge">✨ Available in Full Version</span></div>
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <p style="margin-bottom: 0.5rem;"><strong>BoxLeague Pro</strong> by <a href="https://aifusionautomations.com">AI Fusion Automations</a></p>
+        <p>Questions? Email <a href="mailto:grant@aifusionautomations.com">grant@aifusionautomations.com</a></p>
     </div>
-  </div>
-
-  <!-- ── FIXTURES ── -->
-  <div id="tab-fixtures" class="section">
-
-    <!-- DEMO CALLOUT -->
-    <div class="demo-callout">
-      <div class="demo-callout-header">
-        <div class="demo-callout-icon">📋</div>
-        <div>
-          <div class="demo-callout-title">Fixtures Tab</div>
-          <div class="demo-callout-subtitle">Demo Version 1.1</div>
-        </div>
-      </div>
-      <div class="demo-callout-body">
-        This tab lists all <strong>15 round-robin matches</strong> — every team vs every other team once. Filter by status (Unscheduled / Pending / Scheduled / Played), then <strong>tap any match</strong> to see details, propose a time, confirm it, or enter the final score.
-        <br><br>
-        The green badge on unscheduled matches shows <strong>how many overlapping availability slots</strong> exist for all 4 players — making it easy to spot which matches are easiest to arrange.
-      </div>
-      <div class="demo-callout-note">
-        🔒 Demo note: Scores and schedule changes are saved <strong>locally on this device</strong>. In the full live version, proposed times and confirmed matches are instantly visible to all players in the league.
-      </div>
-    </div>
-
-    <div class="info-box" style="margin-bottom:14px">ℹ️ Tap any fixture to see details or enter a score. Filter by status using the dropdown below.</div>
-    <div class="section-title">Fixtures</div>
-    <div style="margin-bottom:12px">
-      <select class="fi" id="fix-filter" onchange="renderFixtures()">
-        <option value="all">All matches</option>
-        <option value="unscheduled">Unscheduled</option>
-        <option value="proposed">Pending</option>
-        <option value="confirmed">Scheduled</option>
-        <option value="played">Played</option>
-      </select>
-    </div>
-    <div id="fixtures-list"></div>
-
-    <!-- COMING SOON: Comments -->
-    <div class="divider" style="margin:24px 0 16px"></div>
-    <div class="card-title" style="margin-bottom:12px">💬 Comments &amp; Feedback</div>
-    <div class="coming-soon-block">
-      <div class="coming-soon-icon">🔒</div>
-      <div class="coming-soon-title">Comments — Coming in Live Version</div>
-      <div class="coming-soon-body">
-        In the full version, players can comment on the Fixtures tab — e.g. to dispute a score, celebrate a result, or coordinate upcoming matches. Synced in real-time across all users.
-      </div>
-      <div><span class="coming-soon-badge">✨ Available in Full Version</span></div>
-    </div>
-  </div>
-
-  <!-- ── LEAGUE TABLE ── -->
-  <div id="tab-table" class="section">
-
-    <!-- DEMO CALLOUT -->
-    <div class="demo-callout">
-      <div class="demo-callout-header">
-        <div class="demo-callout-icon">🏆</div>
-        <div>
-          <div class="demo-callout-title">League Table Tab</div>
-          <div class="demo-callout-subtitle">Demo Version 1.1</div>
-        </div>
-      </div>
-      <div class="demo-callout-body">
-        The league table is <strong>automatically calculated</strong> from all played results. Scoring is: <strong>1 point per set won + 1 bonus point for playing</strong> (both teams get the bonus). Teams are sorted by points, then set difference, then game difference.
-        <br><br>
-        Below the table is a <strong>full results log</strong> — every played match with its date and set scores. The demo has 5 real results pre-loaded so you can see the table in action.
-      </div>
-      <div class="demo-callout-note">
-        🔒 Demo note: Results are calculated from data stored <strong>locally on this device</strong>. In the full live version, every score entered by any player updates the table for the whole league instantly.
-      </div>
-    </div>
-
-    <div class="info-box" style="margin-bottom:14px">ℹ️ <strong>Scoring:</strong> 1 point per set won + 1 bonus point for playing. Teams sorted by points, then set difference.</div>
-    <div class="section-title">League Table</div>
-    <div id="league-content"></div>
-
-    <!-- COMING SOON: Comments -->
-    <div class="divider" style="margin:24px 0 16px"></div>
-    <div class="card-title" style="margin-bottom:12px">💬 Comments &amp; Feedback</div>
-    <div class="coming-soon-block">
-      <div class="coming-soon-icon">🔒</div>
-      <div class="coming-soon-title">Comments — Coming in Live Version</div>
-      <div class="coming-soon-body">
-        In the full version, players can discuss the standings, challenge scores, or congratulate winners directly on the League Table tab. All comments sync across the league in real-time.
-      </div>
-      <div><span class="coming-soon-badge">✨ Available in Full Version</span></div>
-    </div>
-  </div>
-
-  <!-- ── CHAT ── -->
-  <div id="tab-chat" class="section">
-
-    <!-- DEMO CALLOUT -->
-    <div class="demo-callout">
-      <div class="demo-callout-header">
-        <div class="demo-callout-icon">💬</div>
-        <div>
-          <div class="demo-callout-title">Group Chat Tab</div>
-          <div class="demo-callout-subtitle">Demo Version 1.1</div>
-        </div>
-      </div>
-      <div class="demo-callout-body">
-        The Group Chat is the league's shared messaging space — coordinate match times, share court booking links, celebrate wins, or just keep the banter going.
-        <br><br>
-        In the <strong>full live version</strong>, messages are visible to all league members in real-time, just like a WhatsApp group but built right into the app. No phone numbers needed — just select your name and chat.
-      </div>
-      <div class="demo-callout-note">
-        🔒 Group Chat requires real-time sync between players — this feature is <strong>not available in the demo</strong>. It will be fully functional in the live collaborative version.
-      </div>
-    </div>
-
-    <div class="section-title">💬 Group Chat</div>
-
-    <div class="coming-soon-block" style="margin-top:8px">
-      <div class="coming-soon-icon">💬</div>
-      <div class="coming-soon-title">Group Chat — Coming in Live Version</div>
-      <div class="coming-soon-body">
-        The group chat lets all league members message each other in real-time — directly inside the app. Use it to arrange matches, confirm bookings, and share match updates.
-        <br><br>
-        This feature requires a live back-end to sync messages between players, so it's not available in this local demo.
-      </div>
-      <div><span class="coming-soon-badge">✨ Available in Full Version</span></div>
-    </div>
-
-    <!-- Greyed-out preview of what the chat UI looks like -->
-    <div style="opacity:0.35;pointer-events:none;margin-top:4px">
-      <div class="card" style="margin-bottom:8px">
-        <div class="fg" style="margin-bottom:0">
-          <label class="fl">Your Name</label>
-          <select class="fi" disabled>
-            <option>— Select your name —</option>
-          </select>
-        </div>
-      </div>
-      <div class="chat-messages" style="min-height:140px">
-        <div class="chat-empty">Messages will appear here in real-time 👋</div>
-      </div>
-      <div class="card" style="padding:12px">
-        <div class="chat-input-row">
-          <input class="fi" placeholder="Type a message…" style="flex:1;margin-bottom:0" disabled />
-          <button class="btn btn-primary" disabled>Send</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<!-- ── FOOTER ── -->
-<div class="aifa-footer">
-  <div class="aifa-footer-brand">⚡ Made by <a href="https://aifusionautomations.com" target="_blank" rel="noopener">AI Fusion Automations</a></div>
-  <div class="aifa-footer-sub">Questions or want a custom league app? <a href="mailto:grant@aifusionautomations.com">grant@aifusionautomations.com</a></div>
-</div>
-
-<!-- ── HELP DRAWER ── -->
-<div id="help-overlay" class="help-overlay" onclick="helpOverlayClick(event)">
-  <div class="help-drawer">
-    <div class="help-drawer-hdr">
-      <div>
-        <div class="help-drawer-title">📖 How to Use — DEMO</div>
-        <div class="help-drawer-sub">BoxLeague Pro DEMO v1.1 — quick guide</div>
-      </div>
-      <button class="help-close" onclick="closeHelp()">✕</button>
-    </div>
-
-    <div class="help-body">
-
-      <!-- Demo intro -->
-      <div class="help-section" style="background:#fefce8">
-        <div class="help-section-hdr">
-          <span class="help-section-icon">⚠️</span>
-          <span class="help-section-title" style="color:#92400e">This is a Demo</span>
-        </div>
-        <div class="help-step">
-          <div class="help-step-num" style="background:#f59e0b">!</div>
-          <div class="help-step-text">All data is <strong>stored locally on your device only</strong>. Nothing syncs with other users in this demo version.</div>
-        </div>
-        <div class="help-step">
-          <div class="help-step-num" style="background:#f59e0b">!</div>
-          <div class="help-step-text">The <strong>Group Chat</strong> and <strong>Comments</strong> features are disabled. They require real-time sync, available only in the full live version.</div>
-        </div>
-        <div class="help-tip" style="background:#fef9c3;border-color:#fbbf24;color:#78350f">💡 Interested in the full version for your league? Email <a href="mailto:grant@aifusionautomations.com" style="color:#1d4ed8">grant@aifusionautomations.com</a></div>
-      </div>
-
-      <!-- Teams -->
-      <div class="help-section">
-        <div class="help-section-hdr">
-          <span class="help-section-icon">👥</span>
-          <span class="help-section-title">Teams Tab</span>
-        </div>
-        <div class="help-step">
-          <div class="help-step-num">1</div>
-          <div class="help-step-text">The <strong>Teams</strong> tab shows all 6 doubles pairs in your league. Each card shows both players side by side.</div>
-        </div>
-        <div class="help-step">
-          <div class="help-step-num">2</div>
-          <div class="help-step-text">Tap a player's photo circle to <strong>upload a profile photo</strong>. It's stored on your device and shows throughout the app.</div>
-        </div>
-        <div class="help-step">
-          <div class="help-step-num">3</div>
-          <div class="help-step-text">New teams can be added with <strong>+ Add Team</strong>, up to 6 teams. Once all teams are added, generate the round-robin fixtures.</div>
-        </div>
-        <div class="help-tip">💡 The league runs a full round-robin — every team plays every other team once (15 matches total).</div>
-      </div>
-
-      <!-- Availability -->
-      <div class="help-section">
-        <div class="help-section-hdr">
-          <span class="help-section-icon">📅</span>
-          <span class="help-section-title">Availability Tab</span>
-        </div>
-        <div class="help-step">
-          <div class="help-step-num">1</div>
-          <div class="help-step-text">Select <strong>your name</strong> from the dropdown at the top.</div>
-        </div>
-        <div class="help-step">
-          <div class="help-step-num">2</div>
-          <div class="help-step-text">A weekly grid appears. <strong>Tap any slot</strong> (morning / afternoon / evening) to toggle yourself as available. Green = you're free.</div>
-        </div>
-        <div class="help-step">
-          <div class="help-step-num">3</div>
-          <div class="help-step-text">Use <strong>◀ Prev / Next ▶</strong> to navigate between weeks.</div>
-        </div>
-        <div class="help-step">
-          <div class="help-step-num">4</div>
-          <div class="help-step-text">The <strong>All Players — Next 2 Weeks</strong> calendar below updates instantly as you tap. Coloured initials show who's free in each slot.</div>
-        </div>
-        <div class="help-tip">💡 Your availability is saved to this device. Ask everyone to fill theirs in so the smart scheduler can find match times.</div>
-      </div>
-
-      <!-- Fixtures -->
-      <div class="help-section">
-        <div class="help-section-hdr">
-          <span class="help-section-icon">📋</span>
-          <span class="help-section-title">Fixtures Tab</span>
-        </div>
-        <div class="help-step">
-          <div class="help-step-num">1</div>
-          <div class="help-step-text">Every match has a <strong>status badge</strong>. Use the filter dropdown to view matches by status.</div>
-        </div>
-        <div class="help-badge-row">
-          <span class="help-badge b-unscheduled">Unscheduled</span>
-          <span class="help-badge b-proposed">Pending</span>
-          <span class="help-badge b-confirmed">Scheduled</span>
-          <span class="help-badge b-played">Played</span>
-        </div>
-        <div class="help-step" style="margin-top:10px">
-          <div class="help-step-num">2</div>
-          <div class="help-step-text"><strong>Tap any match</strong> to open its detail panel. From there you can propose a time, confirm, or reschedule.</div>
-        </div>
-        <div class="help-step">
-          <div class="help-step-num">3</div>
-          <div class="help-step-text">Once a match is played, tap <strong>Mark as Played</strong> and enter the set scores.</div>
-        </div>
-        <div class="help-tip">💡 A green badge shows how many overlapping availability slots exist for that fixture.</div>
-      </div>
-
-      <!-- League Table -->
-      <div class="help-section">
-        <div class="help-section-hdr">
-          <span class="help-section-icon">🏆</span>
-          <span class="help-section-title">League Table &amp; Scoring</span>
-        </div>
-        <div class="help-step">
-          <div class="help-step-num">1</div>
-          <div class="help-step-text"><strong>1 point per set won</strong> + <strong>1 bonus point for playing</strong>. A 2–0 win = 3pts. A 2–1 win = 3pts. A 1–2 loss = 2pts. A 0–2 loss = 1pt.</div>
-        </div>
-        <div class="help-step">
-          <div class="help-step-num">2</div>
-          <div class="help-step-text"><strong>Tiebreaker order:</strong> Total points → Set difference → Game difference.</div>
-        </div>
-        <div class="help-tip">💡 Scroll below the table for the full results log.</div>
-      </div>
-
-    </div><!-- /help-body -->
-
-    <div class="help-footer">
-      <button class="btn btn-primary btn-full" onclick="closeHelp()">Got it! ✓</button>
-    </div>
-  </div><!-- /help-drawer -->
-</div><!-- /help-overlay -->
-
-<!-- ── Photo upload input ── -->
-<input type="file" id="photo-upload-input" accept="image/*" style="display:none" onchange="handlePhotoUpload(this)">
-
-<!-- ── FIXTURE MODAL ── -->
-<div id="fix-modal" class="modal-overlay" onclick="modalBgClick(event)">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div id="modal-body"></div>
-  </div>
-</div>
-
-<div id="toast" class="toast"></div>
+</footer>
 
 <script>
-/* ── State ─────────────────────────────────────────────────── */
-const SK = 'eg_tennis_demo_v2';
-let S = { teams: [], availability: {}, fixtures: [] };
-
-/* ── Default league data ────────────────────────────────────── */
-const DEFAULT_TEAMS = [
-  { id:'M1', name:'Mark & Mark',    player1:'Mark D',  player2:'Mark P'  },
-  { id:'M2', name:'Sean & Dave',    player1:'Sean',    player2:'Dave'    },
-  { id:'M3', name:'Greg & Pete',    player1:'Greg',    player2:'Pete'    },
-  { id:'M4', name:'Grant & James',  player1:'Grant',   player2:'James'   },
-  { id:'M5', name:'Stuart & Toby',  player1:'Stuart',  player2:'Toby'    },
-  { id:'M6', name:'Vinay & Shaun',  player1:'Vinay',   player2:'Shaun'   },
-];
-
-function initDefaults() {
-  S.teams = DEFAULT_TEAMS.map(t => ({...t}));
-  S.availability = {};
-
-  // Generate round-robin (15 fixtures)
-  const fixes = [];
-  let n = 1;
-  for (let i = 0; i < S.teams.length; i++)
-    for (let j = i+1; j < S.teams.length; j++)
-      fixes.push({ id:'F'+n++, t1:S.teams[i].id, t2:S.teams[j].id,
-        status:'unscheduled', date:null, slot:null,
-        scheduledTime:null, court:null, note:null, score:null });
-
-  const set = (t1, t2, fields) => {
-    const f = fixes.find(f => f.t1===t1 && f.t2===t2);
-    if (f) Object.assign(f, fields);
-  };
-
-  // ── Played results ──
-  set('M3','M4', { status:'played', date:'2026-01-28', score:'4-6 2-6|6-4 6-2' });
-  set('M2','M6', { status:'played', date:'2026-02-14', score:'2-6 2-6|6-2 6-2' });
-  set('M1','M4', { status:'played', date:'2026-02-28', score:'1-6 6-3 6-10|6-1 3-6 10-6' });
-  set('M3','M5', { status:'played', date:'2026-03-22', score:'6-4 4-6 4-6|4-6 6-4 6-4' });
-  set('M4','M5', { status:'played', date:'2026-03-23', score:'1-6 7-5 10-7|6-1 5-7 7-10' });
-
-  // ── Scheduled matches ──
-  set('M3','M6', { status:'confirmed', date:'2026-03-29', scheduledTime:'09:00–10:30', court:'Court booked' });
-  set('M5','M6', { status:'confirmed', date:'2026-03-29', scheduledTime:'12:00', court:'Court booked' });
-  set('M4','M6', { status:'confirmed', date:'2026-03-30', scheduledTime:'16:30–18:00', court:'Court 1' });
-  set('M1','M6', { status:'proposed', date:'2026-03-30', scheduledTime:'18:00', court:'Court 1', note:'Pending Mark Davis confirmation' });
-
-  S.fixtures = fixes;
-  save();
-}
-
-function decodeHtml(s) { const t = document.createElement('textarea'); t.innerHTML = s; return t.value; }
-function load() {
-  try {
-    const d = localStorage.getItem(SK);
-    if (d) {
-      S = JSON.parse(d);
-      if (!S.teams || S.teams.length === 0) { initDefaults(); return; }
-      // Decode any HTML-encoded team/player names from old data
-      S.teams.forEach(t => {
-        t.name = decodeHtml(t.name);
-        t.player1 = decodeHtml(t.player1);
-        t.player2 = decodeHtml(t.player2);
-      });
-    } else {
-      initDefaults();
-    }
-  } catch(e) { initDefaults(); }
-}
-function save() { localStorage.setItem(SK, JSON.stringify(S)); }
-
-/* ── Tabs ───────────────────────────────────────────────────── */
-const TABS = ['teams','availability','fixtures','table','chat'];
-function showTab(t) {
-  TABS.forEach((tab, i) => {
-    document.getElementById('tab-' + tab).classList.toggle('active', tab === t);
-    document.querySelectorAll('.nav-tab')[i].classList.toggle('active', tab === t);
-  });
-  if (t === 'availability') { refreshPlayerSelect(); renderAllAvail(); renderSuggestions(); }
-  if (t === 'fixtures') renderFixtures();
-  if (t === 'table') renderTable();
-}
-
-/* ── Player photos (base64 in localStorage) ─────────────────── */
-const PHOTOS_SK = 'eg_tennis_demo_photos_v1';
-let playerPhotos = {};
-
-function loadPhotos() {
-  try { playerPhotos = JSON.parse(localStorage.getItem(PHOTOS_SK) || '{}'); } catch(e) { playerPhotos = {}; }
-}
-function savePhotos() { localStorage.setItem(PHOTOS_SK, JSON.stringify(playerPhotos)); }
-
-function triggerPhotoUpload(playerName) {
-  const input = document.getElementById('photo-upload-input');
-  input._targetPlayer = playerName;
-  input.click();
-}
-
-function handlePhotoUpload(input) {
-  const file = input.files[0];
-  const playerName = input._targetPlayer;
-  if (!file || !playerName) return;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    playerPhotos[playerName] = e.target.result;
-    savePhotos();
-    renderTeams();
-    input.value = '';
-  };
-  reader.readAsDataURL(file);
-}
-
-function playerCardHtml(name) {
-  const color = getPlayerColor(name);
-  const initials = getInitials(name);
-  const photo = playerPhotos[name];
-  const imgStyle = photo
-    ? `background-image:url(${photo});background-size:cover;background-position:center;`
-    : `background:${color};`;
-  const inner = photo ? '' : `<span class="initials">${x(initials)}</span>`;
-  return `
-    <div class="player-col">
-      <div class="player-photo-wrap" onclick="triggerPhotoUpload('${x(name)}')">
-        <div class="player-photo" style="${imgStyle}">${inner}</div>
-        <div class="player-photo-upload" title="Upload photo">📷</div>
-      </div>
-      <div class="player-col-name">${x(name)}</div>
-    </div>`;
-}
-
-/* ── Teams ──────────────────────────────────────────────────── */
-function renderTeams() {
-  const list = document.getElementById('teams-list');
-  const footer = document.getElementById('teams-footer');
-
-  if (S.teams.length === 0) {
-    list.innerHTML = `<div class="empty"><div class="empty-icon">🎾</div><h3>No teams yet</h3><p>Tap "Add Team" to register up to 6 teams</p></div>`;
-    footer.innerHTML = '';
-    return;
-  }
-
-  list.innerHTML = S.teams.map(t => `
-    <div class="card">
-      <div class="card-title" style="margin-bottom:14px;text-align:center">${x(t.name)}</div>
-      <div class="team-players-row">
-        ${playerCardHtml(t.player1)}
-        <div class="team-divider"></div>
-        ${playerCardHtml(t.player2)}
-      </div>
-    </div>`).join('');
-
-  const n = S.teams.length;
-  const totalPossible = n * (n - 1) / 2;
-
-  if (S.fixtures.length > 0) {
-    footer.innerHTML = `
-      <div class="info-box">
-        ✅ ${S.fixtures.length} fixtures active.
-        <a href="#" style="color:var(--blue);font-weight:700" onclick="resetFixtures(event)">Reset fixtures</a>
-        &nbsp;·&nbsp;
-        <a href="#" style="color:var(--blue);font-weight:700" onclick="resetToDefaults(event)">Reset to league defaults</a>
-      </div>`;
-  } else if (n >= 2) {
-    footer.innerHTML = `
-      <div class="card" style="background:#eff6ff;border:1px solid #bfdbfe">
-        <div class="card-title" style="color:var(--green-dark);margin-bottom:6px">${n === 6 ? '✅ All 6 teams added!' : `${n} / 6 teams`}</div>
-        <p class="txt-muted" style="margin-bottom:12px">
-          ${n < 6 ? 'Add more teams, or' : 'Ready to'} generate the ${totalPossible}-match round-robin.
-        </p>
-        <button class="btn btn-primary btn-full" onclick="generateFixtures()">Generate ${totalPossible} Fixtures</button>
-      </div>`;
-  } else {
-    footer.innerHTML = '';
-  }
-
-  document.getElementById('btn-add-team').style.display = n >= 6 ? 'none' : '';
-}
-
-function showAddTeamForm() {
-  document.getElementById('add-team-form').style.display = 'block';
-  document.getElementById('inp-tname').focus();
-}
-function hideAddTeamForm() {
-  document.getElementById('add-team-form').style.display = 'none';
-  ['inp-tname','inp-p1','inp-p2'].forEach(id => document.getElementById(id).value = '');
-}
-function addTeam() {
-  const name = v('inp-tname'), p1 = v('inp-p1'), p2 = v('inp-p2');
-  if (!name || !p1 || !p2) { toast('Please fill in all fields'); return; }
-  if (S.teams.length >= 6) { toast('Maximum 6 teams'); return; }
-  const pAll = getAllPlayers();
-  if (pAll.includes(p1)) { toast(`${p1} is already registered`); return; }
-  if (pAll.includes(p2)) { toast(`${p2} is already registered`); return; }
-  if (p1.toLowerCase() === p2.toLowerCase()) { toast('Player names must be different'); return; }
-  S.teams.push({ id: 'T' + Date.now(), name, player1: p1, player2: p2 });
-  save(); hideAddTeamForm(); renderTeams(); toast('Team added!');
-}
-function removeTeam(id) {
-  if (!confirm('Remove this team? This will also remove their fixtures.')) return;
-  S.teams = S.teams.filter(t => t.id !== id);
-  S.fixtures = S.fixtures.filter(f => f.t1 !== id && f.t2 !== id);
-  save(); renderTeams();
-}
-function generateFixtures() {
-  const teams = S.teams;
-  const fixes = [];
-  let n = 1;
-  for (let i = 0; i < teams.length; i++)
-    for (let j = i+1; j < teams.length; j++)
-      fixes.push({ id:'F'+n++, t1:teams[i].id, t2:teams[j].id,
-        status:'unscheduled', date:null, slot:null,
-        scheduledTime:null, court:null, note:null, score:null });
-  S.fixtures = fixes;
-  save(); renderTeams(); toast(`${fixes.length} fixtures generated!`);
-}
-function resetFixtures(e) {
-  e.preventDefault();
-  if (!confirm('Reset all fixtures and scores? This cannot be undone.')) return;
-  S.fixtures = []; save(); renderTeams();
-}
-function resetToDefaults(e) {
-  e.preventDefault();
-  if (!confirm('Reset everything to the league defaults? This will overwrite all current data.')) return;
-  initDefaults(); renderTeams(); toast('Reset to league defaults');
-}
-
-/* ── Availability ───────────────────────────────────────────── */
-let weekOff = 0;
-
-function getAllPlayers() {
-  return S.teams.flatMap(t => [t.player1, t.player2]);
-}
-
-function refreshPlayerSelect() {
-  const sel = document.getElementById('avail-sel');
-  const cur = sel.value;
-  sel.innerHTML = '<option value="">— Select your name —</option>';
-  getAllPlayers().forEach(p => {
-    const o = document.createElement('option');
-    o.value = p; o.textContent = p;
-    if (p === cur) o.selected = true;
-    sel.appendChild(o);
-  });
-  onPlayerSelect();
-}
-
-function onPlayerSelect() {
-  const p = document.getElementById('avail-sel').value;
-  document.getElementById('avail-body').style.display = p ? 'block' : 'none';
-  if (p) renderAvailGrid();
-}
-
-function weekDates() {
-  const today = new Date(); today.setHours(0,0,0,0);
-  const dow = today.getDay();
-  const mon = new Date(today);
-  mon.setDate(today.getDate() - (dow === 0 ? 6 : dow - 1) + weekOff * 7);
-  return Array.from({length:7}, (_, i) => { const d = new Date(mon); d.setDate(mon.getDate()+i); return d; });
-}
-
-function ds(d) { return d.toISOString().split('T')[0]; }
-function avk(player, date, slot) { return `${player}|${ds(date)}|${slot}`; }
-function isTd(d) { const t=new Date(); return d.getFullYear()===t.getFullYear()&&d.getMonth()===t.getMonth()&&d.getDate()===t.getDate(); }
-function fmtShort(d) { return d.toLocaleDateString('en-GB', {day:'numeric',month:'short'}); }
-function fmtFull(s) {
-  const d = new Date(s + 'T00:00:00');
-  return d.toLocaleDateString('en-GB', {weekday:'short',day:'numeric',month:'short',year:'numeric'});
-}
-function cap(s) { return s ? s[0].toUpperCase()+s.slice(1) : s; }
-
-function renderAvailGrid() {
-  const player = document.getElementById('avail-sel').value;
-  if (!player) return;
-  const dates = weekDates();
-  const slots = ['morning','afternoon','evening'];
-  const slotIcons = { morning:'🌅', afternoon:'☀️', evening:'🌙' };
-  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-
-  document.getElementById('wk-label').textContent = `${fmtShort(dates[0])} – ${fmtShort(dates[6])}`;
-
-  let h = `<table class="avail-tbl"><thead><tr><th style="text-align:left;min-width:80px">Slot</th>`;
-  dates.forEach((d,i) => {
-    const td = isTd(d);
-    h += `<th style="${td?'color:var(--green);':''}${d.getDay()===0||d.getDay()===6?'background:#fafafa;':''}">
-      ${days[i]}<br><span style="font-size:10px;font-weight:400">${d.getDate()}</span></th>`;
-  });
-  h += '</tr></thead><tbody>';
-  slots.forEach(slot => {
-    h += `<tr><td class="slot-lbl">${slotIcons[slot]} ${cap(slot)}</td>`;
-    dates.forEach(d => {
-      const on = S.availability[avk(player, d, slot)] ? 'on' : '';
-      h += `<td><div class="cell ${on}" data-date="${ds(d)}" data-slot="${slot}" onclick="toggleCell(this)"></div></td>`;
+    // Mobile nav toggle
+    document.getElementById('navToggle').addEventListener('click', function() {
+        document.getElementById('navLinks').classList.toggle('open');
     });
-    h += '</tr>';
-  });
-  h += '</tbody></table>';
-  document.getElementById('avail-grid').innerHTML = h;
-}
 
-function toggleCell(el) {
-  const player = document.getElementById('avail-sel').value;
-  if (!player) return;
-  const d = new Date(el.dataset.date + 'T00:00:00');
-  const key = avk(player, d, el.dataset.slot);
-  if (S.availability[key]) { delete S.availability[key]; el.classList.remove('on'); }
-  else { S.availability[key] = true; el.classList.add('on'); }
-  save();
-  renderAllAvail();
-  renderSuggestions();
-}
-
-function changeWeek(dir) { weekOff += dir; renderAvailGrid(); }
-
-/* ── Fixtures ───────────────────────────────────────────────── */
-function findSlots(fix) {
-  const t1 = S.teams.find(t => t.id === fix.t1);
-  const t2 = S.teams.find(t => t.id === fix.t2);
-  if (!t1 || !t2) return [];
-  const players = [t1.player1, t1.player2, t2.player1, t2.player2];
-  const result = [];
-  const today = new Date(); today.setHours(0,0,0,0);
-  for (let i = 0; i < 42; i++) {
-    const d = new Date(today); d.setDate(today.getDate()+i);
-    for (const slot of ['morning','afternoon','evening']) {
-      if (players.every(p => S.availability[avk(p, d, slot)]))
-        result.push({ date: ds(d), slot });
-    }
-  }
-  return result;
-}
-
-function renderFixtures() {
-  const filter = document.getElementById('fix-filter').value;
-  const el = document.getElementById('fixtures-list');
-  if (S.fixtures.length === 0) {
-    el.innerHTML = `<div class="empty"><div class="empty-icon">📋</div><h3>No fixtures yet</h3><p>Add teams and generate fixtures in the Teams tab</p></div>`;
-    return;
-  }
-  let fixes = filter === 'all' ? S.fixtures : S.fixtures.filter(f => f.status === filter);
-  if (fixes.length === 0) {
-    el.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div><h3>No ${filter} matches</h3></div>`;
-    return;
-  }
-  el.innerHTML = fixes.map(f => {
-    const t1 = S.teams.find(t => t.id === f.t1);
-    const t2 = S.teams.find(t => t.id === f.t2);
-    if (!t1 || !t2) return '';
-    const slots = f.status === 'unscheduled' ? findSlots(f) : [];
-    const slotBadge = f.status === 'unscheduled' && slots.length > 0
-      ? `<span class="slot-count">🟢 ${slots.length} slot${slots.length!==1?'s':''}</span>` : '';
-    const noSlot = f.status === 'unscheduled' && slots.length === 0
-      ? `<span class="badge b-unscheduled" style="background:#fee2e2;color:#b91c1c">No availability</span>` : '';
-
-    let scoreHtml = '';
-    if (f.score) {
-      const sc = parseScore(f.score);
-      if (sc) {
-        const winner = sc.s1 > sc.s2 ? x(t1.name) : sc.s2 > sc.s1 ? x(t2.name) : 'Draw';
-        const wLabel = sc.s1 === sc.s2 ? 'Draw' : `${winner} won`;
-        scoreHtml = `<div class="fix-score">${sc.s1}–${sc.s2} sets &nbsp;·&nbsp; ${wLabel}</div>`;
-      }
-    }
-
-    const timeStr = f.scheduledTime || (f.slot ? cap(f.slot) : '');
-    const timeHtml = f.date
-      ? `<div class="fix-time">📅 ${fmtFull(f.date)}${timeStr ? '&ensp;' + timeStr : ''}</div>` : '';
-    const courtHtml = f.court ? `<div class="fix-court">🎾 ${x(f.court)}</div>` : '';
-    const noteHtml  = f.note  ? `<div class="fix-note">⚠️ ${x(f.note)}</div>` : '';
-
-    const extraCls = f.status === 'confirmed' ? ' fix-confirmed' : f.status === 'proposed' ? ' fix-proposed' : '';
-
-    return `<div class="fix-item${extraCls}" onclick="openFixture('${f.id}')">
-      <div class="fix-teams">${x(t1.name)} <span style="color:#9ca3af;font-weight:400">vs</span> ${x(t2.name)}</div>
-      <div class="fix-players">${x(t1.player1)} &amp; ${x(t1.player2)} &nbsp;·&nbsp; ${x(t2.player1)} &amp; ${x(t2.player2)}</div>
-      <div class="fix-meta">
-        <span class="badge b-${f.status}">${statusLbl(f.status)}</span>
-        ${slotBadge}${noSlot}
-      </div>
-      ${timeHtml}${courtHtml}${noteHtml}${scoreHtml}
-    </div>`;
-  }).join('');
-}
-
-/* ── Fixture modal ──────────────────────────────────────────── */
-let activeFixId = null;
-
-function openFixture(id) {
-  activeFixId = id;
-  renderModal();
-  document.getElementById('fix-modal').classList.add('open');
-}
-
-function renderModal() {
-  const id = activeFixId;
-  const f = S.fixtures.find(f => f.id === id);
-  if (!f) return;
-  const t1 = S.teams.find(t => t.id === f.t1);
-  const t2 = S.teams.find(t => t.id === f.t2);
-  if (!t1 || !t2) return;
-
-  const slots = findSlots(f);
-
-  let slotsHtml = '';
-  if (f.status !== 'played') {
-    if (slots.length === 0) {
-      slotsHtml = `<div class="warn-box">No overlapping availability found for all 4 players. Ask everyone to update their availability.</div>`;
-    } else {
-      slotsHtml = `<div class="card-title" style="margin-bottom:9px">Best Available Times <span class="txt-muted">(${slots.length} found)</span></div>
-        ${slots.slice(0,6).map(s =>
-          `<div class="ts">
-            <div><div class="ts-info">${fmtFull(s.date)}</div><div class="ts-sub">${cap(s.slot)} session</div></div>
-            <button class="btn btn-primary btn-sm" onclick="proposeTime('${s.date}','${s.slot}')">
-              ${f.status==='unscheduled'?'Propose':'Reschedule'}
-            </button>
-          </div>`
-        ).join('')}
-        ${slots.length>6?`<div class="txt-muted" style="text-align:center;padding:6px">+${slots.length-6} more slots</div>`:''}
-        <div class="divider"></div>`;
-    }
-  }
-
-  let actions = '';
-  if (f.status === 'proposed') {
-    actions = `<div class="card-title" style="margin-bottom:9px">Actions</div>
-      <div class="flex gap8" style="margin-bottom:14px">
-        <button class="btn btn-primary" style="flex:1" onclick="setStatus('confirmed')">✅ Confirm</button>
-        <button class="btn btn-secondary" style="flex:1" onclick="setStatus('unscheduled')">Unschedule</button>
-      </div>`;
-  }
-  if (f.status === 'confirmed') {
-    actions = `<div class="flex gap8" style="margin-bottom:14px">
-      <button class="btn btn-primary" style="flex:1" onclick="setStatus('played')">Mark as Played</button>
-      <button class="btn btn-secondary" style="flex:1" onclick="setStatus('unscheduled')">Unschedule</button>
-    </div>`;
-  }
-
-  let scoreHtml = '';
-  if (f.status === 'confirmed' || f.status === 'played') {
-    const sc = f.score ? f.score.split('|') : ['',''];
-    const parsed = parseScore(f.score);
-    let scoreSummary = '';
-    if (parsed && f.score) {
-      const winner = parsed.s1 > parsed.s2 ? t1.name : parsed.s2 > parsed.s1 ? t2.name : null;
-      scoreSummary = `
-        <div class="score-summary">
-          <div class="score-team">
-            <div class="score-team-name">${x(t1.name)}</div>
-            <div class="score-team-sets">${parsed.s1}</div>
-          </div>
-          <div class="score-sep">–</div>
-          <div class="score-team">
-            <div class="score-team-name">${x(t2.name)}</div>
-            <div class="score-team-sets">${parsed.s2}</div>
-          </div>
-        </div>
-        <div class="score-detail">
-          ${winner ? `<strong>${x(winner)}</strong> won` : '<strong>Draw</strong>'} &nbsp;·&nbsp;
-          Sets: ${x(sc[0])} / ${x(sc[1])}
-        </div>`;
-    }
-    scoreHtml = `<div class="divider"></div>
-      <div class="card-title" style="margin-bottom:10px">Score</div>
-      ${scoreSummary}
-      <div class="txt-muted" style="margin-bottom:8px;font-size:12px">Enter set scores for each team (e.g. <strong>6-4 6-3</strong> for 2 sets won)</div>
-      <div class="score-row"><label>${x(t1.name)}</label><input class="score-in fi" id="sc1" placeholder="6-4 6-3" value="${x(sc[0])}" /></div>
-      <div class="score-row"><label>${x(t2.name)}</label><input class="score-in fi" id="sc2" placeholder="4-6 3-6" value="${x(sc[1])}" /></div>
-      <button class="btn btn-primary btn-full" onclick="saveScore()">Save Score</button>`;
-  }
-
-  const timeStr = f.scheduledTime || (f.slot ? cap(f.slot) : '');
-  const scheduleInfo = (f.date || f.court || f.note) ? `
-    <div style="background:#f9fafb;border-radius:9px;padding:11px 13px;margin-bottom:14px;font-size:13px">
-      ${f.date ? `<div>📅 <strong>${fmtFull(f.date)}</strong>${timeStr ? '&ensp;' + timeStr : ''}</div>` : ''}
-      ${f.court ? `<div style="margin-top:4px">🎾 ${x(f.court)}</div>` : ''}
-      ${f.note  ? `<div style="margin-top:4px;color:#b45309;font-weight:600">⚠️ ${x(f.note)}</div>` : ''}
-    </div>` : '';
-
-  document.getElementById('modal-body').innerHTML = `
-    <div class="modal-title">${x(t1.name)} vs ${x(t2.name)}</div>
-    <div class="flex gap8 wrap" style="margin-bottom:12px">
-      <span class="badge b-${f.status}">${statusLbl(f.status)}</span>
-    </div>
-    <div class="players-grid">
-      <div class="players-box">
-        <div class="players-box-label">${x(t1.name)}</div>
-        <div class="players-box-name">${x(t1.player1)}<br>${x(t1.player2)}</div>
-      </div>
-      <div class="players-box">
-        <div class="players-box-label">${x(t2.name)}</div>
-        <div class="players-box-name">${x(t2.player1)}<br>${x(t2.player2)}</div>
-      </div>
-    </div>
-    ${scheduleInfo}
-    ${actions}
-    ${slotsHtml}
-    ${scoreHtml}
-    <button class="btn btn-secondary btn-full mt12" onclick="closeModal()">Close</button>
-  `;
-}
-
-function modalBgClick(e) { if (e.target === document.getElementById('fix-modal')) closeModal(); }
-function closeModal() { document.getElementById('fix-modal').classList.remove('open'); }
-
-function proposeTime(date, slot) {
-  const f = S.fixtures.find(f => f.id === activeFixId);
-  if (!f) return;
-  f.status = 'proposed'; f.date = date; f.slot = slot;
-  save(); toast('Time proposed!'); renderModal(); renderFixtures();
-}
-
-function setStatus(status) {
-  const f = S.fixtures.find(f => f.id === activeFixId);
-  if (!f) return;
-  f.status = status;
-  if (status === 'unscheduled') { f.date = null; f.slot = null; f.scheduledTime = null; f.court = null; f.note = null; }
-  save(); toast(`Status: ${statusLbl(status)}`); renderModal(); renderFixtures();
-}
-
-function saveScore() {
-  const f = S.fixtures.find(f => f.id === activeFixId);
-  if (!f) return;
-  const s1 = document.getElementById('sc1').value.trim();
-  const s2 = document.getElementById('sc2').value.trim();
-  if (!s1 || !s2) { toast('Enter scores for both teams'); return; }
-  f.score = `${s1}|${s2}`; f.status = 'played';
-  save(); toast('Score saved!'); renderModal(); renderFixtures(); renderTable();
-}
-
-/* ── Score parser ────────────────────────────────────────────── */
-function parseScore(raw) {
-  if (!raw) return null;
-  const r1 = raw.split('|')[0];
-  if (!r1) return null;
-  try {
-    const sets = r1.trim().split(/\s+/);
-    let s1=0, s2=0, g1=0, g2=0;
-    sets.forEach(s => {
-      const parts = s.split('-').map(Number);
-      if (parts.length >= 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
-        g1 += parts[0]; g2 += parts[1];
-        if (parts[0] > parts[1]) s1++;
-        else if (parts[1] > parts[0]) s2++;
-      }
+    // FAQ accordion
+    document.querySelectorAll('.faq-question').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var item = this.parentElement;
+            var isOpen = item.classList.contains('open');
+            // Close all
+            document.querySelectorAll('.faq-item').forEach(function(i) {
+                i.classList.remove('open');
+            });
+            // Toggle clicked
+            if (!isOpen) {
+                item.classList.add('open');
+            }
+        });
     });
-    return { s1, s2, g1, g2 };
-  } catch(e) { return null; }
-}
 
-/* ── League Table ───────────────────────────────────────────── */
-function renderTable() {
-  const el = document.getElementById('league-content');
-  if (S.teams.length === 0) {
-    el.innerHTML = `<div class="empty"><div class="empty-icon">🏆</div><h3>No teams yet</h3></div>`;
-    return;
-  }
-  const rows = S.teams.map(t => ({
-    id:t.id, name:t.name, p1:t.player1, p2:t.player2,
-    P:0, W:0, D:0, L:0, SF:0, SA:0, GF:0, GA:0, pts:0
-  }));
-
-  S.fixtures.filter(f => f.status==='played' && f.score).forEach(f => {
-    const sc = parseScore(f.score);
-    if (!sc) return;
-    const r1 = rows.find(r => r.id===f.t1);
-    const r2 = rows.find(r => r.id===f.t2);
-    if (!r1 || !r2) return;
-    r1.P++; r2.P++;
-    r1.SF += sc.s1; r1.SA += sc.s2; r1.GF += sc.g1; r1.GA += sc.g2;
-    r2.SF += sc.s2; r2.SA += sc.s1; r2.GF += sc.g2; r2.GA += sc.g1;
-    r1.pts += sc.s1 + 1;
-    r2.pts += sc.s2 + 1;
-    if (sc.s1 > sc.s2)      { r1.W++; r2.L++; }
-    else if (sc.s2 > sc.s1) { r2.W++; r1.L++; }
-    else                    { r1.D++; r2.D++; }
-  });
-
-  rows.sort((a,b) => {
-    if (b.pts !== a.pts) return b.pts - a.pts;
-    const sd = r => r.SF - r.SA;
-    if (sd(b) !== sd(a)) return sd(b) - sd(a);
-    return (b.GF - b.GA) - (a.GF - a.GA);
-  });
-
-  const rankCls = ['r1','r2','r3','rx','rx','rx'];
-  const played = S.fixtures.filter(f => f.status==='played');
-
-  el.innerHTML = `
-    <div style="overflow-x:auto;border-radius:9px;box-shadow:var(--shadow)">
-      <table class="ltbl">
-        <thead><tr>
-          <th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th>
-          <th title="Sets For">SF</th><th title="Sets Against">SA</th><th>Pts</th>
-        </tr></thead>
-        <tbody>${rows.map((r,i) => `<tr>
-          <td>
-            <span class="rank ${rankCls[i]}">${i+1}</span><strong>${x(r.name)}</strong>
-            <div style="font-size:11px;color:var(--muted);padding-left:30px;margin-top:2px">${x(r.p1)} &amp; ${x(r.p2)}</div>
-          </td>
-          <td>${r.P}</td><td>${r.W}</td><td>${r.D}</td><td>${r.L}</td>
-          <td>${r.SF}</td><td>${r.SA}</td>
-          <td><strong>${r.pts}</strong></td>
-        </tr>`).join('')}</tbody>
-      </table>
-    </div>
-    <div class="txt-muted mt8" style="padding:4px 2px">
-      1pt per set won + 1pt for playing &nbsp;·&nbsp; SF/SA = Sets For/Against &nbsp;·&nbsp; Sorted by pts → set diff → game diff
-    </div>
-    ${played.length > 0 ? `
-      <div class="mt16">
-        <div class="card-title" style="margin-bottom:10px">Results (${played.length} played)</div>
-        ${played.slice().reverse().map(f => {
-          const t1 = S.teams.find(t => t.id===f.t1);
-          const t2 = S.teams.find(t => t.id===f.t2);
-          if (!t1 || !t2) return '';
-          const sc = parseScore(f.score);
-          const sc2 = f.score ? f.score.split('|') : ['?','?'];
-          const winner = sc && sc.s1 > sc.s2 ? t1.name : sc && sc.s2 > sc.s1 ? t2.name : null;
-          const sets = sc ? `${sc.s1}–${sc.s2}` : '?–?';
-          return `<div class="card" style="padding:12px;margin-bottom:8px">
-            <div style="font-size:12px;color:var(--muted);margin-bottom:4px">${f.date ? fmtFull(f.date) : 'Date TBC'}</div>
-            <div style="font-size:14px;font-weight:700">
-              ${x(t1.name)} <span style="color:var(--green-dark);font-size:16px">${sets}</span> ${x(t2.name)}
-              ${winner ? `<span style="font-size:12px;color:var(--muted);font-weight:400"> — ${x(winner)} won</span>` : '<span style="font-size:12px;color:var(--muted);font-weight:400"> — draw</span>'}
-            </div>
-            <div style="font-size:11px;color:var(--muted);margin-top:3px">${x(sc2[0])} &nbsp;/&nbsp; ${x(sc2[1])}</div>
-          </div>`;
-        }).join('')}
-      </div>` : ''}
-  `;
-}
-
-/* ── Deadline banner ────────────────────────────────────────── */
-function renderDeadline() {
-  const el = document.getElementById('deadline-banner');
-  const deadline = new Date('2026-03-29T23:59:00');
-  const now = new Date();
-  const diffMs = deadline - now;
-  const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-  if (diffDays > 0) {
-    const unplayed = S.fixtures.filter(f => f.status !== 'played').length;
-    el.innerHTML = `⏰ League deadline: <strong>Sun 29 Mar 2026</strong> &nbsp;·&nbsp; <strong>${diffDays} day${diffDays!==1?'s':''}</strong> to go &nbsp;·&nbsp; ${unplayed} fixture${unplayed!==1?'s':''} remaining`;
-    el.className = 'deadline-banner' + (diffDays <= 2 ? ' urgent' : '');
-    el.style.display = 'block';
-  } else if (diffDays <= 0 && diffDays > -7) {
-    el.innerHTML = `🎾 League deadline passed — check results in the League Table`;
-    el.className = 'deadline-banner';
-    el.style.display = 'block';
-  }
-}
-
-/* ── Utilities ──────────────────────────────────────────────── */
-function x(s) { if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function v(id) { return document.getElementById(id).value.trim(); }
-function statusLbl(s) {
-  return { unscheduled:'Unscheduled', proposed:'Pending', confirmed:'Scheduled', played:'Played' }[s] || s;
-}
-function toast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg; el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 2000);
-}
-
-/* ── Player helpers ─────────────────────────────────────────── */
-const TEAM_COLORS = ['#1d4ed8','#0891b2','#dc2626','#d97706','#7c3aed','#059669'];
-
-function getPlayerColor(playerName) {
-  const idx = S.teams.findIndex(t => t.player1 === playerName || t.player2 === playerName);
-  return TEAM_COLORS[idx >= 0 ? idx % TEAM_COLORS.length : 0];
-}
-
-function getInitials(name) {
-  const parts = name.trim().split(/\s+/);
-  return parts.map(w => w[0].toUpperCase()).join('').slice(0, 2);
-}
-
-function avatarHtml(playerName, large) {
-  const col = getPlayerColor(playerName);
-  const cls = large ? 'avatar avatar-lg' : 'avatar';
-  return `<span class="${cls}" style="background:${col}" title="${x(playerName)}">${x(getInitials(playerName))}</span>`;
-}
-
-/* ── All-player availability calendar ──────────────────────── */
-function renderAllAvail() {
-  const players = getAllPlayers();
-  const legend = document.getElementById('avail-legend');
-  const grid = document.getElementById('avail-cal-grid');
-  if (!legend || !grid) return;
-
-  legend.innerHTML = players.map(p => `
-    <div style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600">
-      ${avatarHtml(p, false)} ${x(p)}
-    </div>`).join('');
-
-  const today = new Date(); today.setHours(0,0,0,0);
-  const dates = Array.from({length:14}, (_, i) => { const d = new Date(today); d.setDate(today.getDate()+i); return d; });
-  const slots = ['morning','afternoon','evening'];
-  const slotIcons = { morning:'🌅 Morn', afternoon:'☀️ Aft', evening:'🌙 Eve' };
-  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-
-  let h = `<table class="avail-cal"><thead><tr><th class="slot-col">Slot</th>`;
-  dates.forEach(d => {
-    const isToday = ds(d) === ds(today);
-    h += `<th style="${isToday ? 'color:var(--green);' : ''}">
-      ${dayNames[d.getDay()]}<br><span style="font-size:10px;font-weight:400">${d.getDate()}/${d.getMonth()+1}</span>
-    </th>`;
-  });
-  h += '</tr></thead><tbody>';
-
-  slots.forEach(slot => {
-    h += `<tr><td class="slot-col">${slotIcons[slot]}</td>`;
-    dates.forEach(d => {
-      const isToday = ds(d) === ds(today);
-      const available = players.filter(p => S.availability[avk(p, d, slot)]);
-      h += `<td${isToday ? ' class="today-col"' : ''}><div class="avail-cell">`;
-      available.forEach(p => { h += avatarHtml(p, false); });
-      h += '</div></td>';
+    // Close mobile nav when clicking a link
+    document.querySelectorAll('.nav-links a').forEach(function(link) {
+        link.addEventListener('click', function() {
+            document.getElementById('navLinks').classList.remove('open');
+        });
     });
-    h += '</tr>';
-  });
-  h += '</tbody></table>';
-  grid.innerHTML = h;
-}
-
-/* ── Auto-match suggestions ─────────────────────────────────── */
-function renderSuggestions() {
-  const el = document.getElementById('avail-suggestions');
-  if (!el) return;
-  const unplayed = S.fixtures.filter(f => f.status !== 'played');
-
-  const results = unplayed.map(f => {
-    const t1 = S.teams.find(t => t.id === f.t1);
-    const t2 = S.teams.find(t => t.id === f.t2);
-    if (!t1 || !t2) return null;
-    const slots = findSlots(f).slice(0, 4);
-    return { f, t1, t2, slots };
-  }).filter(r => r && r.slots.length > 0);
-
-  if (results.length === 0) {
-    el.innerHTML = `<div class="empty" style="padding:24px 16px"><div class="empty-icon">🔍</div><h3>No overlapping availability found</h3><p>Ask players to add their availability above</p></div>`;
-    return;
-  }
-
-  el.innerHTML = results.map(r => `
-    <div class="sug-item">
-      <div class="sug-match">${x(r.t1.name)} <span style="color:var(--muted);font-weight:400">vs</span> ${x(r.t2.name)}</div>
-      <div style="font-size:11px;color:var(--muted);margin-bottom:7px">${x(r.t1.player1)}, ${x(r.t1.player2)}, ${x(r.t2.player1)}, ${x(r.t2.player2)} — all free:</div>
-      <div class="sug-slots">
-        ${r.slots.map(s => `<span class="sug-slot">📅 ${fmtFull(s.date)} · ${cap(s.slot)}</span>`).join('')}
-      </div>
-    </div>`).join('');
-}
-
-/* ── Help drawer ────────────────────────────────────────────── */
-function openHelp() {
-  document.getElementById('help-overlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function closeHelp() {
-  document.getElementById('help-overlay').classList.remove('open');
-  document.body.style.overflow = '';
-}
-function helpOverlayClick(e) {
-  if (e.target === document.getElementById('help-overlay')) closeHelp();
-}
-
-/* ── Boot ───────────────────────────────────────────────────── */
-loadPhotos();
-load();
-renderDeadline();
-renderTeams();
 </script>
 
-<!-- ── GHL CHATBOT WIDGET ── -->
-<script
-  src="https://widgets.leadconnectorhq.com/loader.js"
-  data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js"
-  data-widget-id="69c2d44d510b6031cc38ed0e">
-</script>
 </body>
 </html>
