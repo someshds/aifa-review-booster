@@ -641,8 +641,7 @@ section{position:relative;z-index:1}
         <div class="form-actions">
           <button type="submit" class="btn btn-primary" style="width:100%">Send Message &rarr;</button>
           <span class="form-or">or</span>
-          <!-- NOTE: This booking link will need updating after DNS switch from GHL to GitHub Pages -->
-          <a href="https://tools.aifusionautomations.com/book-a-call" class="btn btn-secondary" style="width:100%" target="_blank" rel="noopener">Book Directly on Our Calendar</a>
+          <a href="javascript:void(0)" onclick="try{document.querySelector('[data-widget-id] button, .lc_text-widget-open, .chat-widget-open-btn').click()}catch(e){window.open('https://web.aifusionautomations.com','_blank')}" class="btn btn-secondary" style="width:100%">Book Directly on Our Calendar</a>
         </div>
       </form>
     </div>
