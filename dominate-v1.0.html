@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dominate — All-in-One Business Software for Tradespeople | AI Fusion Automations</title>
+<meta name="description" content="Your entire business — one dashboard, fully automated. AI receptionist, invoicing, quote-to-payment automation & custom workflows. Built for tradespeople. £297/mo.">
+<meta name="keywords" content="AI receptionist for tradespeople UK, automated invoicing for home services, business automation for plumbers, all-in-one software for tradespeople, AI phone answering for small businesses, quote to payment automation, CRM with invoicing for home services, business growth software for tradespeople UK">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.aifusionautomations.com/dominate-v1.0.html">
+<meta property="og:title" content="Dominate — All-in-One Business Software for Tradespeople">
+<meta property="og:description" content="Your entire business — one dashboard, fully automated. AI receptionist, invoicing, quote-to-payment automation & custom workflows. Built for tradespeople. £297/mo.">
+<meta property="og:type" content="website">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{--primary:#7c3aed;--primary-light:#a78bfa;--primary-dark:#5b21b6;--accent:#06b6d4;--accent-light:#22d3ee;--bg:#0f0f1a;--bg-card:#1a1a2e;--text:#f1f5f9;--text-muted:#94a3b8;--border:#2d2d4a;--success:#10b981;--warning:#f59e0b;--danger:#ef4444}
+  body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+  .gradient-bg{position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 20% 0%,rgba(124,58,237,.15) 0%,transparent 50%),radial-gradient(ellipse at 80% 100%,rgba(6,182,212,.1) 0%,transparent 50%);pointer-events:none;z-index:0}
+  section{position:relative;z-index:1}
+  .container{max-width:900px;margin:0 auto;padding:0 1.5rem}
+  a{color:var(--accent-light);text-decoration:none}
+
+  /* Nav */
+  .nav{padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between;max-width:900px;margin:0 auto;position:relative;z-index:1}
+  .nav-logo{display:flex;align-items:center;gap:.5rem;text-decoration:none}
+  .nav-logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+  .nav-logo-text{font-size:.95rem;font-weight:700;background:linear-gradient(135deg,var(--primary-light),var(--accent-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .nav-back{color:var(--text-muted);font-size:.85rem;font-weight:500;text-decoration:none}
+  .nav-back:hover{color:var(--text)}
+
+  /* Hero */
+  .hero{padding:3rem 0 4rem;text-align:center}
+  .hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25);color:var(--success);font-size:.8rem;font-weight:700;padding:.35rem 1rem;border-radius:20px;margin-bottom:1rem}
+  .hero-product-line{font-size:.85rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem}
+  .hero h1{font-size:2.8rem;font-weight:800;line-height:1.1;margin-bottom:1rem;background:linear-gradient(135deg,#fff,var(--primary-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .hero .tagline{font-size:1.3rem;font-weight:600;color:var(--accent-light);margin-bottom:.75rem}
+  .hero p{font-size:1.1rem;color:var(--text-muted);max-width:620px;margin:0 auto 2rem}
+  .hero-ctas{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.9rem 2.5rem;border-radius:12px;font-size:1rem;font-weight:700;font-family:inherit;cursor:pointer;border:none;transition:all .2s;text-decoration:none}
+  .btn-primary{background:linear-gradient(135deg,var(--primary),var(--accent));color:white}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(124,58,237,.4)}
+  .btn-secondary{background:transparent;border:1.5px solid var(--border);color:var(--text)}
+  .btn-secondary:hover{border-color:var(--primary);transform:translateY(-2px)}
+
+  /* Stats */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:3rem 0}
+  .stat{text-align:center;padding:1.25rem;background:var(--bg-card);border:1px solid var(--border);border-radius:14px}
+  .stat-value{font-size:1.6rem;font-weight:800;background:linear-gradient(135deg,var(--primary-light),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .stat-label{font-size:.75rem;color:var(--text-muted);margin-top:.3rem}
+  @media(max-width:600px){.stats{grid-template-columns:1fr}}
+
+  /* Included Section */
+  .included{padding:3rem 0}
+  .included h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:.5rem}
+  .included-sub{text-align:center;color:var(--text-muted);margin-bottom:2rem}
+  .included-box{background:linear-gradient(135deg,rgba(124,58,237,.08),rgba(6,182,212,.05));border:1.5px solid rgba(124,58,237,.25);border-radius:20px;padding:2.5rem;position:relative}
+  .included-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;font-size:.75rem;font-weight:700;padding:.3rem 1.25rem;border-radius:20px;white-space:nowrap}
+  .included-tier{margin-top:.75rem;margin-bottom:1.25rem}
+  .included-tier-label{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--primary-light);margin-bottom:.6rem}
+  .included-features{display:grid;grid-template-columns:1fr 1fr;gap:.3rem .75rem}
+  @media(max-width:600px){.included-features{grid-template-columns:1fr}}
+  .included-feature{display:flex;align-items:flex-start;gap:.5rem;padding:.3rem 0;font-size:.85rem;color:var(--text-muted)}
+  .included-check{color:var(--success);font-weight:700;flex-shrink:0;font-size:.85rem}
+  .included-divider{border:none;border-top:1px solid var(--border);margin:1.25rem 0}
+
+  /* Features */
+  .features{padding:4rem 0}
+  .features h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:.5rem}
+  .features-sub{text-align:center;color:var(--text-muted);margin-bottom:2.5rem}
+  .feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+  @media(max-width:600px){.feature-grid{grid-template-columns:1fr}}
+  .feature-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:1.75rem;transition:border-color .2s}
+  .feature-card:hover{border-color:var(--primary)}
+  .feature-icon{font-size:1.75rem;margin-bottom:.75rem}
+  .feature-name{font-size:1rem;font-weight:700;margin-bottom:.4rem}
+  .feature-desc{font-size:.85rem;color:var(--text-muted);line-height:1.6}
+  .feature-bullets{list-style:none;margin-top:.6rem}
+  .feature-bullets li{font-size:.8rem;color:var(--text-muted);padding:.2rem 0;display:flex;gap:.5rem;align-items:flex-start}
+  .feature-bullets li::before{content:'';width:5px;height:5px;min-width:5px;border-radius:50%;background:var(--accent);margin-top:.4rem}
+
+  /* How it works */
+  .how{padding:4rem 0}
+  .how h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:2.5rem}
+  .steps{display:flex;flex-direction:column;gap:1.5rem}
+  .step{display:flex;gap:1.5rem;align-items:flex-start}
+  .step-num{width:48px;height:48px;min-width:48px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:800;color:#fff}
+  .step-text h3{font-size:1rem;font-weight:700;margin-bottom:.3rem}
+  .step-text p{font-size:.85rem;color:var(--text-muted);line-height:1.6}
+
+  /* Selling Points */
+  .selling{padding:3rem 0}
+  .selling h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:2rem}
+  .selling-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+  @media(max-width:600px){.selling-grid{grid-template-columns:1fr}}
+  .selling-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:1.5rem;text-align:center}
+  .selling-icon{font-size:2rem;margin-bottom:.6rem}
+  .selling-name{font-size:.9rem;font-weight:700;margin-bottom:.3rem}
+  .selling-desc{font-size:.8rem;color:var(--text-muted)}
+
+  /* Pricing */
+  .pricing{padding:4rem 0}
+  .pricing h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:.5rem}
+  .pricing-sub{text-align:center;color:var(--text-muted);margin-bottom:2rem}
+  .price-card{background:var(--bg-card);border:2px solid var(--primary);border-radius:20px;padding:2.5rem;text-align:center;max-width:520px;margin:0 auto;position:relative}
+  .price-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;font-size:.75rem;font-weight:700;padding:.3rem 1.25rem;border-radius:20px;white-space:nowrap}
+  .price-name{font-size:1.2rem;font-weight:800;margin-top:.5rem}
+  .price-amount{font-size:3rem;font-weight:800;background:linear-gradient(135deg,#fff,var(--accent-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:1rem 0 .25rem}
+  .price-period{font-size:.9rem;color:var(--text-muted);margin-bottom:.5rem}
+  .price-note{font-size:.75rem;color:var(--text-muted);margin-bottom:1.5rem;font-style:italic}
+  .price-features{text-align:left;margin-bottom:2rem}
+  .price-feature{display:flex;align-items:flex-start;gap:.6rem;padding:.5rem 0;font-size:.9rem}
+  .price-check{color:var(--success);font-weight:700;flex-shrink:0}
+  .price-card .btn{width:100%;margin-bottom:.75rem}
+  .price-card .btn:last-child{margin-bottom:0}
+  .price-divider{border:none;border-top:1px solid var(--border);margin:1rem 0}
+  .price-upsell{font-size:.8rem;color:var(--text-muted);margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)}
+  .price-upsell strong{color:var(--primary-light)}
+  .price-included-label{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--primary-light);text-align:left;margin-bottom:.25rem}
+
+  /* FAQ */
+  .faq{padding:3rem 0}
+  .faq h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:2rem}
+  .faq-item{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:.75rem;cursor:pointer}
+  .faq-q{font-size:.95rem;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+  .faq-a{font-size:.85rem;color:var(--text-muted);line-height:1.7;max-height:0;overflow:hidden;transition:max-height .3s,padding .3s}
+  .faq-item.open .faq-a{max-height:300px;padding-top:.75rem}
+  .faq-toggle{font-size:1.2rem;color:var(--text-muted);transition:transform .2s}
+  .faq-item.open .faq-toggle{transform:rotate(45deg)}
+
+  /* CTA */
+  .cta-section{padding:4rem 0}
+  .cta-box{background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(6,182,212,.1));border:1px solid rgba(124,58,237,.3);border-radius:20px;padding:3rem;text-align:center}
+  .cta-box h2{font-size:1.6rem;font-weight:800;margin-bottom:.75rem}
+  .cta-box p{color:var(--text-muted);margin-bottom:1.5rem;max-width:500px;margin-left:auto;margin-right:auto}
+  .cta-box .btn{margin:.25rem}
+
+  /* Footer */
+  .footer{text-align:center;padding:2rem 0;border-top:1px solid var(--border);margin-top:2rem}
+  .footer p{color:var(--text-muted);font-size:.85rem}
+  .footer a{color:var(--primary-light);font-weight:600}
+
+  @media(max-width:600px){
+    .hero h1{font-size:2rem}
+    .hero .tagline{font-size:1.1rem}
+    .hero-ctas{flex-direction:column;align-items:center}
+  }
+</style>
+</head>
+<body>
+<div class="gradient-bg"></div>
+
+<div class="nav">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon">⚡</div>
+    <div class="nav-logo-text">AI Fusion Automations</div>
+  </a>
+  <a href="index.html" class="nav-back">&larr; Back to Home</a>
+</div>
+
+<div class="container">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-badge">14-Day Free Trial — No Card Required</div>
+    <div class="hero-product-line">All-in-One Business Software</div>
+    <h1>Dominate</h1>
+    <div class="tagline">Your entire business &mdash; one dashboard, fully automated.</div>
+    <p>AI receptionist, quote-to-payment automation, invoicing, advanced reporting, and custom workflows &mdash; all built around your business. From enquiry to payment, on autopilot.</p>
+    <div class="hero-ctas">
+      <a href="#pricing" class="btn btn-primary">Start Your Free 14-Day Trial &rarr;</a>
+      <a href="#pricing" class="btn btn-secondary">Book a Demo</a>
+    </div>
+  </section>
+
+  <!-- Social Proof Stats -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-value">40%</div>
+      <div class="stat-label">More leads captured outside business hours with AI voice</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">30 &rarr; 7 days</div>
+      <div class="stat-label">Average payment time with automated invoicing</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">30%</div>
+      <div class="stat-label">More repeat customers with systemised follow-up</div>
+    </div>
+  </div>
+
+  <!-- Everything in Growth, plus -->
+  <section class="included">
+    <h2>Everything you already love &mdash; plus total automation.</h2>
+    <p class="included-sub">Dominate includes every feature from Essentials and Growth, plus six powerful new capabilities.</p>
+    <div class="included-box">
+      <div class="included-badge">Everything Included</div>
+
+      <div class="included-tier">
+        <div class="included-tier-label">Essentials Features (&pound;97/mo value)</div>
+        <div class="included-features">
+          <div class="included-feature"><span class="included-check">&#10003;</span> CRM &amp; contact management</div>
+          <div class="included-feature"><span class="included-check">&#10003;</span> Online booking page &amp; calendar sync</div>
+          <div class="included-feature"><span class="included-check">&#10003;</span> Missed call text-back</div>
+          <div class="included-feature"><span class="included-check">&#10003;</span> Automated review requests</div>
+          <div class="included-feature"><span class="included-check">&#10003;</span> Visual sales pipeline</div>
+          <div class="included-feature"><span class="included-check">&#10003;</span> Unified inbox (SMS, email, socials)</div>
+          <div class="included-feature"><span class="included-check">&#10003;</span> Mobile app access</div>
+          <div class="included-feature"><span class="included-check">&#10003;</span> Pre-built templates &amp; automations</div>
+        </div>
+      </div>
+
+      <hr class="included-divider">
+
+      <div class="included-tier">
+        <div class="included-tier-label">Growth Features (&pound;197/mo value)</div>
+        <div class="included-features">
+          <div class="included-feature"><span class="included-check">&#10003;</span> Email &amp; SMS marketing campaigns</div>
+          <div class="included-feature"><span class="included-check">&#10003;</span> Landing pages &amp; funnels</div>
+          <div class="included-feature"><span class="included-check">&#10003;</span> AI webchat assistant</div>
+          <div class="included-feature"><span class="included-check">&#10003;</span> Social media scheduling</div>
+          <div class="included-feature"><span class="included-check">&#10003;</span> Reputation management dashboard</div>
+          <div class="included-feature"><span class="included-check">&#10003;</span> Advanced automations &amp; workflows</div>
+          <div class="included-feature"><span class="included-check">&#10003;</span> Website &amp; funnel builder</div>
+          <div class="included-feature"><span class="included-check">&#10003;</span> Membership &amp; course hosting</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEW Dominate Features -->
+  <section class="features">
+    <h2>What makes Dominate different.</h2>
+    <p class="features-sub">Six powerful capabilities that turn your business into a fully automated machine.</p>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📞</div>
+        <div class="feature-name">AI Voice Receptionist</div>
+        <div class="feature-desc">AI answers your calls 24/7 in a natural voice. Never lose a job to a missed call again.</div>
+        <ul class="feature-bullets">
+          <li>Takes messages, answers FAQs (pricing, availability, service areas)</li>
+          <li>Books appointments directly into your calendar</li>
+          <li>Transfers urgent calls to your mobile</li>
+          <li>Customised with your business name, services, and tone</li>
+        </ul>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔄</div>
+        <div class="feature-name">Full Quote-to-Payment Workflow</div>
+        <div class="feature-desc">From first enquiry to money in the bank &mdash; fully automated with manual overrides where you need them.</div>
+        <ul class="feature-bullets">
+          <li>Enquiry &rarr; automated quote &rarr; booking confirmation</li>
+          <li>Job completion &rarr; invoice &rarr; payment collection</li>
+          <li>Branded estimates and invoices</li>
+          <li>Accept card payments online</li>
+        </ul>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💷</div>
+        <div class="feature-name">Invoicing &amp; Payments</div>
+        <div class="feature-desc">Create and send professional invoices from your phone. Get paid faster with automatic reminders.</div>
+        <ul class="feature-bullets">
+          <li>Create invoices in seconds from your mobile</li>
+          <li>Automatic payment reminders for overdue invoices</li>
+          <li>Accept credit/debit card and bank transfer</li>
+          <li>Track who&rsquo;s paid at a glance in one view</li>
+        </ul>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <div class="feature-name">Advanced Reporting Dashboard</div>
+        <div class="feature-desc">Know exactly how your business is performing with monthly reports delivered automatically.</div>
+        <ul class="feature-bullets">
+          <li>Monthly performance report: leads, bookings, revenue, reviews</li>
+          <li>Pipeline health and conversion tracking</li>
+          <li>Marketing ROI across all channels</li>
+          <li>Review and reputation trends over time</li>
+        </ul>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚙️</div>
+        <div class="feature-name">Custom Automations &amp; Integrations</div>
+        <div class="feature-desc">A system built around YOUR business &mdash; not a one-size-fits-all template.</div>
+        <ul class="feature-bullets">
+          <li>Bespoke workflow automations tailored to how you work</li>
+          <li>Integration with Xero, QuickBooks, Google Sheets, and more</li>
+          <li>Custom triggers and actions for any business process</li>
+        </ul>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <div class="feature-name">Priority Support &amp; Monthly Strategy Call</div>
+        <div class="feature-desc">Your own strategy advisor &mdash; not just a help desk ticket.</div>
+        <ul class="feature-bullets">
+          <li>Priority email and chat support with faster response times</li>
+          <li>Monthly 30-minute strategy call to optimise your setup</li>
+          <li>Dedicated account contact who knows your business</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="how">
+    <h2>From sign-up to fully automated in 7 days.</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <h3>Start Your Free Trial</h3>
+          <p>Sign up in 60 seconds. No credit card required. You get a fully configured account with CRM, pipeline, automations, and templates &mdash; all ready to go.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <h3>60-Minute Onboarding Call</h3>
+          <p>We set up your AI Voice receptionist, configure your quote-to-payment workflow, brand your invoicing templates, build your reporting dashboard, and scope your custom automations &mdash; all in one call.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <h3>Custom Automations Built</h3>
+          <p>Our team builds your bespoke automations and integrations. Xero, QuickBooks, Google Sheets &mdash; whatever your business needs, we connect it.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">
+          <h3>Go Live &amp; Dominate</h3>
+          <p>Your entire business runs from one dashboard. AI answers your phone. Quotes go out automatically. Invoices get paid on time. Reports land in your inbox. You focus on the work you love.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Selling Points -->
+  <section class="selling">
+    <h2>Built for established tradespeople who want to scale.</h2>
+    <div class="selling-grid">
+      <div class="selling-card">
+        <div class="selling-icon">📞</div>
+        <div class="selling-name">AI Answers Your Phone 24/7</div>
+        <div class="selling-desc">Never miss a call again. Your AI receptionist handles enquiries, books jobs, and transfers urgent calls &mdash; day or night.</div>
+      </div>
+      <div class="selling-card">
+        <div class="selling-icon">🔄</div>
+        <div class="selling-name">Enquiry to Payment &mdash; Automated</div>
+        <div class="selling-desc">From first contact to final payment, the entire workflow runs itself. You just do the work.</div>
+      </div>
+      <div class="selling-card">
+        <div class="selling-icon">💷</div>
+        <div class="selling-name">Get Paid Faster</div>
+        <div class="selling-desc">Professional invoices with online payment links and automatic reminders. Average payment time drops from 30 days to 7.</div>
+      </div>
+      <div class="selling-card">
+        <div class="selling-icon">📊</div>
+        <div class="selling-name">Know Your Numbers</div>
+        <div class="selling-desc">Monthly reports on leads, revenue, reviews, and marketing ROI. Make decisions based on data, not guesswork.</div>
+      </div>
+      <div class="selling-card">
+        <div class="selling-icon">⚙️</div>
+        <div class="selling-name">Built Around YOUR Business</div>
+        <div class="selling-desc">Custom automations and integrations tailored to how you actually work. Not a cookie-cutter template.</div>
+      </div>
+      <div class="selling-card">
+        <div class="selling-icon">🎯</div>
+        <div class="selling-name">Your Own Strategy Advisor</div>
+        <div class="selling-desc">Monthly strategy calls and priority support. A dedicated contact who knows your business inside out.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="pricing" id="pricing">
+    <h2>Simple pricing. Total automation.</h2>
+    <p class="pricing-sub">Everything from Essentials and Growth included. Cancel any time.</p>
+    <div class="price-card">
+      <div class="price-badge">14-Day Free Trial</div>
+      <div class="price-name">Dominate</div>
+      <div class="price-amount">&pound;297</div>
+      <div class="price-period">per month</div>
+      <div class="price-note">AI Voice, SMS &amp; email usage billed separately &mdash; typically &pound;30&ndash;&pound;60/mo for established businesses.</div>
+      <div class="price-features">
+        <div class="price-included-label">Everything in Growth (&pound;197/mo) included, plus:</div>
+        <div class="price-feature"><span class="price-check">&#10003;</span> AI Voice receptionist &mdash; 24/7 call answering</div>
+        <div class="price-feature"><span class="price-check">&#10003;</span> Full quote-to-payment workflow</div>
+        <div class="price-feature"><span class="price-check">&#10003;</span> Invoicing &amp; online payments</div>
+        <div class="price-feature"><span class="price-check">&#10003;</span> Advanced reporting dashboard</div>
+        <div class="price-feature"><span class="price-check">&#10003;</span> Custom automations &amp; integrations</div>
+        <div class="price-feature"><span class="price-check">&#10003;</span> Priority support &amp; monthly strategy call</div>
+        <hr class="price-divider">
+        <div class="price-feature"><span class="price-check">&#10003;</span> 60-minute onboarding call</div>
+        <div class="price-feature"><span class="price-check">&#10003;</span> AI Voice receptionist configured &amp; tested</div>
+        <div class="price-feature"><span class="price-check">&#10003;</span> Quote-to-payment workflow built end-to-end</div>
+        <div class="price-feature"><span class="price-check">&#10003;</span> Branded invoicing templates</div>
+        <div class="price-feature"><span class="price-check">&#10003;</span> Reporting dashboard configured</div>
+        <div class="price-feature"><span class="price-check">&#10003;</span> Custom automations scoped &amp; built</div>
+      </div>
+      <a href="https://tools.aifusionautomations.com" class="btn btn-primary">Start Your Free 14-Day Trial &rarr;</a>
+      <a href="https://tools.aifusionautomations.com" class="btn btn-secondary" style="width:100%">Book a Demo Instead</a>
+      <div class="price-upsell">Need something custom? <strong>Contact us for bespoke automation packages &rarr;</strong></div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq">
+    <h2>Common questions</h2>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Do I need any tech skills?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">No. We set everything up for you. Your 60-minute onboarding call covers the full walkthrough &mdash; AI Voice setup, invoicing, workflows, and reporting. If you can use WhatsApp, you can use this.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">What are the AI Voice usage costs?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">AI Voice minutes are charged per minute of call time. Combined with SMS and email usage, typical total costs run &pound;30&ndash;&pound;60/mo for an established business. We give you a full breakdown during onboarding so there are no surprises.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Does the AI receptionist sound natural?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">Yes. Modern AI voices are remarkably natural and conversational. We customise the receptionist with your business name, services, pricing guidance, service areas, and tone of voice. Most callers won&rsquo;t realise they&rsquo;re speaking to AI.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Can I keep my existing phone number?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">Absolutely. We set up call forwarding from your existing number, so your current customers don&rsquo;t notice any change. You can also use a new dedicated number alongside your existing one if you prefer.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">How does the quote-to-payment workflow work?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">A customer enquiry triggers an automated quote. Once accepted, booking confirmation goes out. When you mark the job as complete, an invoice is generated with an online payment link. If payment is overdue, automatic reminders are sent. The entire flow runs itself &mdash; with manual overrides wherever you need them.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Can I integrate with my accounting software?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">Yes. We support integrations with Xero, QuickBooks, Google Sheets, and many more. During your onboarding call, we&rsquo;ll scope exactly which integrations your business needs and build them for you.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Is there a contract?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">No long-term contracts. It&rsquo;s a rolling monthly subscription &mdash; cancel any time. You get a 14-day free trial to make sure it works for your business before paying a penny.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">What&rsquo;s the difference between Growth and Dominate?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">Dominate includes everything in Growth, plus six additional capabilities: AI Voice receptionist (24/7 call answering), full quote-to-payment automation, invoicing with online payments, advanced reporting dashboard, custom automations and integrations, and priority support with monthly strategy calls.</div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="cta-box">
+      <h2>Your entire business. One dashboard. Fully automated.</h2>
+      <p>Start your free 14-day trial and see what happens when AI handles your calls, quotes go out automatically, and invoices get paid on time. No credit card. No contract.</p>
+      <a href="https://tools.aifusionautomations.com" class="btn btn-primary">Start Your Free Trial &rarr;</a>
+      <a href="https://tools.aifusionautomations.com" class="btn btn-secondary">Book a Demo</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p style="margin-bottom:.5rem"><a href="index.html">AI Fusion Automations</a> &middot; East Sussex, UK</p>
+    <p><a href="privacy-policy.html">Privacy Policy</a> &middot; <a href="terms.html">Terms</a> &middot; <a href="earnings-disclaimer.html">Earnings Disclaimer</a></p>
+    <p style="margin-top:.75rem;font-size:.75rem">&copy; 2026 AI Fusion Automations. All rights reserved.</p>
+  </div>
+
+</div>
+
+<script>
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t)t.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+});
+</script>
+<script src="https://widgets.leadconnectorhq.com/loader.js" data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js" data-widget-id="668394bfc5fec605b13596ff"></script>
+</body>
+</html>
