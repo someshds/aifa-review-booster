@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Agents — Custom AI That Works For You 24/7 | AI Fusion Automations</title>
+<meta name="description" content="Custom-built AI agents that handle your repetitive tasks — answering enquiries, qualifying leads, processing documents, booking appointments, and running workflows. From £997.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.aifusionautomations.com/ai-agents.html">
+<meta property="og:title" content="AI Agents — Custom AI That Works For You 24/7">
+<meta property="og:description" content="Custom-built AI agents that automate your business tasks. From £997.">
+<meta property="og:type" content="website">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{--primary:#7c3aed;--primary-light:#a78bfa;--primary-dark:#5b21b6;--accent:#06b6d4;--accent-light:#22d3ee;--bg:#0f0f1a;--bg-card:#1a1a2e;--text:#f1f5f9;--text-muted:#94a3b8;--border:#2d2d4a;--success:#10b981;--warning:#f59e0b;--danger:#ef4444}
+  body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+  .gradient-bg{position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 20% 0%,rgba(124,58,237,.15) 0%,transparent 50%),radial-gradient(ellipse at 80% 100%,rgba(6,182,212,.1) 0%,transparent 50%);pointer-events:none;z-index:0}
+  section{position:relative;z-index:1}
+  .container{max-width:900px;margin:0 auto;padding:0 1.5rem}
+  a{color:var(--accent-light);text-decoration:none}
+
+  /* Nav */
+  .nav{padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between;max-width:900px;margin:0 auto;position:relative;z-index:1}
+  .nav-logo{display:flex;align-items:center;gap:.5rem;text-decoration:none}
+  .nav-logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+  .nav-logo-text{font-size:.95rem;font-weight:700;background:linear-gradient(135deg,var(--primary-light),var(--accent-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .nav-back{color:var(--text-muted);font-size:.85rem;font-weight:500;text-decoration:none}
+  .nav-back:hover{color:var(--text)}
+
+  /* Hero */
+  .hero{padding:3rem 0 4rem;text-align:center}
+  .hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25);color:var(--success);font-size:.8rem;font-weight:700;padding:.35rem 1rem;border-radius:20px;margin-bottom:1.5rem}
+  .hero h1{font-size:2.8rem;font-weight:800;line-height:1.1;margin-bottom:1rem;background:linear-gradient(135deg,#fff,var(--primary-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .hero p{font-size:1.15rem;color:var(--text-muted);max-width:620px;margin:0 auto 2rem}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.9rem 2.5rem;border-radius:12px;font-size:1rem;font-weight:700;font-family:inherit;cursor:pointer;border:none;transition:all .2s;text-decoration:none}
+  .btn-primary{background:linear-gradient(135deg,var(--primary),var(--accent));color:white}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(124,58,237,.4)}
+  .btn-secondary{background:transparent;border:1.5px solid var(--border);color:var(--text);margin-left:.75rem}
+  .btn-secondary:hover{border-color:var(--primary);transform:translateY(-2px)}
+
+  /* Stats */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:3rem 0}
+  .stat{text-align:center;padding:1.25rem;background:var(--bg-card);border:1px solid var(--border);border-radius:14px}
+  .stat-value{font-size:1.6rem;font-weight:800;background:linear-gradient(135deg,var(--primary-light),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .stat-label{font-size:.75rem;color:var(--text-muted);margin-top:.3rem}
+  @media(max-width:600px){.stats{grid-template-columns:1fr 1fr}}
+
+  /* Features / Problem / Agent Types */
+  .features{padding:3rem 0}
+  .features h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:.5rem}
+  .features-sub{text-align:center;color:var(--text-muted);margin-bottom:2.5rem}
+  .feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+  @media(max-width:600px){.feature-grid{grid-template-columns:1fr}}
+  .feature-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:1.75rem}
+  .feature-icon{font-size:1.75rem;margin-bottom:.75rem}
+  .feature-name{font-size:1rem;font-weight:700;margin-bottom:.4rem}
+  .feature-desc{font-size:.85rem;color:var(--text-muted);line-height:1.6}
+
+  /* Agent types — 3 col grid */
+  .agent-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
+  @media(max-width:768px){.agent-grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:500px){.agent-grid{grid-template-columns:1fr}}
+
+  /* How it works */
+  .how{padding:4rem 0}
+  .how h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:2.5rem}
+  .steps{display:flex;flex-direction:column;gap:1.5rem}
+  .step{display:flex;gap:1.5rem;align-items:flex-start}
+  .step-num{width:48px;height:48px;min-width:48px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:800;color:#fff}
+  .step-text h3{font-size:1rem;font-weight:700;margin-bottom:.3rem}
+  .step-text p{font-size:.85rem;color:var(--text-muted);line-height:1.6}
+
+  /* Case studies */
+  .casestudies{padding:3rem 0}
+  .casestudies h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:2rem}
+  .case-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
+  @media(max-width:768px){.case-grid{grid-template-columns:1fr}}
+  .case-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:1.75rem;display:flex;flex-direction:column}
+  .case-label{font-size:.75rem;font-weight:700;color:var(--accent-light);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem}
+  .case-title{font-size:1rem;font-weight:700;margin-bottom:.5rem}
+  .case-desc{font-size:.85rem;color:var(--text-muted);line-height:1.6;flex:1;margin-bottom:1rem}
+  .case-stats{display:flex;gap:1rem}
+  .case-stat{background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.2);border-radius:10px;padding:.5rem .75rem;font-size:.8rem;font-weight:700;color:var(--primary-light)}
+
+  /* Pricing */
+  .pricing{padding:4rem 0}
+  .pricing h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:.5rem}
+  .pricing-sub{text-align:center;color:var(--text-muted);margin-bottom:2.5rem}
+  .price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;align-items:start}
+  @media(max-width:768px){.price-grid{grid-template-columns:1fr;max-width:480px;margin:0 auto}}
+  .price-card{background:var(--bg-card);border:1px solid var(--border);border-radius:20px;padding:2rem;text-align:center;position:relative}
+  .price-card.featured{border:2px solid var(--primary)}
+  .price-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;font-size:.75rem;font-weight:700;padding:.3rem 1.25rem;border-radius:20px;white-space:nowrap}
+  .price-name{font-size:1.1rem;font-weight:800;margin-bottom:.25rem}
+  .price-amount{font-size:2.2rem;font-weight:800;background:linear-gradient(135deg,#fff,var(--accent-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:.75rem 0 .25rem}
+  .price-period{font-size:.8rem;color:var(--text-muted);margin-bottom:1.25rem}
+  .price-features{text-align:left;margin-bottom:1.5rem}
+  .price-feature{display:flex;align-items:flex-start;gap:.6rem;padding:.4rem 0;font-size:.85rem}
+  .price-check{color:var(--success);font-weight:700;flex-shrink:0}
+  .price-perfect{font-size:.8rem;color:var(--text-muted);font-style:italic;margin-bottom:1.25rem}
+  .price-card .btn{width:100%;padding:.75rem 1.5rem;font-size:.9rem}
+
+  /* FAQ */
+  .faq{padding:3rem 0}
+  .faq h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:2rem}
+  .faq-item{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:.75rem;cursor:pointer}
+  .faq-q{font-size:.95rem;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+  .faq-a{font-size:.85rem;color:var(--text-muted);line-height:1.7;max-height:0;overflow:hidden;transition:max-height .3s,padding .3s}
+  .faq-item.open .faq-a{max-height:300px;padding-top:.75rem}
+  .faq-toggle{font-size:1.2rem;color:var(--text-muted);transition:transform .2s}
+  .faq-item.open .faq-toggle{transform:rotate(45deg)}
+
+  /* CTA */
+  .cta-section{padding:4rem 0}
+  .cta-box{background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(6,182,212,.1));border:1px solid rgba(124,58,237,.3);border-radius:20px;padding:3rem;text-align:center}
+  .cta-box h2{font-size:1.6rem;font-weight:800;margin-bottom:.75rem}
+  .cta-box p{color:var(--text-muted);margin-bottom:1.5rem;max-width:500px;margin-left:auto;margin-right:auto}
+
+  /* Footer */
+  .footer{text-align:center;padding:2rem 0;border-top:1px solid var(--border);margin-top:2rem}
+  .footer p{color:var(--text-muted);font-size:.85rem}
+  .footer a{color:var(--primary-light);font-weight:600}
+
+  @media(max-width:600px){
+    .hero h1{font-size:2rem}
+    .hero .btn-secondary{margin-left:0;margin-top:.5rem}
+    .hero-ctas{flex-direction:column;align-items:center}
+  }
+</style>
+</head>
+<body>
+<div class="gradient-bg"></div>
+
+<div class="nav">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon">⚡</div>
+    <div class="nav-logo-text">AI Fusion Automations</div>
+  </a>
+  <a href="index.html" class="nav-back">&larr; Back to Home</a>
+</div>
+
+<div class="container">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-badge">NEW SERVICE — AI AGENTS FOR YOUR BUSINESS</div>
+    <h1>AI Agents That Work<br>For You. 24/7.</h1>
+    <p>Custom-built AI agents that handle your repetitive tasks — answering enquiries, qualifying leads, processing documents, booking appointments, and running workflows — so you can focus on growing your business.</p>
+    <div class="hero-ctas">
+      <a href="https://tools.aifusionautomations.com" class="btn btn-primary">Book a Free AI Audit →</a>
+      <a href="#pricing" class="btn btn-secondary">See Packages</a>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-value">73%</div>
+      <div class="stat-label">Of business tasks can be automated with AI agents</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">15hrs</div>
+      <div class="stat-label">Average time saved per week per agent</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">4x</div>
+      <div class="stat-label">Faster response time than manual processes</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">£997</div>
+      <div class="stat-label">Starting price for your first AI agent</div>
+    </div>
+  </div>
+
+  <!-- Problem Section -->
+  <section class="features">
+    <h2>Sound familiar?</h2>
+    <p class="features-sub">&nbsp;</p>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">😤</div>
+        <div class="feature-name">Drowning in Repetitive Tasks</div>
+        <div class="feature-desc">You or your team spend hours every day on tasks that follow the same pattern — answering the same questions, chasing the same invoices, entering the same data.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📞</div>
+        <div class="feature-name">Missing Leads After Hours</div>
+        <div class="feature-desc">Enquiries come in at 8pm, weekends, bank holidays. By the time you respond Monday morning, they've gone to a competitor.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <div class="feature-name">Errors in Manual Processes</div>
+        <div class="feature-desc">Copy-pasting between spreadsheets, missing follow-ups, duplicating entries. Human error costs time and money.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📈</div>
+        <div class="feature-name">Can't Scale Without Hiring</div>
+        <div class="feature-desc">Every new client means more admin work. You want to grow but can't afford another full-time employee.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Agent Types -->
+  <section class="features">
+    <h2>AI agents for every part of your business</h2>
+    <p class="features-sub">Each agent is custom-built for your specific workflows, tools, and industry.</p>
+    <div class="agent-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <div class="feature-name">Customer Service Agent</div>
+        <div class="feature-desc">Answers enquiries via chat, email, or phone 24/7. Handles FAQs, routes complex queries to your team with full context. Integrates with your CRM.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <div class="feature-name">Lead Qualification Agent</div>
+        <div class="feature-desc">Scores and qualifies incoming leads based on your criteria. Asks the right questions, books meetings for hot prospects, nurtures warm leads automatically.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📄</div>
+        <div class="feature-name">Document Processing Agent</div>
+        <div class="feature-desc">Reads invoices, purchase orders, contracts, and forms. Extracts data, validates against your rules, and enters it into your systems — 10x faster than manual entry.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📅</div>
+        <div class="feature-name">Appointment & Booking Agent</div>
+        <div class="feature-desc">Manages your calendar, handles bookings, sends confirmations and reminders, reduces no-shows by 40%. Works across Google Calendar, Outlook, or your CRM.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📧</div>
+        <div class="feature-name">Follow-Up & Outreach Agent</div>
+        <div class="feature-desc">Sends personalised follow-up sequences after enquiries, quotes, or meetings. Knows when to chase and when to back off. Never forgets a lead.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📈</div>
+        <div class="feature-name">Reporting & Insights Agent</div>
+        <div class="feature-desc">Monitors your key metrics, generates weekly reports, flags anomalies. Pulls data from your CRM, accounting software, and marketing tools into one clear view.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how">
+    <h2>From first call to live agent in 2-4 weeks</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <h3>Free AI Audit (30 mins)</h3>
+          <p>We map your workflows, identify the top 3 tasks costing you the most time, and show you exactly which agents would help — with projected ROI.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <h3>Agent Design & Build (1-2 weeks)</h3>
+          <p>We design your agent's logic, connect it to your tools (CRM, email, calendar, accounting), and train it on your business data.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <h3>Test & Approve</h3>
+          <p>You test the agent with real scenarios. We refine until it handles every edge case. Nothing goes live without your sign-off.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">
+          <h3>Deploy & Monitor</h3>
+          <p>Your agent goes live. We monitor performance for the first 2 weeks, catching anything that needs adjustment.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-text">
+          <h3>Optimise & Scale</h3>
+          <p>Monthly reviews to improve accuracy and add capabilities. When you're ready, we add more agents that work together as a team.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Case Studies -->
+  <section class="casestudies">
+    <h2>Real results from real businesses</h2>
+    <div class="case-grid">
+      <div class="case-card">
+        <div class="case-label">Document Processing</div>
+        <div class="case-title">10 International</div>
+        <div class="case-desc">Purchase order processing reduced from 60 minutes to 7 minutes. AI reads documents, validates data, human approves with one click.</div>
+        <div class="case-stats">
+          <div class="case-stat">88% time saved</div>
+          <div class="case-stat">Zero errors</div>
+        </div>
+      </div>
+      <div class="case-card">
+        <div class="case-label">Lead Response</div>
+        <div class="case-title">Happy Chimney Sweep</div>
+        <div class="case-desc">Every enquiry now gets an instant response with availability and pricing — even at 10pm on a Saturday. No more lost leads to voicemail.</div>
+        <div class="case-stats">
+          <div class="case-stat">100% response rate</div>
+          <div class="case-stat">24/7 coverage</div>
+        </div>
+      </div>
+      <div class="case-card">
+        <div class="case-label">Review Collection</div>
+        <div class="case-title">Service Business</div>
+        <div class="case-desc">Automated review requests sent after every job. 5-star reviews increased from 2/month to 12/month within 6 weeks.</div>
+        <div class="case-stats">
+          <div class="case-stat">6x more reviews</div>
+          <div class="case-stat">4.9★ average</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="pricing" id="pricing">
+    <h2>Packages for every stage of growth</h2>
+    <p class="pricing-sub">Start small, prove the value, then scale. No long-term contracts.</p>
+    <div class="price-grid">
+
+      <!-- Tier 1 -->
+      <div class="price-card">
+        <div class="price-name">AI Quick Win</div>
+        <div class="price-amount">£997</div>
+        <div class="price-period">one-time</div>
+        <div class="price-features">
+          <div class="price-feature"><span class="price-check">✓</span> 1 targeted AI agent</div>
+          <div class="price-feature"><span class="price-check">✓</span> 2-week delivery</div>
+          <div class="price-feature"><span class="price-check">✓</span> CRM integration included</div>
+          <div class="price-feature"><span class="price-check">✓</span> 30-day support & optimisation</div>
+        </div>
+        <div class="price-perfect">Perfect for: testing AI on one task</div>
+        <a href="https://tools.aifusionautomations.com" class="btn btn-primary">Start With a Quick Win →</a>
+      </div>
+
+      <!-- Tier 2 -->
+      <div class="price-card featured">
+        <div class="price-badge">Most Popular</div>
+        <div class="price-name">AI Operating System</div>
+        <div class="price-amount">£2,500–5,000</div>
+        <div class="price-period">one-time + £297/mo</div>
+        <div class="price-features">
+          <div class="price-feature"><span class="price-check">✓</span> 3-5 integrated AI agents</div>
+          <div class="price-feature"><span class="price-check">✓</span> GHL CRM setup & white-label</div>
+          <div class="price-feature"><span class="price-check">✓</span> AI chatbot + automated follow-ups</div>
+          <div class="price-feature"><span class="price-check">✓</span> 4-6 week delivery with pilot phase</div>
+          <div class="price-feature"><span class="price-check">✓</span> Monthly optimisation & support</div>
+        </div>
+        <div class="price-perfect">Perfect for: automating your core operations</div>
+        <a href="https://tools.aifusionautomations.com" class="btn btn-primary">Build Your AI System →</a>
+      </div>
+
+      <!-- Tier 3 -->
+      <div class="price-card">
+        <div class="price-name">AI Transformation</div>
+        <div class="price-amount">£5,000–15,000</div>
+        <div class="price-period">one-time + £497/mo</div>
+        <div class="price-features">
+          <div class="price-feature"><span class="price-check">✓</span> Custom multi-agent system</div>
+          <div class="price-feature"><span class="price-check">✓</span> Full team training</div>
+          <div class="price-feature"><span class="price-check">✓</span> Dashboard & reporting</div>
+          <div class="price-feature"><span class="price-check">✓</span> 8-12 week delivery</div>
+          <div class="price-feature"><span class="price-check">✓</span> Dedicated AI consultant</div>
+          <div class="price-feature"><span class="price-check">✓</span> Priority support & monthly strategy</div>
+        </div>
+        <div class="price-perfect">Perfect for: transforming your entire business</div>
+        <a href="https://tools.aifusionautomations.com" class="btn btn-primary">Transform Your Business →</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq">
+    <h2>Common questions</h2>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">What exactly is an AI agent?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">An AI agent is software that can perform tasks autonomously — like answering customer queries, processing documents, or managing your calendar. Unlike simple chatbots, agents can make decisions, use tools, and handle multi-step workflows.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Do I need technical knowledge?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">Not at all. We handle everything — design, build, integration, and training. You just tell us what tasks you want automated, and we build the agent to do it.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">What tools can agents connect to?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">We integrate with 2,000+ platforms including GoHighLevel, Google Workspace, Xero, QuickBooks, Stripe, Outlook, Slack, and most popular business tools. If your tool has an API, we can connect to it.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">How long before I see results?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">Most clients see measurable time savings within the first week of their agent going live. Our Quick Win package delivers a working agent in just 2 weeks.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Is my data safe?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">Absolutely. We follow strict data handling practices, comply with UK GDPR, and your data never leaves your existing systems. We connect to your tools — we don't store your data.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">What if the agent makes a mistake?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">Every agent has human-in-the-loop guardrails. For critical tasks, the agent flags decisions for your approval before acting. We monitor accuracy and continuously improve.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Can I start small and add more agents later?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">Yes — that's exactly what we recommend. Start with one Quick Win agent, see the results, then expand to a full AI Operating System when you're ready.</div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="cta-box">
+      <h2>Ready to put AI to work in your business?</h2>
+      <p>Book a free 30-minute AI Audit. We'll map your workflows, identify your biggest time-wasters, and show you exactly which agents would help — with projected ROI.</p>
+      <a href="https://tools.aifusionautomations.com" class="btn btn-primary">Book Your Free AI Audit →</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p style="margin-bottom:.5rem"><a href="index.html">AI Fusion Automations</a> · East Sussex, UK</p>
+    <p><a href="privacy-policy-aifa.html">Privacy Policy</a> · <a href="terms.html">Terms</a> · <a href="earnings-disclaimer.html">Earnings Disclaimer</a></p>
+    <p style="margin-top:.75rem;font-size:.75rem">© 2026 AI Fusion Automations. All rights reserved.</p>
+  </div>
+
+</div>
+
+<script src="https://widgets.leadconnectorhq.com/loader.js" data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js" data-widget-id="668394bfc5fec605b13596ff"></script>
+</body>
+</html>
