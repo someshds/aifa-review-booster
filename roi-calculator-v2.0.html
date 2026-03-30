@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Automation ROI Calculator — AI Fusion Automations</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{--primary:#7c3aed;--primary-light:#a78bfa;--primary-dark:#5b21b6;--accent:#06b6d4;--accent-light:#22d3ee;--bg:#0f0f1a;--bg-card:#1a1a2e;--bg-card-hover:#1e1e35;--text:#f1f5f9;--text-muted:#94a3b8;--border:#2d2d4a;--success:#10b981;--warning:#f59e0b;--danger:#ef4444}
+  body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+  .gradient-bg{position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 20% 0%,rgba(124,58,237,.15) 0%,transparent 50%),radial-gradient(ellipse at 80% 100%,rgba(6,182,212,.1) 0%,transparent 50%);pointer-events:none;z-index:0}
+  .container{max-width:900px;margin:0 auto;padding:2rem 1.5rem;position:relative;z-index:1}
+
+  .header{text-align:center;margin-bottom:2.5rem}
+  .logo{display:inline-flex;align-items:center;gap:.5rem;margin-bottom:1.5rem}
+  .logo-icon{width:44px;height:44px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+  .logo-text{font-size:1.1rem;font-weight:700;background:linear-gradient(135deg,var(--primary-light),var(--accent-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .header h1{font-size:2.2rem;font-weight:800;margin-bottom:.5rem;background:linear-gradient(135deg,#fff,var(--primary-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .header p{color:var(--text-muted);font-size:1rem;max-width:600px;margin:0 auto}
+  .tag{display:inline-block;background:rgba(16,185,129,.12);color:var(--success);font-size:.8rem;font-weight:700;padding:.3rem .8rem;border-radius:20px;margin-bottom:1rem;letter-spacing:.03em}
+
+  /* Form */
+  .calc-section{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:2rem;margin-bottom:1.5rem}
+  .calc-section h2{font-size:1.1rem;font-weight:700;margin-bottom:1.25rem;display:flex;align-items:center;gap:.5rem}
+  .calc-section h2 .icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem}
+
+  .field{margin-bottom:1.25rem}
+  .field:last-child{margin-bottom:0}
+  .field label{display:block;font-size:.85rem;font-weight:600;margin-bottom:.4rem;color:var(--text)}
+  .field .hint{font-size:.75rem;color:var(--text-muted);margin-bottom:.4rem}
+  .field input[type="number"],.field input[type="email"],.field input[type="text"],.field select{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:.7rem 1rem;border-radius:10px;font-size:.95rem;font-family:inherit;transition:border-color .2s}
+  .field input:focus,.field select:focus{outline:none;border-color:var(--primary)}
+  .field select option{background:var(--bg);color:var(--text)}
+
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  @media(max-width:600px){.row{grid-template-columns:1fr}}
+
+  .slider-field{margin-bottom:1.25rem}
+  .slider-field label{display:flex;justify-content:space-between;font-size:.85rem;font-weight:600;margin-bottom:.5rem}
+  .slider-field label span{color:var(--accent-light);font-weight:700}
+  .slider-field input[type="range"]{width:100%;-webkit-appearance:none;height:6px;border-radius:3px;background:var(--border);outline:none}
+  .slider-field input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));cursor:pointer;border:2px solid var(--bg)}
+
+  /* Service type selector */
+  .service-types{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:.5rem}
+  @media(max-width:600px){.service-types{grid-template-columns:1fr}}
+  .service-type-btn{background:var(--bg);border:2px solid var(--border);border-radius:12px;padding:1rem;text-align:center;cursor:pointer;transition:all .2s}
+  .service-type-btn:hover{border-color:var(--primary-light)}
+  .service-type-btn.active{border-color:var(--primary);background:rgba(124,58,237,.1)}
+  .service-type-btn .st-icon{font-size:1.5rem;margin-bottom:.4rem}
+  .service-type-btn .st-name{font-size:.85rem;font-weight:700}
+  .service-type-btn .st-desc{font-size:.7rem;color:var(--text-muted);margin-top:.2rem}
+
+  /* Pay calculator inline */
+  .pay-toggle{display:flex;gap:0;border-radius:8px;overflow:hidden;border:1px solid var(--border);margin-bottom:.6rem}
+  .pay-toggle button{flex:1;padding:.5rem .75rem;background:var(--bg);color:var(--text-muted);border:none;font-size:.8rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+  .pay-toggle button.active{background:var(--primary);color:#fff}
+  .hourly-calc{font-size:.8rem;color:var(--accent-light);margin-top:.4rem;min-height:1.2em}
+
+  /* Checkbox */
+  .checkbox-field{display:flex;align-items:flex-start;gap:.6rem;margin-top:1rem}
+  .checkbox-field input[type="checkbox"]{width:18px;height:18px;margin-top:2px;accent-color:var(--primary);flex-shrink:0}
+  .checkbox-field label{font-size:.8rem;color:var(--text-muted);cursor:pointer;line-height:1.4}
+  .checkbox-field label a{color:var(--primary-light);text-decoration:underline}
+
+  /* Button */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.9rem 2.5rem;border-radius:12px;font-size:1rem;font-weight:700;font-family:inherit;cursor:pointer;border:none;transition:all .2s;text-decoration:none;width:100%}
+  .btn-primary{background:linear-gradient(135deg,var(--primary),var(--accent));color:white}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(124,58,237,.4)}
+  .btn-secondary{background:transparent;border:1px solid var(--border);color:var(--text-muted);margin-top:.75rem}
+  .btn-secondary:hover{border-color:var(--primary);color:var(--text)}
+
+  /* Results */
+  .results{display:none}
+  .results.show{display:block}
+  .results-header{text-align:center;margin-bottom:2rem}
+  .results-header h2{font-size:1.8rem;font-weight:800;margin-bottom:.5rem}
+  .results-header p{color:var(--text-muted)}
+
+  .result-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:2rem}
+  .result-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:1.5rem;text-align:center}
+  .result-card .value{font-size:2rem;font-weight:800;line-height:1.2}
+  .result-card .label{font-size:.8rem;color:var(--text-muted);margin-top:.4rem}
+  .value-green{color:var(--success)}
+  .value-red{color:var(--danger)}
+  .value-amber{color:var(--warning)}
+  .value-blue{color:var(--accent-light)}
+
+  .breakdown{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:2rem;margin-bottom:1.5rem}
+  .breakdown h3{font-size:1rem;font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+  .breakdown-row{display:flex;justify-content:space-between;align-items:center;padding:.65rem 0;border-bottom:1px solid rgba(255,255,255,.05)}
+  .breakdown-row:last-child{border-bottom:none}
+  .breakdown-row .lbl{font-size:.85rem;color:var(--text-muted)}
+  .breakdown-row .val{font-size:.95rem;font-weight:600}
+  .val-pos{color:var(--success)}
+  .val-neg{color:var(--danger)}
+
+  .bar-chart{margin-bottom:2rem}
+  .bar-row{margin-bottom:.75rem}
+  .bar-label{display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:.3rem}
+  .bar-label span:first-child{color:var(--text-muted)}
+  .bar-label span:last-child{font-weight:700}
+  .bar-track{height:24px;background:var(--bg);border-radius:6px;overflow:hidden;position:relative}
+  .bar-fill{height:100%;border-radius:6px;transition:width .8s ease}
+
+  .cta-box{background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(6,182,212,.1));border:1px solid rgba(124,58,237,.3);border-radius:16px;padding:2.5rem;text-align:center;margin-bottom:2rem}
+  .cta-box h2{font-size:1.4rem;margin-bottom:.5rem}
+  .cta-box p{color:var(--text-muted);margin-bottom:1.5rem;font-size:.9rem}
+  .cta-box .btn{width:auto;padding:.8rem 2rem}
+
+  .footer{text-align:center;padding:2rem 0;border-top:1px solid var(--border)}
+  .footer p{color:var(--text-muted);font-size:.85rem}
+  .footer a{color:var(--primary-light);text-decoration:none;font-weight:600}
+
+  .hidden{display:none}
+  .form-section.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="gradient-bg"></div>
+<div class="container">
+
+  <div class="header">
+    <a href="index.html" style="text-decoration:none">
+      <div class="logo">
+        <div class="logo-icon">⚡</div>
+        <div class="logo-text">AI Fusion Automations</div>
+      </div>
+    </a>
+    <div class="tag">Free — No sign-up required</div>
+    <h1>AI Automation ROI Calculator</h1>
+    <p>Find out how much time and money AI automation could save your business — whether you're automating customer interactions, back-office operations, or both.</p>
+  </div>
+
+  <!-- FORM -->
+  <div id="form-section" class="form-section">
+
+    <!-- Step 1: Service Type -->
+    <div class="calc-section">
+      <h2><span class="icon" style="background:rgba(124,58,237,.12)">🎯</span> What do you want to automate?</h2>
+      <div class="service-types">
+        <div class="service-type-btn active" onclick="selectServiceType('customer')" id="st-customer">
+          <div class="st-icon">📞</div>
+          <div class="st-name">Customer-Facing</div>
+          <div class="st-desc">Leads, enquiries, follow-ups, bookings</div>
+        </div>
+        <div class="service-type-btn" onclick="selectServiceType('backoffice')" id="st-backoffice">
+          <div class="st-icon">📋</div>
+          <div class="st-name">Back-Office Operations</div>
+          <div class="st-desc">Data entry, invoicing, document processing</div>
+        </div>
+        <div class="service-type-btn" onclick="selectServiceType('chatbot')" id="st-chatbot">
+          <div class="st-icon">🤖</div>
+          <div class="st-name">AI Chatbot</div>
+          <div class="st-desc">24/7 customer support, FAQ, booking</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Business Info (always shown) -->
+    <div class="calc-section">
+      <h2><span class="icon" style="background:rgba(245,158,11,.12)">📊</span> Your Business</h2>
+      <div class="row">
+        <div class="field">
+          <label>Industry</label>
+          <select id="industry">
+            <option value="trades">Trades & Home Services</option>
+            <option value="professional">Professional Services</option>
+            <option value="health">Health & Wellness</option>
+            <option value="retail">Retail / E-commerce</option>
+            <option value="hospitality">Hospitality & Food</option>
+            <option value="property">Property & Lettings</option>
+            <option value="automotive">Automotive</option>
+            <option value="distribution">Distribution & Wholesale</option>
+            <option value="manufacturing">Manufacturing</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Number of Employees</label>
+          <select id="employees">
+            <option value="1">Just me (1)</option>
+            <option value="3">2–5</option>
+            <option value="8">6–10</option>
+            <option value="15">11–20</option>
+            <option value="35">21–50</option>
+            <option value="75">50+</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Staff Cost (always shown) -->
+    <div class="calc-section">
+      <h2><span class="icon" style="background:rgba(16,185,129,.12)">💷</span> Staff Cost</h2>
+      <div class="field">
+        <label>How are your staff paid?</label>
+        <div class="pay-toggle">
+          <button class="active" onclick="setPayMode('hourly')" id="pay-hourly">Hourly Rate</button>
+          <button onclick="setPayMode('salary')" id="pay-salary">Annual Salary</button>
+        </div>
+      </div>
+      <div id="pay-hourly-fields">
+        <div class="field">
+          <label>Hourly rate (£)</label>
+          <div class="hint">Average cost per hour for staff doing this work</div>
+          <input type="number" id="hourlyRate" value="25" min="1" max="500" oninput="updateHourlyCalc()" />
+        </div>
+      </div>
+      <div id="pay-salary-fields" style="display:none">
+        <div class="row">
+          <div class="field">
+            <label>Annual salary (£)</label>
+            <div class="hint">Gross annual salary before tax</div>
+            <input type="number" id="annualSalary" value="28000" min="1000" max="500000" oninput="updateHourlyCalc()" />
+          </div>
+          <div class="field">
+            <label>Working hours per day</label>
+            <div class="hint">Typical working day length</div>
+            <select id="hoursPerDay" onchange="updateHourlyCalc()">
+              <option value="7">7 hours</option>
+              <option value="7.5" selected>7.5 hours</option>
+              <option value="8">8 hours</option>
+              <option value="9">9 hours</option>
+            </select>
+          </div>
+        </div>
+        <div class="hourly-calc" id="salary-calc-result"></div>
+      </div>
+    </div>
+
+    <!-- Customer-Facing Questions -->
+    <div id="q-customer">
+      <div class="calc-section">
+        <h2><span class="icon" style="background:rgba(6,182,212,.12)">📞</span> Leads & Customers</h2>
+        <div class="row">
+          <div class="field">
+            <label>New enquiries per month</label>
+            <div class="hint">Phone calls, emails, web forms, social messages</div>
+            <input type="number" id="leads" value="30" min="1" max="10000" />
+          </div>
+          <div class="field">
+            <label>Average job/sale value (£)</label>
+            <div class="hint">What a typical customer is worth</div>
+            <input type="number" id="jobValue" value="250" min="1" max="1000000" />
+          </div>
+        </div>
+        <div class="slider-field">
+          <label>How many enquiries do you think you lose or miss? <span id="lostPctLabel">25%</span></label>
+          <input type="range" id="lostPct" min="5" max="60" value="25" step="5" oninput="document.getElementById('lostPctLabel').textContent=this.value+'%'" />
+        </div>
+      </div>
+
+      <div class="calc-section">
+        <h2><span class="icon" style="background:rgba(124,58,237,.12)">⏱️</span> Response & Follow-Up</h2>
+        <div class="slider-field">
+          <label>Hours/week on admin, follow-ups, quoting, scheduling <span id="adminHoursLabel">10</span></label>
+          <input type="range" id="adminHours" min="2" max="40" value="10" step="1" oninput="document.getElementById('adminHoursLabel').textContent=this.value" />
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Average response time to new enquiry</label>
+            <select id="responseTime">
+              <option value="0.25">Under 15 minutes</option>
+              <option value="1">About 1 hour</option>
+              <option value="4" selected>A few hours</option>
+              <option value="24">Next day</option>
+              <option value="48">2+ days</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Do you send follow-up messages?</label>
+            <select id="followUp">
+              <option value="always">Always — automated system</option>
+              <option value="sometimes" selected>Sometimes — when I remember</option>
+              <option value="rarely">Rarely</option>
+              <option value="never">Never</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Back-Office Questions -->
+    <div id="q-backoffice" style="display:none">
+      <div class="calc-section">
+        <h2><span class="icon" style="background:rgba(6,182,212,.12)">📋</span> Current Process</h2>
+        <div class="field">
+          <label>What type of work are you automating?</label>
+          <select id="boTaskType">
+            <option value="data-entry">Data entry / document processing</option>
+            <option value="invoicing">Invoicing & accounting</option>
+            <option value="ordering">Order processing / purchase orders</option>
+            <option value="reporting">Reporting & compliance</option>
+            <option value="hr">HR / employee admin</option>
+            <option value="other">Other repetitive task</option>
+          </select>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>How many tasks/transactions per day?</label>
+            <div class="hint">e.g. orders processed, invoices entered, documents handled</div>
+            <input type="number" id="boTasksPerDay" value="5" min="1" max="1000" />
+          </div>
+          <div class="field">
+            <label>Average time per task (minutes)</label>
+            <div class="hint">How long each task currently takes a person</div>
+            <input type="number" id="boMinutesPerTask" value="15" min="1" max="480" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>How many staff do this work?</label>
+            <input type="number" id="boStaffCount" value="2" min="1" max="100" />
+          </div>
+          <div class="field">
+            <label>Working days per week</label>
+            <select id="boDaysPerWeek">
+              <option value="5" selected>5 days</option>
+              <option value="5.5">5.5 days</option>
+              <option value="6">6 days</option>
+              <option value="7">7 days</option>
+            </select>
+          </div>
+        </div>
+        <div class="slider-field">
+          <label>Error/rework rate <span id="boErrorLabel">10%</span></label>
+          <div class="hint" style="margin-bottom:.5rem">How often do tasks need correcting or redoing?</div>
+          <input type="range" id="boErrorRate" min="0" max="30" value="10" step="1" oninput="document.getElementById('boErrorLabel').textContent=this.value+'%'" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Chatbot Questions -->
+    <div id="q-chatbot" style="display:none">
+      <div class="calc-section">
+        <h2><span class="icon" style="background:rgba(6,182,212,.12)">🤖</span> Customer Interactions</h2>
+        <div class="row">
+          <div class="field">
+            <label>Customer enquiries per month</label>
+            <div class="hint">Phone, email, live chat, social media</div>
+            <input type="number" id="cbEnquiries" value="200" min="1" max="100000" />
+          </div>
+          <div class="field">
+            <label>Average time per enquiry (minutes)</label>
+            <div class="hint">Time a person spends responding</div>
+            <input type="number" id="cbMinutesPerEnquiry" value="8" min="1" max="120" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>What % could an AI chatbot handle?</label>
+            <div class="hint">FAQ, booking, status checks, basic support</div>
+            <select id="cbAutoRate">
+              <option value="40">~40% — Simple FAQs only</option>
+              <option value="60" selected>~60% — FAQs + booking/scheduling</option>
+              <option value="75">~75% — Most standard queries</option>
+              <option value="85">~85% — Complex queries too</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Current support hours</label>
+            <select id="cbSupportHours">
+              <option value="8">Business hours only (8hrs)</option>
+              <option value="12" selected>Extended hours (12hrs)</option>
+              <option value="24">24/7 coverage</option>
+            </select>
+          </div>
+        </div>
+        <div class="slider-field">
+          <label>Enquiries that come outside your support hours <span id="cbOohLabel">30%</span></label>
+          <input type="range" id="cbOohPct" min="5" max="60" value="30" step="5" oninput="document.getElementById('cbOohLabel').textContent=this.value+'%'" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Optional Email Capture with GDPR -->
+    <div class="calc-section">
+      <h2><span class="icon" style="background:rgba(124,58,237,.12)">📧</span> Get Your Report Emailed (Optional)</h2>
+      <div class="row">
+        <div class="field">
+          <label>Your name</label>
+          <input type="text" id="userName" placeholder="e.g. Sarah" />
+        </div>
+        <div class="field">
+          <label>Email address</label>
+          <input type="email" id="userEmail" placeholder="you@company.com" />
+        </div>
+      </div>
+      <div class="checkbox-field">
+        <input type="checkbox" id="gdprConsent" />
+        <label for="gdprConsent">I consent to AI Fusion Automations storing my details and contacting me about AI automation services. You can unsubscribe at any time. See our <a href="privacy-policy-aifa.html" target="_blank">privacy policy</a>.</label>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="calculate()">Calculate My ROI →</button>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results" class="results">
+    <div class="results-header">
+      <h2 style="background:linear-gradient(135deg,#fff,var(--accent-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent">Your ROI Report</h2>
+      <p id="results-subtitle">Here's what AI automation could do for your business</p>
+    </div>
+
+    <div class="result-cards" id="result-cards"></div>
+
+    <div class="breakdown" id="breakdown-main">
+      <h3 id="breakdown-title"></h3>
+      <div id="breakdown-rows"></div>
+    </div>
+
+    <div class="breakdown">
+      <h3>⏱️ Time Savings</h3>
+      <div id="time-breakdown"></div>
+    </div>
+
+    <div class="breakdown">
+      <h3>📈 Impact Areas</h3>
+      <div class="bar-chart" id="impact-bars"></div>
+    </div>
+
+    <div class="breakdown">
+      <h3>🎯 What AI Automation Would Do For You</h3>
+      <div id="recommendations" style="font-size:.9rem;line-height:1.8"></div>
+    </div>
+
+    <div class="cta-box">
+      <h2>Want to make this happen?</h2>
+      <p>Book a free 15-minute strategy call and we'll show you exactly how to implement these savings in your business.</p>
+      <a href="https://tools.aifusionautomations.com" target="_blank" class="btn btn-primary">Book Your Free Strategy Call →</a>
+    </div>
+
+    <button class="btn btn-secondary" onclick="reset()" style="max-width:300px;margin:0 auto;display:flex">← Recalculate</button>
+  </div>
+
+  <!-- CTA banner for custom software -->
+  <div style="background:linear-gradient(135deg,rgba(6,182,212,.08),rgba(124,58,237,.08));border:1px solid var(--border);border-radius:16px;padding:1.5rem;text-align:center;margin-bottom:1.5rem">
+    <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:.5rem">Need a custom app or automation built for your business?</p>
+    <a href="ai-operating-systems.html" style="color:var(--accent-light);font-weight:700;font-size:.9rem;text-decoration:none">Explore our Custom Software & App Development →</a>
+  </div>
+
+  <div class="footer" style="margin-top:1rem">
+    <div class="logo" style="margin-bottom:1rem;justify-content:center">
+      <div class="logo-icon" style="width:32px;height:32px;font-size:1rem">⚡</div>
+      <div class="logo-text" style="font-size:.9rem">AI Fusion Automations</div>
+    </div>
+    <p>Free tools powered by <a href="https://tools.aifusionautomations.com" target="_blank">AI Fusion Automations</a></p>
+    <p style="margin-top:.5rem;font-size:.75rem">Helping businesses grow with AI-powered automation, chatbots, and CRM solutions.</p>
+  </div>
+
+</div>
+
+<script>
+let serviceType = 'customer';
+let payMode = 'hourly';
+
+function selectServiceType(type) {
+  serviceType = type;
+  document.querySelectorAll('.service-type-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('st-' + type).classList.add('active');
+  document.getElementById('q-customer').style.display = type === 'customer' ? '' : 'none';
+  document.getElementById('q-backoffice').style.display = type === 'backoffice' ? '' : 'none';
+  document.getElementById('q-chatbot').style.display = type === 'chatbot' ? '' : 'none';
+}
+
+function setPayMode(mode) {
+  payMode = mode;
+  document.getElementById('pay-hourly').classList.toggle('active', mode === 'hourly');
+  document.getElementById('pay-salary').classList.toggle('active', mode === 'salary');
+  document.getElementById('pay-hourly-fields').style.display = mode === 'hourly' ? '' : 'none';
+  document.getElementById('pay-salary-fields').style.display = mode === 'salary' ? '' : 'none';
+  updateHourlyCalc();
+}
+
+function getHourlyRate() {
+  if (payMode === 'hourly') {
+    return parseFloat(document.getElementById('hourlyRate').value) || 25;
+  }
+  const salary = parseFloat(document.getElementById('annualSalary').value) || 28000;
+  const hpd = parseFloat(document.getElementById('hoursPerDay').value) || 7.5;
+  // UK: 52 weeks - 5 weeks (25 days holiday + bank holidays) = 47 working weeks
+  const workingWeeks = 47;
+  const hourlyRate = salary / (workingWeeks * 5 * hpd);
+  return Math.round(hourlyRate * 100) / 100;
+}
+
+function updateHourlyCalc() {
+  if (payMode === 'salary') {
+    const rate = getHourlyRate();
+    const salary = parseFloat(document.getElementById('annualSalary').value) || 28000;
+    const hpd = parseFloat(document.getElementById('hoursPerDay').value) || 7.5;
+    document.getElementById('salary-calc-result').textContent =
+      '= £' + rate.toFixed(2) + '/hour (£' + salary.toLocaleString() + ' ÷ 47 working weeks ÷ 5 days ÷ ' + hpd + ' hrs/day)';
+  }
+}
+
+function calculate() {
+  const industry = document.getElementById('industry').value;
+  const employees = parseInt(document.getElementById('employees').value);
+  const hourlyRate = getHourlyRate();
+
+  if (serviceType === 'customer') calculateCustomer(hourlyRate, employees, industry);
+  else if (serviceType === 'backoffice') calculateBackoffice(hourlyRate, employees, industry);
+  else calculateChatbot(hourlyRate, employees, industry);
+
+  // Capture lead if email provided with consent
+  const email = document.getElementById('userEmail').value.trim();
+  const name = document.getElementById('userName').value.trim();
+  const consent = document.getElementById('gdprConsent').checked;
+  if (email && consent) {
+    sendToGHL(name, email);
+  }
+
+  document.getElementById('form-section').classList.add('hidden');
+  document.getElementById('results').classList.add('show');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function calculateCustomer(hourlyRate, employees, industry) {
+  const leads = parseInt(document.getElementById('leads').value) || 30;
+  const jobValue = parseInt(document.getElementById('jobValue').value) || 250;
+  const lostPct = parseInt(document.getElementById('lostPct').value) / 100;
+  const adminHours = parseInt(document.getElementById('adminHours').value) || 10;
+  const responseTime = parseFloat(document.getElementById('responseTime').value);
+  const followUp = document.getElementById('followUp').value;
+
+  let responseMultiplier = 1.0;
+  if (responseTime <= 0.25) responseMultiplier = 0.7;
+  else if (responseTime <= 1) responseMultiplier = 0.85;
+  else if (responseTime <= 4) responseMultiplier = 1.0;
+  else if (responseTime <= 24) responseMultiplier = 1.2;
+  else responseMultiplier = 1.4;
+
+  let followUpMultiplier = 1.0;
+  if (followUp === 'always') followUpMultiplier = 0.7;
+  else if (followUp === 'sometimes') followUpMultiplier = 1.0;
+  else if (followUp === 'rarely') followUpMultiplier = 1.2;
+  else followUpMultiplier = 1.4;
+
+  const effectiveLostPct = Math.min(lostPct * responseMultiplier * followUpMultiplier, 0.8);
+  const lostLeadsPerMonth = Math.round(leads * effectiveLostPct);
+  const lostRevenuePerMonth = lostLeadsPerMonth * jobValue;
+  const lostRevenuePerYear = lostRevenuePerMonth * 12;
+
+  let recoveryRate = 0.6;
+  if (responseTime >= 24) recoveryRate += 0.1;
+  if (followUp === 'never' || followUp === 'rarely') recoveryRate += 0.1;
+  recoveryRate = Math.min(recoveryRate, 0.85);
+  const recoverablePerYear = Math.round(lostRevenuePerYear * recoveryRate);
+
+  let automationRate = 0.55;
+  if (employees <= 3) automationRate = 0.6;
+  if (adminHours >= 15) automationRate += 0.05;
+  const hoursSavedPerWeek = Math.round(adminHours * automationRate * 10) / 10;
+  const hoursSavedPerYear = Math.round(hoursSavedPerWeek * 50);
+  const timeSavedValue = Math.round(hoursSavedPerYear * hourlyRate);
+
+  const totalAnnualValue = recoverablePerYear + timeSavedValue;
+  const annualCost = 3600;
+  const roi = totalAnnualValue > 0 ? Math.round(totalAnnualValue / annualCost * 10) / 10 : 0;
+
+  // Result cards
+  document.getElementById('result-cards').innerHTML = `
+    <div class="result-card"><div class="value value-red">£${lostRevenuePerYear.toLocaleString()}</div><div class="label">Revenue Lost Per Year</div></div>
+    <div class="result-card"><div class="value value-green">£${recoverablePerYear.toLocaleString()}</div><div class="label">Recoverable With AI</div></div>
+    <div class="result-card"><div class="value value-blue">${hoursSavedPerYear.toLocaleString()}</div><div class="label">Hours Saved Per Year</div></div>
+    <div class="result-card"><div class="value value-amber">${roi}x</div><div class="label">Estimated ROI</div></div>
+  `;
+
+  // Revenue breakdown
+  document.getElementById('breakdown-title').innerHTML = '💰 Revenue Breakdown';
+  document.getElementById('breakdown-rows').innerHTML = `
+    <div class="breakdown-row"><span class="lbl">Monthly enquiries</span><span class="val">${leads}</span></div>
+    <div class="breakdown-row"><span class="lbl">Estimated missed/lost enquiries</span><span class="val val-neg">${lostLeadsPerMonth} /month</span></div>
+    <div class="breakdown-row"><span class="lbl">Revenue lost per month</span><span class="val val-neg">£${lostRevenuePerMonth.toLocaleString()}</span></div>
+    <div class="breakdown-row"><span class="lbl">Revenue lost per year</span><span class="val val-neg">£${lostRevenuePerYear.toLocaleString()}</span></div>
+    <div class="breakdown-row"><span class="lbl">AI recovery rate (estimated)</span><span class="val">${Math.round(recoveryRate * 100)}%</span></div>
+    <div class="breakdown-row"><span class="lbl">Recoverable revenue per year</span><span class="val val-pos">£${recoverablePerYear.toLocaleString()}</span></div>
+  `;
+
+  // Time breakdown
+  document.getElementById('time-breakdown').innerHTML = `
+    <div class="breakdown-row"><span class="lbl">Current admin hours per week</span><span class="val">${adminHours} hrs</span></div>
+    <div class="breakdown-row"><span class="lbl">Estimated automation rate</span><span class="val">${Math.round(automationRate * 100)}%</span></div>
+    <div class="breakdown-row"><span class="lbl">Hours saved per week</span><span class="val val-pos">${hoursSavedPerWeek} hrs</span></div>
+    <div class="breakdown-row"><span class="lbl">Hours saved per year</span><span class="val val-pos">${hoursSavedPerYear} hrs</span></div>
+    <div class="breakdown-row"><span class="lbl">Value of time saved (at £${hourlyRate.toFixed(2)}/hr)</span><span class="val val-pos">£${timeSavedValue.toLocaleString()}</span></div>
+  `;
+
+  // Impact bars
+  const impacts = [
+    { label: 'Lead Response Speed', pct: responseTime > 1 ? 90 : 40, color: '#10b981' },
+    { label: 'Follow-Up Automation', pct: followUp === 'always' ? 30 : followUp === 'sometimes' ? 70 : 95, color: '#06b6d4' },
+    { label: 'Admin Time Reduction', pct: Math.round(automationRate * 100), color: '#7c3aed' },
+    { label: 'Lead Capture & Booking', pct: Math.min(Math.round(effectiveLostPct * 100 + 20), 95), color: '#f59e0b' },
+    { label: 'Customer Experience', pct: responseTime > 4 ? 85 : 55, color: '#ec4899' }
+  ];
+  renderBars(impacts);
+
+  // Recommendations
+  const recs = [];
+  if (responseTime > 1) recs.push('⚡ <strong>Instant lead response</strong> — An AI chatbot or auto-responder would reply to every enquiry in under 60 seconds, 24/7. Businesses that respond within 5 minutes are 21x more likely to convert.');
+  if (followUp !== 'always') recs.push('🔄 <strong>Automated follow-up sequences</strong> — Set up SMS and email follow-ups that trigger automatically. No more leads slipping through because you were busy on a job.');
+  if (adminHours >= 8) recs.push('🤖 <strong>Admin automation</strong> — Automate quoting, scheduling, invoicing, and review requests. You\'d get back ' + hoursSavedPerWeek + ' hours every week to focus on revenue-generating work.');
+  recs.push('📱 <strong>Online booking system</strong> — Let customers book directly from your website, Google listing, or social media. Reduce phone tag and no-shows with automated reminders.');
+  if (lostLeadsPerMonth >= 5) recs.push('📊 <strong>Lead tracking CRM</strong> — Stop losing track of enquiries. A simple CRM ensures every lead gets a response and a follow-up, automatically.');
+  recs.push('⭐ <strong>Automated review collection</strong> — After every job, automatically ask happy customers for a Google review. More reviews = more trust = more leads.');
+  renderRecs(recs);
+}
+
+function calculateBackoffice(hourlyRate, employees, industry) {
+  const taskType = document.getElementById('boTaskType').value;
+  const tasksPerDay = parseInt(document.getElementById('boTasksPerDay').value) || 5;
+  const minutesPerTask = parseInt(document.getElementById('boMinutesPerTask').value) || 15;
+  const staffCount = parseInt(document.getElementById('boStaffCount').value) || 2;
+  const daysPerWeek = parseFloat(document.getElementById('boDaysPerWeek').value) || 5;
+  const errorRate = parseInt(document.getElementById('boErrorRate').value) / 100;
+
+  // Total time spent
+  const hoursPerDayOnTask = (tasksPerDay * minutesPerTask) / 60;
+  const hoursPerWeek = hoursPerDayOnTask * daysPerWeek * staffCount;
+  const hoursPerYear = hoursPerWeek * 50;
+
+  // Error/rework cost
+  const reworkHoursPerYear = hoursPerYear * errorRate;
+  const totalHoursIncRework = hoursPerYear + reworkHoursPerYear;
+
+  // Automation rate by task type
+  let automationRate = 0.65;
+  if (taskType === 'data-entry') automationRate = 0.80;
+  else if (taskType === 'invoicing') automationRate = 0.75;
+  else if (taskType === 'ordering') automationRate = 0.75;
+  else if (taskType === 'reporting') automationRate = 0.70;
+  else if (taskType === 'hr') automationRate = 0.60;
+
+  // AI reduces errors significantly
+  const errorReductionRate = 0.85;
+
+  const hoursSavedPerYear = Math.round(totalHoursIncRework * automationRate);
+  const errorHoursSaved = Math.round(reworkHoursPerYear * errorReductionRate);
+  const costSavedPerYear = Math.round(hoursSavedPerYear * hourlyRate);
+  const errorCostSaved = Math.round(errorHoursSaved * hourlyRate);
+  const totalSaving = costSavedPerYear;
+
+  const annualCost = 4800; // Higher for back-office automation
+  const roi = totalSaving > 0 ? Math.round(totalSaving / annualCost * 10) / 10 : 0;
+
+  const taskTypeLabels = {
+    'data-entry': 'Data Entry & Document Processing',
+    'invoicing': 'Invoicing & Accounting',
+    'ordering': 'Order Processing',
+    'reporting': 'Reporting & Compliance',
+    'hr': 'HR & Employee Admin',
+    'other': 'Repetitive Task Automation'
+  };
+
+  document.getElementById('results-subtitle').textContent = 'Back-Office Automation — ' + taskTypeLabels[taskType];
+
+  document.getElementById('result-cards').innerHTML = `
+    <div class="result-card"><div class="value value-green">£${totalSaving.toLocaleString()}</div><div class="label">Annual Cost Saving</div></div>
+    <div class="result-card"><div class="value value-blue">${hoursSavedPerYear.toLocaleString()}</div><div class="label">Hours Saved Per Year</div></div>
+    <div class="result-card"><div class="value value-amber">${roi}x</div><div class="label">Estimated ROI</div></div>
+    <div class="result-card"><div class="value value-red">${Math.round(errorRate * 100)}% → ${Math.round(errorRate * (1 - errorReductionRate) * 100)}%</div><div class="label">Error Rate Reduction</div></div>
+  `;
+
+  document.getElementById('breakdown-title').innerHTML = '📋 Process Breakdown';
+  document.getElementById('breakdown-rows').innerHTML = `
+    <div class="breakdown-row"><span class="lbl">Tasks per day</span><span class="val">${tasksPerDay}</span></div>
+    <div class="breakdown-row"><span class="lbl">Time per task</span><span class="val">${minutesPerTask} mins</span></div>
+    <div class="breakdown-row"><span class="lbl">Staff on this work</span><span class="val">${staffCount}</span></div>
+    <div class="breakdown-row"><span class="lbl">Total hours/week on this process</span><span class="val val-neg">${hoursPerWeek.toFixed(1)} hrs</span></div>
+    <div class="breakdown-row"><span class="lbl">Additional rework hours/year (${Math.round(errorRate * 100)}% error rate)</span><span class="val val-neg">${reworkHoursPerYear.toFixed(0)} hrs</span></div>
+    <div class="breakdown-row"><span class="lbl">Total cost of this process/year</span><span class="val val-neg">£${Math.round(totalHoursIncRework * hourlyRate).toLocaleString()}</span></div>
+    <div class="breakdown-row"><span class="lbl">Automation rate (${taskTypeLabels[taskType]})</span><span class="val">${Math.round(automationRate * 100)}%</span></div>
+    <div class="breakdown-row"><span class="lbl">Annual saving with automation</span><span class="val val-pos">£${totalSaving.toLocaleString()}</span></div>
+  `;
+
+  document.getElementById('time-breakdown').innerHTML = `
+    <div class="breakdown-row"><span class="lbl">Current process hours per year</span><span class="val">${Math.round(totalHoursIncRework)} hrs</span></div>
+    <div class="breakdown-row"><span class="lbl">Hours automated away</span><span class="val val-pos">${hoursSavedPerYear} hrs</span></div>
+    <div class="breakdown-row"><span class="lbl">Error/rework hours eliminated</span><span class="val val-pos">${errorHoursSaved} hrs</span></div>
+    <div class="breakdown-row"><span class="lbl">Staff hourly rate used</span><span class="val">£${hourlyRate.toFixed(2)}/hr</span></div>
+    <div class="breakdown-row"><span class="lbl">Value of time saved per year</span><span class="val val-pos">£${costSavedPerYear.toLocaleString()}</span></div>
+  `;
+
+  const impacts = [
+    { label: 'Process Speed', pct: Math.round(automationRate * 100), color: '#10b981' },
+    { label: 'Error Reduction', pct: Math.round(errorReductionRate * 100), color: '#06b6d4' },
+    { label: 'Staff Time Freed', pct: Math.round(automationRate * 90), color: '#7c3aed' },
+    { label: 'Data Accuracy', pct: 90, color: '#f59e0b' },
+    { label: 'Scalability', pct: 85, color: '#ec4899' }
+  ];
+  renderBars(impacts);
+
+  const recs = [];
+  if (taskType === 'data-entry' || taskType === 'ordering') recs.push('📄 <strong>AI document extraction</strong> — AI reads PDFs, emails, and spreadsheets and extracts structured data automatically. No more manual copy-paste between systems.');
+  if (taskType === 'invoicing') recs.push('💳 <strong>Automated invoicing pipeline</strong> — Generate, send, and track invoices automatically. Match payments to invoices. Flag overdue accounts.');
+  if (taskType === 'ordering') recs.push('📦 <strong>Purchase order automation</strong> — AI extracts order data, validates against price files, checks for duplicates, and exports directly to your accounting system.');
+  if (errorRate >= 0.05) recs.push('✅ <strong>AI validation & error checking</strong> — AI cross-references data against your master records in real-time, catching errors before they reach your accounting system.');
+  recs.push('📊 <strong>Real-time reporting</strong> — Automated dashboards that update as data flows through, replacing manual spreadsheet compilation.');
+  if (staffCount >= 2) recs.push('👥 <strong>Staff redeployment</strong> — With ' + hoursSavedPerYear + ' hours freed up, your team can focus on higher-value work that actually grows the business.');
+  recs.push('🔄 <strong>System integration</strong> — Connect your existing tools (email, spreadsheets, accounting software) so data flows automatically between them.');
+  renderRecs(recs);
+}
+
+function calculateChatbot(hourlyRate, employees, industry) {
+  const enquiries = parseInt(document.getElementById('cbEnquiries').value) || 200;
+  const minsPerEnquiry = parseInt(document.getElementById('cbMinutesPerEnquiry').value) || 8;
+  const autoRate = parseInt(document.getElementById('cbAutoRate').value) / 100;
+  const supportHours = parseInt(document.getElementById('cbSupportHours').value);
+  const oohPct = parseInt(document.getElementById('cbOohPct').value) / 100;
+
+  // Current cost
+  const hoursPerMonth = (enquiries * minsPerEnquiry) / 60;
+  const hoursPerYear = hoursPerMonth * 12;
+  const currentCostPerYear = Math.round(hoursPerYear * hourlyRate);
+
+  // AI handles automated portion
+  const enquiriesHandledByAI = Math.round(enquiries * autoRate);
+  const hoursSavedPerMonth = (enquiriesHandledByAI * minsPerEnquiry) / 60;
+  const hoursSavedPerYear = Math.round(hoursSavedPerMonth * 12);
+  const costSavedPerYear = Math.round(hoursSavedPerYear * hourlyRate);
+
+  // Out-of-hours value — enquiries that would go unanswered
+  const oohEnquiries = Math.round(enquiries * oohPct);
+  const avgJobValue = 50; // Conservative estimate for support-driven conversions
+  const oohRevenue = oohEnquiries * avgJobValue * 12 * 0.15; // 15% convert
+
+  const totalSaving = costSavedPerYear + Math.round(oohRevenue);
+  const annualCost = 3000;
+  const roi = totalSaving > 0 ? Math.round(totalSaving / annualCost * 10) / 10 : 0;
+
+  document.getElementById('results-subtitle').textContent = 'AI Chatbot ROI Analysis';
+
+  document.getElementById('result-cards').innerHTML = `
+    <div class="result-card"><div class="value value-green">£${costSavedPerYear.toLocaleString()}</div><div class="label">Support Cost Saved/Year</div></div>
+    <div class="result-card"><div class="value value-blue">${hoursSavedPerYear.toLocaleString()}</div><div class="label">Staff Hours Saved/Year</div></div>
+    <div class="result-card"><div class="value value-amber">${roi}x</div><div class="label">Estimated ROI</div></div>
+    <div class="result-card"><div class="value value-red">${enquiriesHandledByAI * 12}</div><div class="label">Enquiries Handled by AI/Year</div></div>
+  `;
+
+  document.getElementById('breakdown-title').innerHTML = '🤖 Chatbot Impact';
+  document.getElementById('breakdown-rows').innerHTML = `
+    <div class="breakdown-row"><span class="lbl">Monthly enquiries</span><span class="val">${enquiries}</span></div>
+    <div class="breakdown-row"><span class="lbl">Handled by AI chatbot (${Math.round(autoRate * 100)}%)</span><span class="val val-pos">${enquiriesHandledByAI} /month</span></div>
+    <div class="breakdown-row"><span class="lbl">Remaining for human agents</span><span class="val">${enquiries - enquiriesHandledByAI} /month</span></div>
+    <div class="breakdown-row"><span class="lbl">Out-of-hours enquiries captured</span><span class="val val-pos">${oohEnquiries} /month</span></div>
+    <div class="breakdown-row"><span class="lbl">Estimated out-of-hours revenue gain</span><span class="val val-pos">£${Math.round(oohRevenue).toLocaleString()}/year</span></div>
+  `;
+
+  document.getElementById('time-breakdown').innerHTML = `
+    <div class="breakdown-row"><span class="lbl">Current support time per month</span><span class="val">${hoursPerMonth.toFixed(1)} hrs</span></div>
+    <div class="breakdown-row"><span class="lbl">Hours automated per month</span><span class="val val-pos">${hoursSavedPerMonth.toFixed(1)} hrs</span></div>
+    <div class="breakdown-row"><span class="lbl">Hours saved per year</span><span class="val val-pos">${hoursSavedPerYear} hrs</span></div>
+    <div class="breakdown-row"><span class="lbl">Staff hourly rate used</span><span class="val">£${hourlyRate.toFixed(2)}/hr</span></div>
+    <div class="breakdown-row"><span class="lbl">Annual support cost saving</span><span class="val val-pos">£${costSavedPerYear.toLocaleString()}</span></div>
+  `;
+
+  const impacts = [
+    { label: 'Response Time (instant 24/7)', pct: 95, color: '#10b981' },
+    { label: 'Support Capacity', pct: Math.round(autoRate * 100), color: '#06b6d4' },
+    { label: 'Out-of-Hours Coverage', pct: supportHours < 24 ? 90 : 40, color: '#7c3aed' },
+    { label: 'Customer Satisfaction', pct: 80, color: '#f59e0b' },
+    { label: 'Staff Workload Reduction', pct: Math.round(autoRate * 85), color: '#ec4899' }
+  ];
+  renderBars(impacts);
+
+  const recs = [];
+  recs.push('💬 <strong>AI-powered chatbot</strong> — Answers customer questions instantly, 24/7. Handles FAQs, booking, order status, and more. Learns from your business knowledge base.');
+  if (supportHours < 24) recs.push('🌙 <strong>24/7 availability</strong> — Capture the ' + Math.round(oohPct * 100) + '% of enquiries that come outside your current support hours. Never miss a potential sale.');
+  recs.push('🎯 <strong>Smart escalation</strong> — Complex queries get routed to the right person with full context. Your team handles fewer, higher-value conversations.');
+  recs.push('📚 <strong>Knowledge base integration</strong> — Train the AI on your products, services, and policies. It gives accurate, consistent answers every time.');
+  if (enquiries >= 100) recs.push('📈 <strong>Conversation analytics</strong> — Understand what customers ask most, spot trends, and improve your products and processes based on real data.');
+  renderRecs(recs);
+}
+
+function renderBars(impacts) {
+  document.getElementById('impact-bars').innerHTML = impacts.map(i => `
+    <div class="bar-row">
+      <div class="bar-label"><span>${i.label}</span><span style="color:${i.color}">${i.pct}% improvement potential</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${i.pct}%;background:${i.color}"></div></div>
+    </div>
+  `).join('');
+}
+
+function renderRecs(recs) {
+  document.getElementById('recommendations').innerHTML = recs.map(r =>
+    '<div style="padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.05)">' + r + '</div>'
+  ).join('');
+}
+
+function sendToGHL(name, email) {
+  // Fire-and-forget webhook to GHL for lead capture
+  const data = {
+    firstName: name || 'ROI Calculator User',
+    email: email,
+    source: 'ROI Calculator v2',
+    tags: ['roi-calculator', 'website-lead', serviceType],
+    customField: { service_type: serviceType }
+  };
+  fetch('https://services.leadconnectorhq.com/hooks/XvQbY3vQ9dnMEnouNyKK/webhook-trigger/2a5e4603-b13e-4772-96c7-5da1417abfff', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  }).catch(() => {}); // Silent fail — don't block the results
+}
+
+function reset() {
+  document.getElementById('form-section').classList.remove('hidden');
+  document.getElementById('results').classList.remove('show');
+  document.getElementById('results-subtitle').textContent = "Here's what AI automation could do for your business";
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Init salary calc display
+updateHourlyCalc();
+</script>
+<script src="https://widgets.leadconnectorhq.com/loader.js" data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js" data-widget-id="668394bfc5fec605b13596ff"></script>
+</body>
+</html>

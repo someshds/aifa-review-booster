@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Receptionist — Never Miss a Call Again | AI Fusion Automations</title>
+<meta name="description" content="24/7 AI-powered phone receptionist for small businesses. Answers calls instantly, books appointments, handles FAQs, and transfers complex queries to your team. From £297/month.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.aifusionautomations.com/ai-receptionist.html">
+<meta property="og:title" content="AI Receptionist — Never Miss a Call Again">
+<meta property="og:description" content="24/7 AI-powered phone receptionist. Answers calls, books appointments, handles FAQs. From £297/month.">
+<meta property="og:type" content="website">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{--primary:#7c3aed;--primary-light:#a78bfa;--primary-dark:#5b21b6;--accent:#06b6d4;--accent-light:#22d3ee;--bg:#0f0f1a;--bg-card:#1a1a2e;--text:#f1f5f9;--text-muted:#94a3b8;--border:#2d2d4a;--success:#10b981;--warning:#f59e0b;--danger:#ef4444}
+  body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+  .gradient-bg{position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 20% 0%,rgba(124,58,237,.15) 0%,transparent 50%),radial-gradient(ellipse at 80% 100%,rgba(6,182,212,.1) 0%,transparent 50%);pointer-events:none;z-index:0}
+  section{position:relative;z-index:1}
+  .container{max-width:900px;margin:0 auto;padding:0 1.5rem}
+  a{color:var(--accent-light);text-decoration:none}
+
+  /* Nav */
+  .nav{padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between;max-width:900px;margin:0 auto;position:relative;z-index:1}
+  .nav-logo{display:flex;align-items:center;gap:.5rem;text-decoration:none}
+  .nav-logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+  .nav-logo-text{font-size:.95rem;font-weight:700;background:linear-gradient(135deg,var(--primary-light),var(--accent-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .nav-back{color:var(--text-muted);font-size:.85rem;font-weight:500;text-decoration:none}
+  .nav-back:hover{color:var(--text)}
+
+  /* Hero */
+  .hero{padding:3rem 0 4rem;text-align:center}
+  .hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25);color:var(--success);font-size:.8rem;font-weight:700;padding:.35rem 1rem;border-radius:20px;margin-bottom:1.5rem}
+  .hero h1{font-size:2.8rem;font-weight:800;line-height:1.1;margin-bottom:1rem;background:linear-gradient(135deg,#fff,var(--primary-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .hero p{font-size:1.15rem;color:var(--text-muted);max-width:620px;margin:0 auto 2rem}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.9rem 2.5rem;border-radius:12px;font-size:1rem;font-weight:700;font-family:inherit;cursor:pointer;border:none;transition:all .2s;text-decoration:none}
+  .btn-primary{background:linear-gradient(135deg,var(--primary),var(--accent));color:white}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(124,58,237,.4)}
+  .btn-secondary{background:transparent;border:1.5px solid var(--border);color:var(--text);margin-left:.75rem}
+  .btn-secondary:hover{border-color:var(--primary);transform:translateY(-2px)}
+
+  /* Stats */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:3rem 0}
+  .stat{text-align:center;padding:1.25rem;background:var(--bg-card);border:1px solid var(--border);border-radius:14px}
+  .stat-value{font-size:1.6rem;font-weight:800;background:linear-gradient(135deg,var(--primary-light),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .stat-label{font-size:.75rem;color:var(--text-muted);margin-top:.3rem}
+  @media(max-width:600px){.stats{grid-template-columns:1fr 1fr}}
+
+  /* Features */
+  .features{padding:3rem 0}
+  .features h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:.5rem}
+  .features-sub{text-align:center;color:var(--text-muted);margin-bottom:2.5rem}
+  .feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+  @media(max-width:600px){.feature-grid{grid-template-columns:1fr}}
+  .feature-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:1.75rem}
+  .feature-icon{font-size:1.75rem;margin-bottom:.75rem}
+  .feature-name{font-size:1rem;font-weight:700;margin-bottom:.4rem}
+  .feature-desc{font-size:.85rem;color:var(--text-muted);line-height:1.6}
+
+  /* How it works */
+  .how{padding:4rem 0}
+  .how h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:2.5rem}
+  .steps{display:flex;flex-direction:column;gap:1.5rem}
+  .step{display:flex;gap:1.5rem;align-items:flex-start}
+  .step-num{width:48px;height:48px;min-width:48px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:800;color:#fff}
+  .step-text h3{font-size:1rem;font-weight:700;margin-bottom:.3rem}
+  .step-text p{font-size:.85rem;color:var(--text-muted);line-height:1.6}
+
+  /* Use cases */
+  .usecases{padding:3rem 0}
+  .usecases h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:2rem}
+  .usecase-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+  @media(max-width:600px){.usecase-grid{grid-template-columns:1fr}}
+  .usecase{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:1.5rem;text-align:center}
+  .usecase-icon{font-size:2rem;margin-bottom:.6rem}
+  .usecase-name{font-size:.9rem;font-weight:700;margin-bottom:.3rem}
+  .usecase-desc{font-size:.8rem;color:var(--text-muted)}
+
+  /* Pricing */
+  .pricing{padding:4rem 0}
+  .pricing h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:.5rem}
+  .pricing-sub{text-align:center;color:var(--text-muted);margin-bottom:2rem}
+  .price-card{background:var(--bg-card);border:2px solid var(--primary);border-radius:20px;padding:2.5rem;text-align:center;max-width:480px;margin:0 auto;position:relative}
+  .price-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;font-size:.75rem;font-weight:700;padding:.3rem 1.25rem;border-radius:20px;white-space:nowrap}
+  .price-amount{font-size:3rem;font-weight:800;background:linear-gradient(135deg,#fff,var(--accent-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:1rem 0 .25rem}
+  .price-period{font-size:.9rem;color:var(--text-muted);margin-bottom:1.5rem}
+  .price-features{text-align:left;margin-bottom:2rem}
+  .price-feature{display:flex;align-items:flex-start;gap:.6rem;padding:.5rem 0;font-size:.9rem}
+  .price-check{color:var(--success);font-weight:700;flex-shrink:0}
+  .price-card .btn{width:100%}
+
+  /* FAQ */
+  .faq{padding:3rem 0}
+  .faq h2{font-size:1.8rem;font-weight:800;text-align:center;margin-bottom:2rem}
+  .faq-item{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:.75rem;cursor:pointer}
+  .faq-q{font-size:.95rem;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+  .faq-a{font-size:.85rem;color:var(--text-muted);line-height:1.7;max-height:0;overflow:hidden;transition:max-height .3s,padding .3s}
+  .faq-item.open .faq-a{max-height:300px;padding-top:.75rem}
+  .faq-toggle{font-size:1.2rem;color:var(--text-muted);transition:transform .2s}
+  .faq-item.open .faq-toggle{transform:rotate(45deg)}
+
+  /* CTA */
+  .cta-section{padding:4rem 0}
+  .cta-box{background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(6,182,212,.1));border:1px solid rgba(124,58,237,.3);border-radius:20px;padding:3rem;text-align:center}
+  .cta-box h2{font-size:1.6rem;font-weight:800;margin-bottom:.75rem}
+  .cta-box p{color:var(--text-muted);margin-bottom:1.5rem;max-width:500px;margin-left:auto;margin-right:auto}
+
+  /* Footer */
+  .footer{text-align:center;padding:2rem 0;border-top:1px solid var(--border);margin-top:2rem}
+  .footer p{color:var(--text-muted);font-size:.85rem}
+  .footer a{color:var(--primary-light);font-weight:600}
+
+  @media(max-width:600px){
+    .hero h1{font-size:2rem}
+    .hero .btn-secondary{margin-left:0;margin-top:.5rem}
+    .hero-ctas{flex-direction:column;align-items:center}
+  }
+</style>
+</head>
+<body>
+<div class="gradient-bg"></div>
+
+<div class="nav">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon">⚡</div>
+    <div class="nav-logo-text">AI Fusion Automations</div>
+  </a>
+  <a href="index.html" class="nav-back">&larr; Back to Home</a>
+</div>
+
+<div class="container">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-badge">New Service — Now Available</div>
+    <h1>Your AI Receptionist.<br>Available 24/7.</h1>
+    <p>Stop losing customers to voicemail. Our AI receptionist answers every call instantly, books appointments, handles FAQs, and transfers complex queries to your team — day or night.</p>
+    <div class="hero-ctas">
+      <a href="https://tools.aifusionautomations.com" class="btn btn-primary">Book a Free Demo Call →</a>
+      <a href="#pricing" class="btn btn-secondary">See Pricing</a>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-value">62%</div>
+      <div class="stat-label">Of calls to small businesses go unanswered</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">85%</div>
+      <div class="stat-label">Of callers won't call back if you don't answer</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">&lt;2s</div>
+      <div class="stat-label">Average answer time with AI Receptionist</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">24/7</div>
+      <div class="stat-label">Coverage including evenings & weekends</div>
+    </div>
+  </div>
+
+  <!-- Features -->
+  <section class="features">
+    <h2>Everything a receptionist does. Without the salary.</h2>
+    <p class="features-sub">Powered by advanced AI that understands context, your business, and your customers.</p>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📞</div>
+        <div class="feature-name">Answers Every Call Instantly</div>
+        <div class="feature-desc">No hold music, no voicemail, no missed calls. Your AI receptionist picks up in under 2 seconds, every time — even at 3am on a Sunday.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📅</div>
+        <div class="feature-name">Books Appointments Directly</div>
+        <div class="feature-desc">Syncs with your calendar and CRM. Customers can book, reschedule, or check availability without you lifting a finger.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💬</div>
+        <div class="feature-name">Handles FAQs Naturally</div>
+        <div class="feature-desc">Trained on your business — pricing, services, opening hours, location. Answers questions accurately in a natural, conversational voice.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔀</div>
+        <div class="feature-name">Smart Call Transfers</div>
+        <div class="feature-desc">Complex queries get routed to the right person with full context. Your team only handles calls that truly need a human touch.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <div class="feature-name">Full Call Dashboard</div>
+        <div class="feature-desc">See every call logged with transcripts, duration, caller info, and outcome. Understand what your customers are asking about.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏷️</div>
+        <div class="feature-name">Your Brand, Your Voice</div>
+        <div class="feature-desc">White-labelled to your business. Callers hear your company name, your greeting, your tone. It sounds like your receptionist, not a robot.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="how">
+    <h2>Live in 48 hours. Seriously.</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <h3>Quick Discovery Call (15 mins)</h3>
+          <p>We learn about your business — services, common questions, booking process, team structure. Everything the AI needs to represent you properly.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <h3>We Build & Train Your AI</h3>
+          <p>We configure your AI receptionist with your business knowledge, calendar integration, and call handling rules. You approve the voice and script.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <h3>Test Calls & Go Live</h3>
+          <p>We run test calls together, fine-tune responses, and connect to your phone number. You can forward calls selectively (e.g. after hours only) or full-time.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">
+          <h3>Monitor & Improve</h3>
+          <p>Your dashboard shows every call with full transcripts. We review performance weekly and continuously improve the AI's responses.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Use cases -->
+  <section class="usecases">
+    <h2>Perfect for businesses like yours</h2>
+    <div class="usecase-grid">
+      <div class="usecase">
+        <div class="usecase-icon">🔧</div>
+        <div class="usecase-name">Trades & Home Services</div>
+        <div class="usecase-desc">Plumbers, electricians, builders, cleaners — answer calls while you're on a job, not after.</div>
+      </div>
+      <div class="usecase">
+        <div class="usecase-icon">🏥</div>
+        <div class="usecase-name">Health & Wellness</div>
+        <div class="usecase-desc">Dentists, physios, salons, clinics — reduce no-shows with instant booking and reminders.</div>
+      </div>
+      <div class="usecase">
+        <div class="usecase-icon">⚖️</div>
+        <div class="usecase-name">Professional Services</div>
+        <div class="usecase-desc">Accountants, solicitors, consultants — capture every potential client, even outside office hours.</div>
+      </div>
+      <div class="usecase">
+        <div class="usecase-icon">🏠</div>
+        <div class="usecase-name">Property & Lettings</div>
+        <div class="usecase-desc">Estate agents, property managers — handle viewing requests and tenant queries 24/7.</div>
+      </div>
+      <div class="usecase">
+        <div class="usecase-icon">🍽️</div>
+        <div class="usecase-name">Hospitality & Food</div>
+        <div class="usecase-desc">Restaurants, cafes, catering — take reservations, answer menu questions, handle event enquiries.</div>
+      </div>
+      <div class="usecase">
+        <div class="usecase-icon">🚗</div>
+        <div class="usecase-name">Automotive</div>
+        <div class="usecase-desc">Garages, dealerships, detailers — book MOTs, provide quotes, and handle service enquiries.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="pricing" id="pricing">
+    <h2>Simple pricing. No surprises.</h2>
+    <p class="pricing-sub">Everything included. Cancel any time.</p>
+    <div class="price-card">
+      <div class="price-badge">Most Popular</div>
+      <div class="price-amount">£297</div>
+      <div class="price-period">per month + one-time £250 setup fee</div>
+      <div class="price-features">
+        <div class="price-feature"><span class="price-check">✓</span> 24/7 AI-powered call answering</div>
+        <div class="price-feature"><span class="price-check">✓</span> Custom-trained on your business</div>
+        <div class="price-feature"><span class="price-check">✓</span> Calendar & CRM integration</div>
+        <div class="price-feature"><span class="price-check">✓</span> Smart call transfers to your team</div>
+        <div class="price-feature"><span class="price-check">✓</span> Full call dashboard with transcripts</div>
+        <div class="price-feature"><span class="price-check">✓</span> White-labelled to your brand</div>
+        <div class="price-feature"><span class="price-check">✓</span> Unlimited calls included</div>
+        <div class="price-feature"><span class="price-check">✓</span> Weekly performance reviews</div>
+        <div class="price-feature"><span class="price-check">✓</span> Continuous AI improvement</div>
+      </div>
+      <a href="https://tools.aifusionautomations.com" class="btn btn-primary">Book Your Free Demo →</a>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq">
+    <h2>Common questions</h2>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Does it actually sound natural?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">Yes. Modern AI voices are remarkably natural — most callers don't realise they're speaking to an AI. We fine-tune the voice, tone, and pacing to match your brand personality.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">What happens with calls the AI can't handle?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">Complex or sensitive queries are seamlessly transferred to you or your team with full context — the AI provides a summary of the conversation so your team can pick up without the caller repeating themselves.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Can I use it just for after-hours calls?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">Absolutely. You can configure call forwarding rules — for example, only forward to the AI after 6pm, on weekends, or when your line is busy. You're in full control.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">How does appointment booking work?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">The AI connects to your existing calendar (Google Calendar, Outlook, or our built-in CRM) and shows available slots to the caller. When they pick a time, it's booked instantly and both you and the caller get confirmation.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Do I need to change my phone number?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">No. You keep your existing business number. We set up call forwarding from your current number to the AI receptionist — or you can use a new dedicated number alongside your existing one.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Is there a contract or minimum term?<span class="faq-toggle">+</span></div>
+      <div class="faq-a">No long-term contracts. It's a rolling monthly subscription — cancel any time with 30 days' notice. We're confident you'll want to keep it once you see the results.</div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="cta-box">
+      <h2>Stop losing customers to voicemail.</h2>
+      <p>Book a free 15-minute demo call and hear your AI receptionist in action — trained on a sample of your business, live on the call.</p>
+      <a href="https://tools.aifusionautomations.com" class="btn btn-primary">Book Your Free Demo →</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p style="margin-bottom:.5rem"><a href="index.html">AI Fusion Automations</a> · East Sussex, UK</p>
+    <p><a href="privacy-policy-aifa.html">Privacy Policy</a> · <a href="terms.html">Terms</a> · <a href="earnings-disclaimer.html">Earnings Disclaimer</a></p>
+    <p style="margin-top:.75rem;font-size:.75rem">© 2026 AI Fusion Automations. All rights reserved.</p>
+  </div>
+
+</div>
+
+<script src="https://widgets.leadconnectorhq.com/loader.js" data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js" data-widget-id="668394bfc5fec605b13596ff"></script>
+</body>
+</html>

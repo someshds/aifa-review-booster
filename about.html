@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — AI Fusion Automations</title>
+<meta name="description" content="AI Fusion Automations helps UK small businesses save time and grow revenue with intelligent automation, AI chatbots, and CRM systems. Founded by Grant de Swardt in East Sussex.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.aifusionautomations.com/about.html">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{--primary:#7c3aed;--primary-light:#a78bfa;--primary-dark:#5b21b6;--accent:#06b6d4;--accent-light:#22d3ee;--bg:#0f0f1a;--bg-card:#1a1a2e;--text:#f1f5f9;--text-muted:#94a3b8;--border:#2d2d4a;--success:#10b981;--warning:#f59e0b}
+  body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+  .gradient-bg{position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 20% 0%,rgba(124,58,237,.15) 0%,transparent 50%),radial-gradient(ellipse at 80% 100%,rgba(6,182,212,.1) 0%,transparent 50%);pointer-events:none;z-index:0}
+  .container{max-width:800px;margin:0 auto;padding:0 1.5rem;position:relative;z-index:1}
+  a{color:var(--accent-light);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  /* Nav */
+  .nav{padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between;max-width:800px;margin:0 auto;position:relative;z-index:1}
+  .nav-logo{display:flex;align-items:center;gap:.5rem;text-decoration:none}
+  .nav-logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+  .nav-logo-text{font-size:.95rem;font-weight:700;background:linear-gradient(135deg,var(--primary-light),var(--accent-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .nav-back{color:var(--text-muted);font-size:.85rem;font-weight:500;text-decoration:none}
+  .nav-back:hover{color:var(--text)}
+
+  /* Hero */
+  .hero{padding:3rem 0 2rem;text-align:center}
+  .hero h1{font-size:2.4rem;font-weight:800;margin-bottom:.75rem;background:linear-gradient(135deg,#fff,var(--primary-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .hero p{font-size:1.1rem;color:var(--text-muted);max-width:600px;margin:0 auto}
+
+  /* Sections */
+  .section{padding:2.5rem 0}
+  .section h2{font-size:1.4rem;font-weight:800;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+  .section h2 .icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+  .section p{color:var(--text-muted);margin-bottom:1rem;font-size:.95rem}
+  .section p:last-child{margin-bottom:0}
+  .highlight{color:var(--text);font-weight:600}
+
+  /* Card */
+  .card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:2rem;margin-bottom:1.5rem}
+
+  /* Values grid */
+  .values-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.5rem}
+  @media(max-width:600px){.values-grid{grid-template-columns:1fr}}
+  .value-item{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:1.5rem}
+  .value-icon{font-size:1.5rem;margin-bottom:.5rem}
+  .value-name{font-size:.95rem;font-weight:700;margin-bottom:.3rem}
+  .value-desc{font-size:.8rem;color:var(--text-muted);line-height:1.6}
+
+  /* Services list */
+  .services-list{list-style:none;margin-top:1rem}
+  .services-list li{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem 0;border-bottom:1px solid rgba(255,255,255,.05)}
+  .services-list li:last-child{border-bottom:none}
+  .services-list .check{color:var(--success);font-weight:700;flex-shrink:0;margin-top:2px}
+  .services-list .text{font-size:.9rem;color:var(--text-muted)}
+  .services-list .text strong{color:var(--text)}
+
+  /* CTA */
+  .cta-box{background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(6,182,212,.1));border:1px solid rgba(124,58,237,.3);border-radius:20px;padding:3rem;text-align:center;margin:2rem 0}
+  .cta-box h2{font-size:1.4rem;font-weight:800;margin-bottom:.5rem;background:none;-webkit-text-fill-color:var(--text)}
+  .cta-box p{color:var(--text-muted);margin-bottom:1.5rem}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.9rem 2.5rem;border-radius:12px;font-size:1rem;font-weight:700;font-family:inherit;cursor:pointer;border:none;transition:all .2s;text-decoration:none}
+  .btn-primary{background:linear-gradient(135deg,var(--primary),var(--accent));color:white}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(124,58,237,.4);text-decoration:none}
+
+  /* Footer */
+  .footer{text-align:center;padding:2rem 0;border-top:1px solid var(--border);margin-top:1rem}
+  .footer p{color:var(--text-muted);font-size:.85rem}
+  .footer a{color:var(--primary-light);font-weight:600}
+
+  @media(max-width:600px){.hero h1{font-size:1.8rem}}
+</style>
+</head>
+<body>
+<div class="gradient-bg"></div>
+
+<div class="nav">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-icon">⚡</div>
+    <div class="nav-logo-text">AI Fusion Automations</div>
+  </a>
+  <a href="index.html" class="nav-back">&larr; Back to Home</a>
+</div>
+
+<div class="container">
+
+  <section class="hero">
+    <h1>Helping businesses work smarter with AI</h1>
+    <p>AI Fusion Automations builds intelligent automation systems for small and medium businesses across the UK. We make AI practical, affordable, and genuinely useful.</p>
+  </section>
+
+  <!-- Who we are -->
+  <section class="section">
+    <h2><span class="icon" style="background:rgba(124,58,237,.12)">👋</span> Who we are</h2>
+    <p>AI Fusion Automations was founded by <span class="highlight">Grant de Swardt</span>, based in East Sussex, England. Grant combines years of hands-on small business experience with deep expertise in AI and automation to help businesses like yours save time, reduce costs, and grow revenue.</p>
+    <p>Unlike big consultancies that sell theory, we build and implement real systems that work from day one. Every solution we recommend, we've tested on our own businesses first. That means you get proven tools, not PowerPoint promises.</p>
+  </section>
+
+  <!-- What we do -->
+  <section class="section">
+    <h2><span class="icon" style="background:rgba(6,182,212,.12)">🔧</span> What we do</h2>
+    <p>We design, build, and manage AI-powered automation systems tailored to how your business actually works.</p>
+    <ul class="services-list">
+      <li><span class="check">✓</span><span class="text"><strong>AI Chatbots & Receptionists</strong> — 24/7 customer interaction, appointment booking, FAQ handling. Your business never sleeps.</span></li>
+      <li><span class="check">✓</span><span class="text"><strong>Back-Office Automation</strong> — Document processing, data entry, invoicing, order management. Eliminate repetitive manual work.</span></li>
+      <li><span class="check">✓</span><span class="text"><strong>CRM & Lead Management</strong> — Capture, track, and nurture every lead automatically. No more lost enquiries.</span></li>
+      <li><span class="check">✓</span><span class="text"><strong>Custom Software & Apps</strong> — Bespoke tools built for your specific workflow. From league management apps to wine analysis platforms.</span></li>
+      <li><span class="check">✓</span><span class="text"><strong>AI Strategy & Training</strong> — Understand what AI can (and can't) do for your business. Practical guidance, not hype.</span></li>
+    </ul>
+  </section>
+
+  <!-- How we work -->
+  <section class="section">
+    <h2><span class="icon" style="background:rgba(16,185,129,.12)">🤝</span> How we work</h2>
+    <div class="card">
+      <p style="margin-bottom:.75rem"><strong style="color:var(--text);font-size:1rem">1. Discovery</strong> — We start with a free strategy call to understand your business, your pain points, and where automation would have the biggest impact.</p>
+      <p style="margin-bottom:.75rem"><strong style="color:var(--text);font-size:1rem">2. Solution Design</strong> — We propose a practical solution with clear costs, timelines, and expected results. No jargon, no overselling.</p>
+      <p style="margin-bottom:.75rem"><strong style="color:var(--text);font-size:1rem">3. Build & Launch</strong> — We build your system, test it thoroughly, and go live with full support. Most projects launch within 1-2 weeks.</p>
+      <p><strong style="color:var(--text);font-size:1rem">4. Ongoing Support</strong> — We monitor performance, make improvements, and ensure your automation keeps delivering results as your business grows.</p>
+    </div>
+  </section>
+
+  <!-- Our values -->
+  <section class="section">
+    <h2><span class="icon" style="background:rgba(245,158,11,.12)">💡</span> What we believe</h2>
+    <div class="values-grid">
+      <div class="value-item">
+        <div class="value-icon">🎯</div>
+        <div class="value-name">Results Over Hype</div>
+        <div class="value-desc">We only recommend what actually works. If AI isn't the right solution, we'll tell you honestly.</div>
+      </div>
+      <div class="value-item">
+        <div class="value-icon">🔒</div>
+        <div class="value-name">Integrity First</div>
+        <div class="value-desc">Transparent pricing, honest timelines, no hidden fees. We treat your business like our own.</div>
+      </div>
+      <div class="value-item">
+        <div class="value-icon">🏗️</div>
+        <div class="value-name">Built to Last</div>
+        <div class="value-desc">We build robust systems, not quick fixes. Every solution is designed to scale with your business.</div>
+      </div>
+      <div class="value-item">
+        <div class="value-icon">🤲</div>
+        <div class="value-name">Accessible to All</div>
+        <div class="value-desc">Enterprise-grade AI shouldn't require enterprise budgets. We make powerful automation affordable for SMBs.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Proven results -->
+  <section class="section">
+    <h2><span class="icon" style="background:rgba(124,58,237,.12)">📈</span> Proven results</h2>
+    <div class="card">
+      <p><strong style="color:var(--text)">Enterprise Pilot — 10 International</strong></p>
+      <p>We built a purchase order automation system for an international wine distribution company. The result: document processing time dropped from <span class="highlight">60 minutes to 7 minutes</span> — an 88% reduction — while keeping 100% human approval for quality control. <a href="case-study-10-international.html">Read the full case study →</a></p>
+    </div>
+    <div class="card">
+      <p><strong style="color:var(--text)">Free Tools — Used by Businesses Across the UK</strong></p>
+      <p>Our suite of free business tools — including the <a href="roi-calculator.html">ROI Calculator</a>, <a href="review-booster.html">Google Review Booster</a>, <a href="analyser.html">Business Analyser</a>, and <a href="boxleague-pro.html">BoxLeague Pro</a> — demonstrates our commitment to helping businesses before asking for anything in return.</p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <div class="cta-box">
+    <h2>Ready to see what AI can do for your business?</h2>
+    <p>Book a free 15-minute strategy call. No pressure, no obligation — just a practical conversation about your biggest time-wasters and how automation could help.</p>
+    <a href="https://tools.aifusionautomations.com" class="btn btn-primary">Book Your Free Strategy Call →</a>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p style="margin-bottom:.5rem"><a href="index.html">AI Fusion Automations</a> · East Sussex, UK</p>
+    <p><a href="privacy-policy-aifa.html">Privacy Policy</a> · <a href="terms.html">Terms</a> · <a href="earnings-disclaimer.html">Earnings Disclaimer</a></p>
+    <p style="margin-top:.75rem;font-size:.75rem">© 2026 AI Fusion Automations. All rights reserved.</p>
+  </div>
+
+</div>
+
+<script src="https://widgets.leadconnectorhq.com/loader.js" data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js" data-widget-id="668394bfc5fec605b13596ff"></script>
+</body>
+</html>
