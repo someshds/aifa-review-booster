@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>AIFA — BoxLeague Pro Case Study</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --brand-deep: #134e4a;
+      --brand-mid: #0d9488;
+      --brand-light: #5eead4;
+      --brand-cream: #f0fdfa;
+      --canvas: #041d1b;
+      --cyan: #22d3ee; --blue: #3b82f6; --pink: #ec4899; --gold: #fbbf24; --emerald: #10b981; --red: #ef4444;
+    }
+    html, body { margin: 0; padding: 0; background: #000; font-family: 'Inter', system-ui, sans-serif; color: #fff; overflow: hidden; }
+    .stage { position: fixed; inset: 0; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .canvas { position: relative; width: 1920px; height: 1080px; background: var(--canvas); transform-origin: center; transform: scale(var(--scale, 1)); overflow: hidden; }
+
+    .slide { position: absolute; inset: 0; opacity: 0; transition: opacity 0.7s cubic-bezier(.4,0,.2,1); pointer-events: none; overflow: hidden; }
+    .slide.active { opacity: 1; }
+    .bg-img { position: absolute; inset: 0; background-size: cover; background-position: center; transform: scale(1.02); transition: transform 12s ease-out; filter: grayscale(0.2); }
+    .slide.active .bg-img { transform: scale(1.14); }
+    .bg-dark { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(4,29,27,0.4) 0%, rgba(4,29,27,0.28) 35%, rgba(4,29,27,0.58) 100%); }
+    .bg-tint { position: absolute; inset: 0; mix-blend-mode: color; opacity: 0.30; }
+    .tint-brand { background: linear-gradient(135deg, var(--brand-deep) 0%, var(--brand-mid) 100%); }
+    .tint-red   { background: linear-gradient(135deg, #991b1b 0%, var(--red) 100%); }
+    .tint-gold  { background: linear-gradient(135deg, #92400e 0%, var(--gold) 100%); }
+
+    .content { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 5; padding: 80px; }
+    .reveal > * { opacity: 0; transform: translateY(14px); transition: opacity 0.7s cubic-bezier(.4,0,.2,1), transform 0.7s cubic-bezier(.4,0,.2,1); }
+    .slide.active .reveal > * { opacity: 1; transform: translateY(0); }
+    .slide.active .reveal > *:nth-child(1) { transition-delay: 0.15s; }
+    .slide.active .reveal > *:nth-child(2) { transition-delay: 0.35s; }
+    .slide.active .reveal > *:nth-child(3) { transition-delay: 0.55s; }
+    .slide.active .reveal > *:nth-child(4) { transition-delay: 0.75s; }
+    .slide.active .reveal > *:nth-child(5) { transition-delay: 0.95s; }
+    .slide.active .reveal > *:nth-child(6) { transition-delay: 1.15s; }
+
+    .chrome { background: linear-gradient(180deg, #ffffff 0%, #f3f4f6 50%, #d1d5db 100%); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 4px 40px rgba(255,255,255,0.15); }
+    .chrome-brand { background: linear-gradient(180deg, #ffffff 0%, var(--brand-cream) 45%, var(--brand-light) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 4px 50px rgba(94,234,212,0.55); }
+    .glow-red { color: #fca5a5; text-shadow: 0 0 25px rgba(239,68,68,0.75); }
+    .glow-brand { color: var(--brand-light); text-shadow: 0 0 30px rgba(94,234,212,0.8); }
+
+    .eyebrow { font-size: 22px; font-weight: 600; letter-spacing: 0.5em; text-transform: uppercase; color: var(--brand-light); }
+    .chip { display: inline-flex; padding: 12px 22px; border-radius: 100px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.22); backdrop-filter: blur(12px); font-size: 20px; font-weight: 600; }
+    .chip-brand { background: rgba(13,148,136,0.18); border-color: rgba(94,234,212,0.5); color: var(--brand-cream); }
+
+    .availability-quote {
+      padding: 16px 24px; border-radius: 16px;
+      background: linear-gradient(145deg, rgba(13,148,136,0.2), rgba(19,78,74,0.4));
+      border: 1.5px solid rgba(94,234,212,0.5);
+      font-size: 24px; font-weight: 600;
+      font-style: italic;
+      color: var(--brand-cream);
+      backdrop-filter: blur(10px);
+    }
+    .module-tag {
+      padding: 12px 28px; border-radius: 12px;
+      font-size: 22px; font-weight: 800;
+      backdrop-filter: blur(10px);
+      letter-spacing: 0.02em;
+    }
+    .module-tag.on { background: linear-gradient(135deg, var(--brand-mid), var(--brand-light)); color: var(--brand-deep); box-shadow: 0 0 30px rgba(94,234,212,0.5); }
+    .module-tag.off { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.18); color: rgba(255,255,255,0.5); }
+
+    .pillar-card {
+      padding: 26px 24px; border-radius: 18px;
+      background: linear-gradient(145deg, rgba(13,148,136,0.16), rgba(94,234,212,0.04));
+      border: 1.5px solid rgba(94,234,212,0.42);
+      backdrop-filter: blur(10px);
+      text-align: center;
+      min-width: 260px;
+    }
+    .pillar-card .n { font-size: 56px; font-weight: 900; color: var(--brand-light); line-height: 1; letter-spacing: -0.03em; }
+    .pillar-card .lbl { font-size: 15px; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(255,255,255,0.8); margin-top: 8px; }
+
+    /* Player controls */
+    #controls { position: fixed; bottom: 0; left: 0; right: 0; padding: 18px 28px 14px; display: flex; align-items: center; gap: 18px; background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.75) 100%); z-index: 60; opacity: 0; pointer-events: none; transition: opacity 0.35s cubic-bezier(.4,0,.2,1); }
+    #controls.visible, .paused #controls { opacity: 1; pointer-events: auto; }
+    .ctrl-btn { width: 46px; height: 46px; border-radius: 50%; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: #fff; font-size: 17px; backdrop-filter: blur(12px); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.2s, transform 0.2s; font-family: system-ui, sans-serif; }
+    .ctrl-btn:hover { background: rgba(255,255,255,0.28); transform: scale(1.05); }
+    #scrub-bar { flex: 1; height: 6px; background: rgba(255,255,255,0.18); border-radius: 3px; cursor: pointer; position: relative; }
+    #scrub-bar::before { content: ''; position: absolute; top: -8px; bottom: -8px; left: 0; right: 0; }
+    #scrub-fill { height: 100%; width: 0%; border-radius: 3px; background: linear-gradient(90deg, var(--brand-mid), var(--brand-light)); box-shadow: 0 0 15px rgba(94,234,212,0.7); transition: width 0.1s linear; pointer-events: none; }
+    #scrub-knob { position: absolute; top: 50%; transform: translate(-50%, -50%); width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.8); opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+    #controls.visible #scrub-knob, .paused #scrub-knob { opacity: 1; }
+    #time-display { color: rgba(255,255,255,0.88); font-size: 13px; font-family: 'JetBrains Mono', monospace; min-width: 92px; text-align: right; letter-spacing: 0.5px; }
+    #play-overlay { position: fixed; inset: 0; background: rgba(4,29,27,0.95); display: flex; align-items: center; justify-content: center; z-index: 100; cursor: pointer; transition: opacity 0.4s; }
+    #play-overlay.hidden { opacity: 0; pointer-events: none; }
+    #play-button { padding: 26px 52px; border-radius: 100px; background: linear-gradient(135deg, var(--brand-mid), var(--brand-light)); color: var(--brand-deep); font-size: 28px; font-weight: 800; box-shadow: 0 0 80px rgba(94,234,212,0.7); letter-spacing: 0.5px; }
+  </style>
+</head>
+<body>
+
+<div id="play-overlay"><button id="play-button">▶ Play Case Study — 98s</button></div>
+
+<div class="stage"><div class="canvas" id="canvas">
+
+    <!-- 0 INTRO (0-3s) -->
+    <div class="slide" data-idx="0">
+      <div class="bg-img" style="background-image: url(img/tech.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-6 text-center">
+        <div class="text-6xl font-black tracking-tight chrome">AI Fusion Automations</div>
+        <div class="eyebrow">Case Study — BoxLeague Pro</div>
+      </div></div>
+    </div>
+
+    <!-- 1 SKEPTICISM (3-7.32s) — "You've seen the demos. Most never become real." -->
+    <div class="slide" data-idx="1">
+      <div class="bg-img" style="background-image: url(img/conference.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-red"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-4 text-center max-w-[1500px]">
+        <div class="text-[5rem] font-black tracking-tight leading-[1.05] chrome">You've seen the AI demos.</div>
+        <div class="text-[4rem] font-extrabold leading-tight glow-red">Most never become real products.</div>
+      </div></div>
+    </div>
+
+    <!-- 2 WE BUILD (7.32-11.56s) — "At AIFA we build the thing" -->
+    <div class="slide" data-idx="2">
+      <div class="bg-img" style="background-image: url(img/workspace.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-4 text-center">
+        <div class="eyebrow">At AI Fusion Automations</div>
+        <div class="text-[9rem] font-black tracking-tighter leading-none chrome-brand whitespace-nowrap">WE BUILD THE THING.</div>
+      </div></div>
+    </div>
+
+    <!-- 3 BLP INTRO (11.56-19.62s) — SaaS for racquet clubs -->
+    <div class="slide" data-idx="3">
+      <div class="bg-img" style="background-image: url(img/team.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-6 text-center max-w-[1500px]">
+        <div class="eyebrow">Our own SaaS product</div>
+        <div class="text-[7rem] font-black tracking-tighter leading-none chrome-brand whitespace-nowrap">BoxLeague Pro</div>
+        <div class="text-3xl font-medium text-white/85">
+          An app for <span class="chrome-brand font-bold">tennis, padel, and squash clubs</span><br>
+          to run their box leagues.
+        </div>
+      </div></div>
+    </div>
+
+    <!-- 4 REAL USERS (19.62-27.04s) — Real clubs, real players, ship weekly -->
+    <div class="slide" data-idx="4">
+      <div class="bg-img" style="background-image: url(img/team.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-6 text-center max-w-[1500px]">
+        <div class="flex gap-6">
+          <div class="pillar-card"><div class="n">REAL</div><div class="lbl">Clubs use it</div></div>
+          <div class="pillar-card"><div class="n">REAL</div><div class="lbl">Players use it</div></div>
+          <div class="pillar-card"><div class="n">EVERY</div><div class="lbl">Week · shipping</div></div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- 5 WE MEAN IT (27.04-33s) — "We've done it here" -->
+    <div class="slide" data-idx="5">
+      <div class="bg-img" style="background-image: url(img/success.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-4 text-center max-w-[1500px]">
+        <div class="text-[4.5rem] font-black tracking-tight leading-[1.1] chrome">
+          When we say we can put AI into your workflows —
+        </div>
+        <div class="text-[4rem] font-black leading-tight chrome-brand">we mean it. Because we've done it here.</div>
+      </div></div>
+    </div>
+
+    <!-- 6 AI AVAILABILITY (33-48s) — Plain English parsed into grid -->
+    <div class="slide" data-idx="6">
+      <div class="bg-img" style="background-image: url(img/tech.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-6 max-w-[1500px]">
+        <div class="flex flex-col items-center gap-1">
+          <div class="font-mono text-lg font-semibold tracking-[0.2em] text-teal-200">FEATURE · AI AVAILABILITY ASSISTANT</div>
+          <div class="text-5xl font-black tracking-tight chrome-brand">Plain English. Grid filled in seconds.</div>
+        </div>
+        <div class="flex flex-col gap-3 w-full max-w-[1100px]">
+          <div class="availability-quote">"Every day except Tuesday."</div>
+          <div class="availability-quote">"Weekday evenings after 6pm."</div>
+          <div class="availability-quote">"Not available the 15th to the 20th."</div>
+        </div>
+        <div class="text-2xl font-semibold text-white/80 mt-1">→ AI parses it → <span class="glow-brand">fills the grid in seconds.</span></div>
+      </div></div>
+    </div>
+
+    <!-- 7 SCORES (48-58s) — Scores on phone, tables auto-update -->
+    <div class="slide" data-idx="7">
+      <div class="bg-img" style="background-image: url(img/workspace.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-5 text-center max-w-[1500px]">
+        <div class="eyebrow">Scoring</div>
+        <div class="text-[4.5rem] font-black tracking-tight leading-[1.05] chrome">Enter scores on the phone.</div>
+        <div class="text-[4.5rem] font-extrabold leading-tight chrome-brand">League tables update <span class="glow-brand">automatically.</span></div>
+        <div class="flex gap-4 justify-center mt-2">
+          <div class="chip" style="background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.35);color:#fca5a5">✕ No more spreadsheets</div>
+          <div class="chip" style="background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.35);color:#fca5a5">✕ No more chasing</div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- 8 MODULAR (58-67s) — Pick only what you need -->
+    <div class="slide" data-idx="8">
+      <div class="bg-img" style="background-image: url(img/team.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-6 text-center">
+        <div class="eyebrow">Modular</div>
+        <div class="text-[5.5rem] font-black tracking-tight leading-[1.02] chrome-brand">Pay only for what's turned on.</div>
+        <div class="flex gap-4 flex-wrap justify-center mt-3">
+          <div class="module-tag on">SCORING</div>
+          <div class="module-tag on">AI</div>
+          <div class="module-tag on">COMMUNICATIONS</div>
+          <div class="module-tag off">WhatsApp</div>
+          <div class="module-tag off">Payments</div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- 9 SHIPPING TODAY (67-75.4s) -->
+    <div class="slide" data-idx="9">
+      <div class="bg-img" style="background-image: url(img/success.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-4 text-center">
+        <div class="text-[6.5rem] font-black tracking-tighter leading-none chrome-brand whitespace-nowrap">SHIPPING TODAY.</div>
+        <div class="flex gap-4 justify-center mt-2">
+          <div class="chip chip-brand">Growing every week</div>
+          <div class="chip chip-brand">Used by real clubs right now</div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- 10 THE PITCH (75.4-88s) — Hire AIFA = same team, same AI -->
+    <div class="slide" data-idx="10">
+      <div class="bg-img" style="background-image: url(img/success.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-5 text-center max-w-[1600px]">
+        <div class="text-[4rem] font-extrabold leading-[1.1] chrome">
+          When you hire AIFA, you hire the team that <span class="chrome-brand font-black">built this.</span>
+        </div>
+        <div class="flex gap-4 flex-wrap justify-center mt-2">
+          <div class="chip chip-brand">Same discipline</div>
+          <div class="chip chip-brand">Same shipping cadence</div>
+          <div class="chip chip-brand">Same practical AI</div>
+        </div>
+        <div class="text-2xl font-semibold text-white/85 mt-2">Applied to <span class="glow-brand font-black">your business.</span></div>
+      </div></div>
+    </div>
+
+    <!-- 11 CTA (88-94.7s) -->
+    <div class="slide" data-idx="11">
+      <div class="bg-img" style="background-image: url(img/success.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-5 text-center max-w-[1500px]">
+        <div class="eyebrow">See it</div>
+        <div class="text-[6rem] font-black tracking-tight leading-[1.02] chrome-brand whitespace-nowrap">boxleaguepro.com</div>
+        <div class="mt-2 inline-flex items-center gap-4 px-14 py-5 rounded-full text-3xl font-extrabold"
+             style="background: linear-gradient(135deg, var(--brand-mid), var(--brand-light)); color: var(--brand-deep); box-shadow: 0 0 80px rgba(94,234,212,0.6), 0 20px 40px rgba(0,0,0,0.3);">
+          Visit BoxLeague Pro <span class="text-4xl">→</span>
+        </div>
+        <div class="text-xl text-white/70 tracking-wider mt-2">Or book an AIFA call: aifusionautomations.com</div>
+      </div></div>
+    </div>
+
+    <!-- 12 OUTRO (94.7-97.68s) -->
+    <div class="slide" data-idx="12">
+      <div class="bg-img" style="background-image: url(img/tech.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-6 text-center">
+        <div class="text-6xl font-black tracking-tight chrome">aifusionautomations.com</div>
+        <div class="eyebrow">We build AI we use ourselves.</div>
+      </div></div>
+    </div>
+
+</div></div>
+
+<div id="controls">
+  <button id="play-pause" class="ctrl-btn">⏸</button>
+  <div id="scrub-bar"><div id="scrub-fill"></div><div id="scrub-knob"></div></div>
+  <div id="time-display">0:00 / 1:37</div>
+</div>
+
+<audio id="narr" src="narration.mp3" preload="auto"></audio>
+<audio id="bgm" src="music.mp3" preload="auto"></audio>
+
+<script>
+  const SCHEDULE = [
+    { idx: 0,  start: 0.0,   end: 3.0   },
+    { idx: 1,  start: 3.0,   end: 7.32  },
+    { idx: 2,  start: 7.32,  end: 11.56 },
+    { idx: 3,  start: 11.56, end: 20.74 },
+    { idx: 4,  start: 20.74, end: 27.04 },
+    { idx: 5,  start: 27.04, end: 34.40 },
+    { idx: 6,  start: 34.40, end: 49.54 },
+    { idx: 7,  start: 49.54, end: 60.96 },
+    { idx: 8,  start: 60.96, end: 70.16 },
+    { idx: 9,  start: 70.16, end: 78.36 },
+    { idx: 10, start: 78.36, end: 91.16 },
+    { idx: 11, start: 91.16, end: 94.66 },
+    { idx: 12, start: 94.66, end: 97.68 },
+  ];
+  const TOTAL = 97.68;
+  const NARR_START = 3.0;
+
+  const narration = document.getElementById('narr');
+  const bgm = document.getElementById('bgm');
+  const slides = document.querySelectorAll('.slide');
+  const overlay = document.getElementById('play-overlay');
+  const canvas = document.getElementById('canvas');
+  const controls = document.getElementById('controls');
+  const playPauseBtn = document.getElementById('play-pause');
+  const scrubBar = document.getElementById('scrub-bar');
+  const scrubFill = document.getElementById('scrub-fill');
+  const scrubKnob = document.getElementById('scrub-knob');
+  const timeDisplay = document.getElementById('time-display');
+
+  function fitStage() { canvas.style.setProperty('--scale', Math.min(window.innerWidth / 1920, window.innerHeight / 1080)); }
+  window.addEventListener('resize', fitStage); fitStage();
+
+  let compStart = 0, currentIdx = -1, paused = false, rafId = null, started = false;
+  function setSlide(idx) { if (idx === currentIdx) return; currentIdx = idx; slides.forEach((s, i) => s.classList.toggle('active', i === idx)); }
+  function fmtTime(s) { const m = Math.floor(s / 60); const sec = Math.floor(s % 60).toString().padStart(2,'0'); return m + ':' + sec; }
+  function updateProgress(t) { const pct = Math.min(100, (t/TOTAL)*100); scrubFill.style.width = pct+'%'; scrubKnob.style.left = pct+'%'; timeDisplay.textContent = fmtTime(Math.min(t,TOTAL))+' / '+fmtTime(TOTAL); }
+
+  function tick() {
+    if (paused) return;
+    const t = (Date.now() - compStart) / 1000;
+    if (t >= TOTAL) { setSlide(SCHEDULE.length-1); updateProgress(TOTAL); paused = true; document.body.classList.add('paused'); playPauseBtn.innerHTML = '▶'; return; }
+    for (let i = SCHEDULE.length - 1; i >= 0; i--) { if (t >= SCHEDULE[i].start) { setSlide(SCHEDULE[i].idx); break; } }
+    updateProgress(t);
+    rafId = requestAnimationFrame(tick);
+  }
+  function play() { paused = false; document.body.classList.remove('paused'); playPauseBtn.innerHTML = '⏸'; const t = (Date.now() - compStart)/1000; if (t >= NARR_START) narration.play().catch(() => {}); bgm.play().catch(() => {}); rafId = requestAnimationFrame(tick); }
+  function pause() { paused = true; document.body.classList.add('paused'); playPauseBtn.innerHTML = '▶'; narration.pause(); bgm.pause(); if (rafId) cancelAnimationFrame(rafId); }
+  function seek(clientX) {
+    const rect = scrubBar.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(1, (clientX - rect.left)/rect.width));
+    const newT = pct * TOTAL;
+    compStart = Date.now() - newT * 1000;
+    if (newT >= NARR_START) narration.currentTime = Math.min(newT - NARR_START, narration.duration || 91.68); else { narration.pause(); narration.currentTime = 0; }
+    bgm.currentTime = Math.min(newT, bgm.duration || TOTAL);
+    for (let i = SCHEDULE.length - 1; i >= 0; i--) { if (newT >= SCHEDULE[i].start) { setSlide(SCHEDULE[i].idx); break; } }
+    updateProgress(newT);
+    if (!paused) { if (newT >= NARR_START) narration.play().catch(() => {}); bgm.play().catch(() => {}); }
+  }
+  playPauseBtn.addEventListener('click', (e) => { e.stopPropagation(); if (!started) return; const t = (Date.now()-compStart)/1000; if (t >= TOTAL) { seek(scrubBar.getBoundingClientRect().left); play(); return; } paused ? play() : pause(); });
+  scrubBar.addEventListener('click', (e) => { if (!started) return; seek(e.clientX); });
+  let hideTimeout;
+  function showControls() { if (!started) return; controls.classList.add('visible'); clearTimeout(hideTimeout); hideTimeout = setTimeout(() => { if (!paused) controls.classList.remove('visible'); }, 2800); }
+  document.body.addEventListener('mousemove', showControls);
+  controls.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+
+  document.getElementById('play-button').addEventListener('click', () => {
+    overlay.classList.add('hidden'); started = true; compStart = Date.now();
+    bgm.volume = 0.18; bgm.play().catch(() => {});
+    setTimeout(() => { narration.volume = 1.0; narration.play().catch(() => {}); }, NARR_START * 1000);
+    updateProgress(0); showControls(); rafId = requestAnimationFrame(tick);
+  });
+  setSlide(0); updateProgress(0);
+</script>
+
+</body>
+</html>
