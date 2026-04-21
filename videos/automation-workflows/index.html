@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>AIFA — Automation Workflows</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --brand-deep: #1e1b4b;
+      --brand-mid: #4f46e5;
+      --brand-light: #a5b4fc;
+      --brand-cream: #eef2ff;
+      --canvas: #07061a;
+      --cyan: #22d3ee;
+      --blue: #3b82f6;
+      --pink: #ec4899;
+      --gold: #fbbf24;
+      --emerald: #10b981;
+      --red: #ef4444;
+    }
+    html, body { margin: 0; padding: 0; background: #000; font-family: 'Inter', system-ui, sans-serif; color: #fff; overflow: hidden; }
+    .stage { position: fixed; inset: 0; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .canvas { position: relative; width: 1920px; height: 1080px; background: var(--canvas); transform-origin: center; transform: scale(var(--scale, 1)); overflow: hidden; }
+
+    .slide { position: absolute; inset: 0; opacity: 0; transition: opacity 0.7s cubic-bezier(.4, 0, .2, 1); pointer-events: none; overflow: hidden; }
+    .slide.active { opacity: 1; }
+    .bg-img { position: absolute; inset: 0; background-size: cover; background-position: center; transform: scale(1.02); transition: transform 12s ease-out; filter: grayscale(0.2); }
+    .slide.active .bg-img { transform: scale(1.14); }
+    .bg-dark { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7,6,26,0.35) 0%, rgba(7,6,26,0.25) 35%, rgba(7,6,26,0.55) 100%); }
+    .bg-tint { position: absolute; inset: 0; mix-blend-mode: color; opacity: 0.30; }
+    .tint-brand    { background: linear-gradient(135deg, var(--brand-deep) 0%, var(--brand-mid) 100%); }
+    .tint-cyan     { background: linear-gradient(135deg, #0e7490 0%, var(--cyan) 100%); }
+    .tint-blue     { background: linear-gradient(135deg, #1e40af 0%, var(--blue) 100%); }
+    .tint-pink     { background: linear-gradient(135deg, #9d174d 0%, var(--pink) 100%); }
+    .tint-gold     { background: linear-gradient(135deg, #92400e 0%, var(--gold) 100%); }
+    .tint-red      { background: linear-gradient(135deg, #991b1b 0%, var(--red) 100%); }
+    .tint-emerald  { background: linear-gradient(135deg, #065f46 0%, var(--emerald) 100%); }
+
+    .content { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 5; padding: 80px; }
+    .reveal > * { opacity: 0; transform: translateY(14px); transition: opacity 0.7s cubic-bezier(.4, 0, .2, 1), transform 0.7s cubic-bezier(.4, 0, .2, 1); }
+    .slide.active .reveal > * { opacity: 1; transform: translateY(0); }
+    .slide.active .reveal > *:nth-child(1) { transition-delay: 0.15s; }
+    .slide.active .reveal > *:nth-child(2) { transition-delay: 0.35s; }
+    .slide.active .reveal > *:nth-child(3) { transition-delay: 0.55s; }
+    .slide.active .reveal > *:nth-child(4) { transition-delay: 0.75s; }
+    .slide.active .reveal > *:nth-child(5) { transition-delay: 0.95s; }
+    .slide.active .reveal > *:nth-child(6) { transition-delay: 1.15s; }
+
+    .chrome { background: linear-gradient(180deg, #ffffff 0%, #f3f4f6 50%, #d1d5db 100%); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 4px 40px rgba(255,255,255,0.15); }
+    .chrome-brand { background: linear-gradient(180deg, #ffffff 0%, var(--brand-cream) 50%, var(--brand-light) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 4px 40px rgba(165,180,252,0.4); }
+    .chrome-cyan { background: linear-gradient(180deg, #ffffff 0%, #cffafe 50%, var(--cyan) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 4px 40px rgba(34,211,238,0.4); }
+    .chrome-gold { background: linear-gradient(180deg, #ffffff 0%, #fef3c7 50%, var(--gold) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 4px 40px rgba(251,191,36,0.4); }
+    .chrome-emerald { background: linear-gradient(180deg, #ffffff 0%, #d1fae5 50%, var(--emerald) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 4px 40px rgba(16,185,129,0.4); }
+    .glow-red { color: #fca5a5; text-shadow: 0 0 25px rgba(239,68,68,0.75); }
+    .glow-brand { color: var(--brand-light); text-shadow: 0 0 30px rgba(165,180,252,0.8); }
+
+    .eyebrow { font-size: 22px; font-weight: 600; letter-spacing: 0.5em; text-transform: uppercase; color: var(--brand-light); }
+    .chip { display: inline-flex; padding: 14px 28px; border-radius: 100px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.22); backdrop-filter: blur(12px); font-size: 22px; font-weight: 600; }
+
+    .workflow-step {
+      display: flex; align-items: center; gap: 18px;
+      padding: 16px 26px;
+      background: rgba(79,70,229,0.14);
+      border: 1px solid rgba(79,70,229,0.45);
+      border-radius: 16px;
+      backdrop-filter: blur(10px);
+      font-size: 22px;
+      text-align: left;
+      min-width: 420px;
+    }
+    .workflow-step .num {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--brand-mid), var(--brand-light));
+      color: #07061a; font-weight: 900; font-size: 17px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .day-card {
+      padding: 22px 26px;
+      border-radius: 16px;
+      background: linear-gradient(145deg, rgba(251,191,36,0.14), rgba(251,191,36,0.03));
+      border: 1.5px solid rgba(251,191,36,0.42);
+      text-align: center;
+    }
+    .day-card .label { font-size: 14px; font-weight: 800; letter-spacing: 0.3em; color: var(--gold); text-transform: uppercase; margin-bottom: 4px; }
+    .day-card .num { font-size: 56px; font-weight: 900; color: #fff; line-height: 1; margin-bottom: 6px; }
+    .day-card .desc { font-size: 17px; color: rgba(255,255,255,0.8); }
+
+    /* Player controls */
+    #controls {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      padding: 18px 28px 14px;
+      display: flex; align-items: center; gap: 18px;
+      background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.75) 100%);
+      z-index: 60; opacity: 0; pointer-events: none;
+      transition: opacity 0.35s cubic-bezier(.4,0,.2,1);
+    }
+    #controls.visible, .paused #controls { opacity: 1; pointer-events: auto; }
+    .ctrl-btn {
+      width: 46px; height: 46px; border-radius: 50%;
+      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+      color: #fff; font-size: 17px; backdrop-filter: blur(12px);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: background 0.2s, transform 0.2s;
+      font-family: system-ui, sans-serif;
+    }
+    .ctrl-btn:hover { background: rgba(255,255,255,0.28); transform: scale(1.05); }
+    .ctrl-btn:active { transform: scale(0.95); }
+    #scrub-bar { flex: 1; height: 6px; background: rgba(255,255,255,0.18); border-radius: 3px; cursor: pointer; position: relative; }
+    #scrub-bar::before { content: ''; position: absolute; top: -8px; bottom: -8px; left: 0; right: 0; }
+    #scrub-fill { height: 100%; width: 0%; border-radius: 3px; background: linear-gradient(90deg, var(--brand-mid), var(--brand-light), var(--cyan)); box-shadow: 0 0 15px rgba(165,180,252,0.7); transition: width 0.1s linear; pointer-events: none; }
+    #scrub-knob { position: absolute; top: 50%; transform: translate(-50%, -50%); width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.8); opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+    #controls.visible #scrub-knob, .paused #scrub-knob { opacity: 1; }
+    #time-display { color: rgba(255,255,255,0.88); font-size: 13px; font-family: 'JetBrains Mono', monospace; min-width: 92px; text-align: right; letter-spacing: 0.5px; }
+
+    #play-overlay { position: fixed; inset: 0; background: rgba(7,6,26,0.95); display: flex; align-items: center; justify-content: center; z-index: 100; cursor: pointer; transition: opacity 0.4s; }
+    #play-overlay.hidden { opacity: 0; pointer-events: none; }
+    #play-button { padding: 26px 52px; border-radius: 100px; background: linear-gradient(135deg, var(--brand-mid), var(--brand-light) 50%, var(--cyan) 100%); color: #fff; font-size: 28px; font-weight: 800; box-shadow: 0 0 80px rgba(79,70,229,0.7); letter-spacing: 0.5px; }
+  </style>
+</head>
+<body>
+
+<div id="play-overlay">
+  <button id="play-button">▶ Play Automation Workflows — 87s</button>
+</div>
+
+<div class="stage">
+  <div class="canvas" id="canvas">
+
+    <!-- 0 INTRO (0-3s) -->
+    <div class="slide" data-idx="0">
+      <div class="bg-img" style="background-image: url(img/tech.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content">
+        <div class="reveal flex flex-col items-center gap-6 text-center">
+          <div class="text-6xl font-black tracking-tight chrome">AI Fusion Automations</div>
+          <div class="eyebrow">Automation Workflows</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1 PAIN HOOK (3-18s) — "Your business runs on repetitive work..." -->
+    <div class="slide" data-idx="1">
+      <div class="bg-img" style="background-image: url(img/stress.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-red"></div>
+      <div class="content">
+        <div class="reveal flex flex-col items-start gap-8 max-w-[1500px]">
+          <div class="text-[5.5rem] font-black tracking-tight leading-[1.05] chrome">
+            Your business runs on <span class="glow-red">repetitive work.</span>
+          </div>
+          <div class="flex gap-4 flex-wrap">
+            <div class="chip">✕ Quotes typed twice</div>
+            <div class="chip">✕ Invoices chased by hand</div>
+            <div class="chip">✕ Reports copied between spreadsheets</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 PROMISE (18-22s) — "A machine can do this..." -->
+    <div class="slide" data-idx="2">
+      <div class="bg-img" style="background-image: url(img/tech.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-cyan"></div>
+      <div class="content">
+        <div class="reveal flex flex-col items-center gap-5 text-center">
+          <div class="eyebrow" style="color: var(--cyan);">A machine can do this in</div>
+          <div class="text-[9rem] font-black tracking-tighter leading-none chrome-cyan whitespace-nowrap">1/10 THE TIME</div>
+          <div class="text-3xl font-medium text-white/85">Without tired. Without mistakes. Without forgetting.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 SOLUTION (22-31s) — "We build custom automation workflows..." -->
+    <div class="slide" data-idx="3">
+      <div class="bg-img" style="background-image: url(img/team.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content">
+        <div class="reveal flex flex-col items-center gap-6 text-center max-w-[1500px]">
+          <div class="text-[6.5rem] font-black tracking-tighter leading-none chrome-brand whitespace-nowrap">CUSTOM WORKFLOWS</div>
+          <div class="text-3xl font-medium text-white/90 leading-snug">
+            Connect your apps. Trigger the right actions.<br>
+            Only pull a human in <span class="glow-brand font-bold">when one is really needed.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 LEAD WORKFLOW (31-44s) — 5 sequential steps -->
+    <div class="slide" data-idx="4">
+      <div class="bg-img" style="background-image: url(img/workspace.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-blue"></div>
+      <div class="content">
+        <div class="reveal flex flex-col items-center gap-7 max-w-[1400px]">
+          <div class="flex flex-col items-center gap-1">
+            <div class="font-mono text-lg font-semibold tracking-[0.2em] text-blue-200">EXAMPLE 01 · LEAD COMES IN</div>
+            <div class="text-6xl font-black tracking-tight chrome">A new lead arrives.</div>
+          </div>
+          <div class="flex flex-col gap-3">
+            <div class="workflow-step"><div class="num">1</div>Logged in your CRM</div>
+            <div class="workflow-step"><div class="num">2</div>Tagged by service</div>
+            <div class="workflow-step"><div class="num">3</div>Assigned to the right team member</div>
+            <div class="workflow-step"><div class="num">4</div>Messaged a booking link</div>
+            <div class="workflow-step"><div class="num">5</div>Follow-up sequence if no reply</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5 INVOICE WORKFLOW (44-58s) — Day 7/14/21 -->
+    <div class="slide" data-idx="5">
+      <div class="bg-img" style="background-image: url(img/workspace.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-gold"></div>
+      <div class="content">
+        <div class="reveal flex flex-col items-center gap-8 max-w-[1500px]">
+          <div class="flex flex-col items-center gap-1">
+            <div class="font-mono text-lg font-semibold tracking-[0.2em]" style="color: #fcd34d;">EXAMPLE 02 · INVOICE UNPAID</div>
+            <div class="text-6xl font-black tracking-tight chrome-gold">The follow-up runs itself.</div>
+          </div>
+          <div class="grid grid-cols-3 gap-6 w-[1200px]">
+            <div class="day-card"><div class="label">Day</div><div class="num">7</div><div class="desc">Polite reminder</div></div>
+            <div class="day-card"><div class="label">Day</div><div class="num">14</div><div class="desc">Firmer nudge</div></div>
+            <div class="day-card"><div class="label">Day</div><div class="num">21</div><div class="desc">Flagged to you, one phone call away</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6 REVIEW WORKFLOW (58-68s) — Job done → review request -->
+    <div class="slide" data-idx="6">
+      <div class="bg-img" style="background-image: url(img/success.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-emerald"></div>
+      <div class="content">
+        <div class="reveal flex flex-col items-center gap-6 text-center max-w-[1500px]">
+          <div class="flex flex-col items-center gap-1">
+            <div class="font-mono text-lg font-semibold tracking-[0.2em]" style="color: #6ee7b7;">EXAMPLE 03 · JOB COMPLETE</div>
+            <div class="text-6xl font-black tracking-tight chrome-emerald">Reviews, handled.</div>
+          </div>
+          <div class="flex items-center gap-5 mt-2">
+            <div class="chip" style="background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.45);">Request sent within the hour</div>
+            <div class="text-4xl text-white/40">→</div>
+            <div class="chip" style="background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.45);">Any reply routed straight to you</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7 SUMMARY (68-77s) — Hours back -->
+    <div class="slide" data-idx="7">
+      <div class="bg-img" style="background-image: url(img/success.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content">
+        <div class="reveal flex flex-col items-center gap-6 text-center max-w-[1600px]">
+          <div class="text-[7.5rem] font-black tracking-tighter leading-none chrome-brand whitespace-nowrap">HOURS BACK.</div>
+          <div class="flex gap-4 flex-wrap justify-center">
+            <div class="chip">Mistakes out</div>
+            <div class="chip">Leads handled</div>
+            <div class="chip">Invoices handled</div>
+            <div class="chip">Reviews handled</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8 CTA (77-84s) -->
+    <div class="slide" data-idx="8">
+      <div class="bg-img" style="background-image: url(img/success.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content">
+        <div class="reveal flex flex-col items-center gap-5 text-center max-w-[1500px]">
+          <div class="eyebrow">Start here</div>
+          <div class="text-[5.5rem] font-black tracking-tight leading-[1.02] chrome">Book a free workflow audit</div>
+          <div class="mt-2 inline-flex items-center gap-4 px-14 py-5 rounded-full text-3xl font-extrabold text-white"
+               style="background: linear-gradient(135deg, var(--brand-mid) 0%, var(--brand-light) 55%, var(--cyan) 100%); box-shadow: 0 0 80px rgba(79,70,229,0.6), 0 20px 40px rgba(0,0,0,0.3);">
+            Book a Call <span class="text-4xl">→</span>
+          </div>
+          <div class="font-mono text-3xl tracking-wide mt-1 text-white/95">
+            <span class="text-indigo-300">→</span>
+            <span style="background: linear-gradient(90deg, var(--brand-light), var(--cyan)); -webkit-background-clip: text; background-clip: text; color: transparent;" class="font-bold">aifusionautomations</span>.com
+          </div>
+          <div class="text-lg text-white/60 tracking-wider">+44 7480 488817 · grant@aifusionautomations.com</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9 OUTRO (84-87s) -->
+    <div class="slide" data-idx="9">
+      <div class="bg-img" style="background-image: url(img/tech.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content">
+        <div class="reveal flex flex-col items-center gap-6 text-center">
+          <div class="text-6xl font-black tracking-tight chrome">aifusionautomations.com</div>
+          <div class="eyebrow">Stop doing work a machine could do.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="controls">
+  <button id="play-pause" class="ctrl-btn" aria-label="Pause">⏸</button>
+  <div id="scrub-bar"><div id="scrub-fill"></div><div id="scrub-knob"></div></div>
+  <div id="time-display">0:00 / 1:27</div>
+</div>
+
+<audio id="narr" src="narration.mp3" preload="auto"></audio>
+<audio id="bgm" src="music.mp3" preload="auto"></audio>
+
+<script>
+  const SCHEDULE = [
+    { idx: 0, start: 0.0,  end: 3.0  },
+    { idx: 1, start: 3.0,  end: 18.0 },
+    { idx: 2, start: 18.0, end: 22.0 },
+    { idx: 3, start: 22.0, end: 31.4 },
+    { idx: 4, start: 31.4, end: 44.0 },
+    { idx: 5, start: 44.0, end: 58.0 },
+    { idx: 6, start: 58.0, end: 68.0 },
+    { idx: 7, start: 68.0, end: 77.0 },
+    { idx: 8, start: 77.0, end: 84.0 },
+    { idx: 9, start: 84.0, end: 87.0 },
+  ];
+  const TOTAL = 87.0;
+  const NARR_START = 3.0;
+
+  const narration = document.getElementById('narr');
+  const bgm = document.getElementById('bgm');
+  const slides = document.querySelectorAll('.slide');
+  const overlay = document.getElementById('play-overlay');
+  const canvas = document.getElementById('canvas');
+  const controls = document.getElementById('controls');
+  const playPauseBtn = document.getElementById('play-pause');
+  const scrubBar = document.getElementById('scrub-bar');
+  const scrubFill = document.getElementById('scrub-fill');
+  const scrubKnob = document.getElementById('scrub-knob');
+  const timeDisplay = document.getElementById('time-display');
+
+  function fitStage() { canvas.style.setProperty('--scale', Math.min(window.innerWidth / 1920, window.innerHeight / 1080)); }
+  window.addEventListener('resize', fitStage); fitStage();
+
+  let compStart = 0, currentIdx = -1, paused = false, rafId = null, started = false;
+
+  function setSlide(idx) { if (idx === currentIdx) return; currentIdx = idx; slides.forEach((s, i) => s.classList.toggle('active', i === idx)); }
+  function fmtTime(s) { const m = Math.floor(s / 60); const sec = Math.floor(s % 60).toString().padStart(2,'0'); return m + ':' + sec; }
+  function updateProgress(t) { const pct = Math.min(100, (t/TOTAL)*100); scrubFill.style.width = pct+'%'; scrubKnob.style.left = pct+'%'; timeDisplay.textContent = fmtTime(Math.min(t,TOTAL))+' / '+fmtTime(TOTAL); }
+
+  function tick() {
+    if (paused) return;
+    const t = (Date.now() - compStart) / 1000;
+    if (t >= TOTAL) { setSlide(SCHEDULE.length-1); updateProgress(TOTAL); paused = true; document.body.classList.add('paused'); playPauseBtn.innerHTML = '▶'; return; }
+    for (let i = SCHEDULE.length - 1; i >= 0; i--) { if (t >= SCHEDULE[i].start) { setSlide(SCHEDULE[i].idx); break; } }
+    updateProgress(t);
+    rafId = requestAnimationFrame(tick);
+  }
+  function play() { paused = false; document.body.classList.remove('paused'); playPauseBtn.innerHTML = '⏸'; const t = (Date.now() - compStart)/1000; if (t >= NARR_START) narration.play().catch(() => {}); bgm.play().catch(() => {}); rafId = requestAnimationFrame(tick); }
+  function pause() { paused = true; document.body.classList.add('paused'); playPauseBtn.innerHTML = '▶'; narration.pause(); bgm.pause(); if (rafId) cancelAnimationFrame(rafId); }
+  function seek(clientX) {
+    const rect = scrubBar.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(1, (clientX - rect.left)/rect.width));
+    const newT = pct * TOTAL;
+    compStart = Date.now() - newT * 1000;
+    if (newT >= NARR_START) narration.currentTime = Math.min(newT - NARR_START, narration.duration || 81); else { narration.pause(); narration.currentTime = 0; }
+    bgm.currentTime = Math.min(newT, bgm.duration || TOTAL);
+    for (let i = SCHEDULE.length - 1; i >= 0; i--) { if (newT >= SCHEDULE[i].start) { setSlide(SCHEDULE[i].idx); break; } }
+    updateProgress(newT);
+    if (!paused) { if (newT >= NARR_START) narration.play().catch(() => {}); bgm.play().catch(() => {}); }
+  }
+  playPauseBtn.addEventListener('click', (e) => { e.stopPropagation(); if (!started) return; const t = (Date.now()-compStart)/1000; if (t >= TOTAL) { seek(scrubBar.getBoundingClientRect().left); play(); return; } paused ? play() : pause(); });
+  scrubBar.addEventListener('click', (e) => { if (!started) return; seek(e.clientX); });
+  let hideTimeout;
+  function showControls() { if (!started) return; controls.classList.add('visible'); clearTimeout(hideTimeout); hideTimeout = setTimeout(() => { if (!paused) controls.classList.remove('visible'); }, 2800); }
+  document.body.addEventListener('mousemove', showControls);
+  controls.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+
+  document.getElementById('play-button').addEventListener('click', () => {
+    overlay.classList.add('hidden'); started = true; compStart = Date.now();
+    bgm.volume = 0.18; bgm.play().catch(() => {});
+    setTimeout(() => { narration.volume = 1.0; narration.play().catch(() => {}); }, NARR_START * 1000);
+    updateProgress(0); showControls(); rafId = requestAnimationFrame(tick);
+  });
+  setSlide(0); updateProgress(0);
+</script>
+
+</body>
+</html>
