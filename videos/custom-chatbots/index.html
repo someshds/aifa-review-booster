@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>AIFA — Custom AI Chatbots</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --brand-deep: #14532d;
+      --brand-mid: #16a34a;
+      --brand-light: #86efac;
+      --brand-cream: #f0fdf4;
+      --canvas: #05190e;
+      --cyan: #22d3ee;
+      --blue: #3b82f6;
+      --pink: #ec4899;
+      --gold: #fbbf24;
+      --emerald: #10b981;
+      --red: #ef4444;
+    }
+    html, body { margin: 0; padding: 0; background: #000; font-family: 'Inter', system-ui, sans-serif; color: #fff; overflow: hidden; }
+    .stage { position: fixed; inset: 0; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .canvas { position: relative; width: 1920px; height: 1080px; background: var(--canvas); transform-origin: center; transform: scale(var(--scale, 1)); overflow: hidden; }
+
+    .slide { position: absolute; inset: 0; opacity: 0; transition: opacity 0.7s cubic-bezier(.4,0,.2,1); pointer-events: none; overflow: hidden; }
+    .slide.active { opacity: 1; }
+    .bg-img { position: absolute; inset: 0; background-size: cover; background-position: center; transform: scale(1.02); transition: transform 12s ease-out; filter: grayscale(0.2); }
+    .slide.active .bg-img { transform: scale(1.14); }
+    .bg-dark { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(5,25,14,0.35) 0%, rgba(5,25,14,0.25) 35%, rgba(5,25,14,0.55) 100%); }
+    .bg-tint { position: absolute; inset: 0; mix-blend-mode: color; opacity: 0.30; }
+    .tint-brand   { background: linear-gradient(135deg, var(--brand-deep) 0%, var(--brand-mid) 100%); }
+    .tint-cyan    { background: linear-gradient(135deg, #0e7490 0%, var(--cyan) 100%); }
+    .tint-red     { background: linear-gradient(135deg, #991b1b 0%, var(--red) 100%); }
+    .tint-gold    { background: linear-gradient(135deg, #92400e 0%, var(--gold) 100%); }
+
+    .content { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 5; padding: 80px; }
+    .reveal > * { opacity: 0; transform: translateY(14px); transition: opacity 0.7s cubic-bezier(.4,0,.2,1), transform 0.7s cubic-bezier(.4,0,.2,1); }
+    .slide.active .reveal > * { opacity: 1; transform: translateY(0); }
+    .slide.active .reveal > *:nth-child(1) { transition-delay: 0.15s; }
+    .slide.active .reveal > *:nth-child(2) { transition-delay: 0.35s; }
+    .slide.active .reveal > *:nth-child(3) { transition-delay: 0.55s; }
+    .slide.active .reveal > *:nth-child(4) { transition-delay: 0.75s; }
+    .slide.active .reveal > *:nth-child(5) { transition-delay: 0.95s; }
+    .slide.active .reveal > *:nth-child(6) { transition-delay: 1.15s; }
+
+    .chrome { background: linear-gradient(180deg, #ffffff 0%, #f3f4f6 50%, #d1d5db 100%); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 4px 40px rgba(255,255,255,0.15); }
+    .chrome-brand { background: linear-gradient(180deg, #ffffff 0%, var(--brand-cream) 50%, var(--brand-light) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 4px 40px rgba(134,239,172,0.45); }
+    .chrome-cyan { background: linear-gradient(180deg, #ffffff 0%, #cffafe 50%, var(--cyan) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 4px 40px rgba(34,211,238,0.4); }
+    .glow-red { color: #fca5a5; text-shadow: 0 0 25px rgba(239,68,68,0.75); }
+    .glow-brand { color: var(--brand-light); text-shadow: 0 0 30px rgba(134,239,172,0.85); }
+
+    .eyebrow { font-size: 22px; font-weight: 600; letter-spacing: 0.5em; text-transform: uppercase; color: var(--brand-light); }
+    .chip { display: inline-flex; padding: 14px 28px; border-radius: 100px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.22); backdrop-filter: blur(12px); font-size: 22px; font-weight: 600; }
+    .chip-brand { background: rgba(22,163,74,0.18); border-color: rgba(22,163,74,0.5); }
+
+    /* Chat bubble */
+    .bubble {
+      position: relative; padding: 18px 26px; border-radius: 22px;
+      font-size: 22px; font-weight: 600; max-width: 520px;
+      backdrop-filter: blur(10px);
+    }
+    .bubble-user {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: #fff; align-self: flex-end;
+      border-bottom-right-radius: 6px;
+    }
+    .bubble-ai {
+      background: linear-gradient(135deg, rgba(22,163,74,0.25), rgba(20,83,45,0.4));
+      border: 1px solid rgba(134,239,172,0.5);
+      color: var(--brand-cream); align-self: flex-start;
+      border-bottom-left-radius: 6px;
+      box-shadow: 0 0 30px rgba(22,163,74,0.25);
+    }
+    .bubble .label { display: block; font-size: 13px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 4px; opacity: 0.7; }
+
+    .time-row { display: flex; gap: 22px; align-items: center; font-size: 28px; font-weight: 700; color: rgba(255,255,255,0.9); letter-spacing: 0.15em; }
+    .time-row .dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; background: var(--brand-light); box-shadow: 0 0 20px rgba(134,239,172,0.85); }
+
+    /* Player controls */
+    #controls { position: fixed; bottom: 0; left: 0; right: 0; padding: 18px 28px 14px; display: flex; align-items: center; gap: 18px; background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.75) 100%); z-index: 60; opacity: 0; pointer-events: none; transition: opacity 0.35s cubic-bezier(.4,0,.2,1); }
+    #controls.visible, .paused #controls { opacity: 1; pointer-events: auto; }
+    .ctrl-btn { width: 46px; height: 46px; border-radius: 50%; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: #fff; font-size: 17px; backdrop-filter: blur(12px); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.2s, transform 0.2s; font-family: system-ui, sans-serif; }
+    .ctrl-btn:hover { background: rgba(255,255,255,0.28); transform: scale(1.05); }
+    #scrub-bar { flex: 1; height: 6px; background: rgba(255,255,255,0.18); border-radius: 3px; cursor: pointer; position: relative; }
+    #scrub-bar::before { content: ''; position: absolute; top: -8px; bottom: -8px; left: 0; right: 0; }
+    #scrub-fill { height: 100%; width: 0%; border-radius: 3px; background: linear-gradient(90deg, var(--brand-mid), var(--brand-light), var(--cyan)); box-shadow: 0 0 15px rgba(134,239,172,0.7); transition: width 0.1s linear; pointer-events: none; }
+    #scrub-knob { position: absolute; top: 50%; transform: translate(-50%, -50%); width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.8); opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+    #controls.visible #scrub-knob, .paused #scrub-knob { opacity: 1; }
+    #time-display { color: rgba(255,255,255,0.88); font-size: 13px; font-family: 'JetBrains Mono', monospace; min-width: 92px; text-align: right; letter-spacing: 0.5px; }
+
+    #play-overlay { position: fixed; inset: 0; background: rgba(5,25,14,0.95); display: flex; align-items: center; justify-content: center; z-index: 100; cursor: pointer; transition: opacity 0.4s; }
+    #play-overlay.hidden { opacity: 0; pointer-events: none; }
+    #play-button { padding: 26px 52px; border-radius: 100px; background: linear-gradient(135deg, var(--brand-mid), var(--brand-light) 50%, var(--cyan) 100%); color: var(--brand-deep); font-size: 28px; font-weight: 800; box-shadow: 0 0 80px rgba(22,163,74,0.7); letter-spacing: 0.5px; }
+  </style>
+</head>
+<body>
+
+<div id="play-overlay"><button id="play-button">▶ Play Custom Chatbots — 85s</button></div>
+
+<div class="stage">
+  <div class="canvas" id="canvas">
+
+    <!-- 0 INTRO (0-3s) -->
+    <div class="slide" data-idx="0">
+      <div class="bg-img" style="background-image: url(img/tech.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-6 text-center">
+        <div class="text-6xl font-black tracking-tight chrome">AI Fusion Automations</div>
+        <div class="eyebrow">Custom AI Chatbots</div>
+      </div></div>
+    </div>
+
+    <!-- 1 LATE-NIGHT PAIN (3-14.22s) — Questions at 10/11/2am, inbox closed, gone elsewhere -->
+    <div class="slide" data-idx="1">
+      <div class="bg-img" style="background-image: url(img/dusk.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-red"></div>
+      <div class="content"><div class="reveal flex flex-col items-start gap-8 max-w-[1500px]">
+        <div class="text-[5rem] font-black tracking-tight leading-[1.05] chrome">
+          Your visitors have questions at <span class="glow-red">2 in the morning.</span>
+        </div>
+        <div class="time-row"><span class="dot" style="background:#f87171;box-shadow:0 0 20px rgba(239,68,68,0.85)"></span>Inbox closed · Phone silent · Gone by morning</div>
+      </div></div>
+    </div>
+
+    <!-- 2 SOLUTION HOOK (14.22-17.74s) — "A custom AI chatbot fixes that" -->
+    <div class="slide" data-idx="2">
+      <div class="bg-img" style="background-image: url(img/tech.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-4 text-center">
+        <div class="eyebrow">This fixes it</div>
+        <div class="text-[7.5rem] font-black tracking-tighter leading-none chrome-brand whitespace-nowrap">CUSTOM AI CHATBOT</div>
+      </div></div>
+    </div>
+
+    <!-- 3 HOW IT WORKS (17.74-27.74s) — sits on site, knows biz, answers like team -->
+    <div class="slide" data-idx="3">
+      <div class="bg-img" style="background-image: url(img/workspace.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-6 text-center max-w-[1500px]">
+        <div class="text-[4.5rem] font-extrabold leading-[1.1] chrome">
+          Sits on your site.<br>
+          Knows your business <span class="glow-brand">inside out.</span>
+        </div>
+        <div class="text-3xl font-medium text-white/85 max-w-[1100px]">
+          Answers like <span class="chip-brand chip inline-flex">a member of your team</span> — not a decision tree from 2015.
+        </div>
+      </div></div>
+    </div>
+
+    <!-- 4 CONVERSATION (27.74-44.34s) — postcode/service/book → captures lead + calendar -->
+    <div class="slide" data-idx="4">
+      <div class="bg-img" style="background-image: url(img/team.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-3 max-w-[1100px] w-full">
+        <div class="eyebrow">Live conversation</div>
+        <div class="bubble bubble-user"><span class="label">Visitor</span>Do you cover RH18?</div>
+        <div class="bubble bubble-ai"><span class="label">Your AI</span>Yes — Forest Row is in our coverage area. Happy to book you in.</div>
+        <div class="bubble bubble-user"><span class="label">Visitor</span>I'd like to book a chimney sweep.</div>
+        <div class="bubble bubble-ai"><span class="label">Your AI</span>Details captured in your CRM · Calendar slot confirmed · Team member notified.</div>
+      </div></div>
+    </div>
+
+    <!-- 5 CUSTOMIZED FOR YOU (44.34-59.46s) — No templates, trained on YOUR everything -->
+    <div class="slide" data-idx="5">
+      <div class="bg-img" style="background-image: url(img/success.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-6 text-center max-w-[1600px]">
+        <div class="eyebrow">No templates</div>
+        <div class="text-[5.5rem] font-black tracking-tight leading-[1.02] chrome-brand whitespace-nowrap">Trained on YOUR business.</div>
+        <div class="flex gap-4 flex-wrap justify-center mt-2">
+          <div class="chip chip-brand">Your services</div>
+          <div class="chip chip-brand">Your tone</div>
+          <div class="chip chip-brand">Your coverage area</div>
+          <div class="chip chip-brand">Your FAQs</div>
+        </div>
+        <div class="text-2xl font-medium text-white/85 mt-2">Every reply sounds like you — not a bot.</div>
+      </div></div>
+    </div>
+
+    <!-- 6 RESULTS — 60-80% HANDLED (59.46-67.94s) -->
+    <div class="slide" data-idx="6">
+      <div class="bg-img" style="background-image: url(img/workspace.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-4 text-center">
+        <div class="eyebrow">The result</div>
+        <div class="text-[11rem] font-black tracking-tighter leading-none chrome-brand whitespace-nowrap">60–80%</div>
+        <div class="text-3xl font-semibold text-white/90">of visitor questions handled — without you lifting a finger.</div>
+        <div class="text-xl text-white/70 max-w-[900px]">The rest routed to you with full context, ready to close.</div>
+      </div></div>
+    </div>
+
+    <!-- 7 24/7 COVERAGE (67.94-73.56s) -->
+    <div class="slide" data-idx="7">
+      <div class="bg-img" style="background-image: url(img/dusk.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-cyan"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-5 text-center">
+        <div class="text-[9rem] font-black tracking-tighter leading-none chrome-cyan whitespace-nowrap">24 / 7</div>
+        <div class="text-4xl font-bold text-white">coverage</div>
+        <div class="text-2xl font-medium text-white/80 mt-2">No more leads going cold overnight.</div>
+      </div></div>
+    </div>
+
+    <!-- 8 CTA (73.56-81.78s) -->
+    <div class="slide" data-idx="8">
+      <div class="bg-img" style="background-image: url(img/success.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-5 text-center max-w-[1500px]">
+        <div class="eyebrow">See it in action</div>
+        <div class="text-[5.5rem] font-black tracking-tight leading-[1.02] chrome">Book a live demo</div>
+        <div class="mt-2 inline-flex items-center gap-4 px-14 py-5 rounded-full text-3xl font-extrabold text-white"
+             style="background: linear-gradient(135deg, var(--brand-mid) 0%, var(--brand-light) 55%, var(--cyan) 100%); box-shadow: 0 0 80px rgba(22,163,74,0.6), 0 20px 40px rgba(0,0,0,0.3);">
+          See a Demo <span class="text-4xl">→</span>
+        </div>
+        <div class="font-mono text-3xl tracking-wide mt-1 text-white/95">
+          <span style="color: var(--brand-light)">→</span>
+          <span style="background: linear-gradient(90deg, var(--brand-light), var(--cyan)); -webkit-background-clip: text; background-clip: text; color: transparent;" class="font-bold">aifusionautomations</span>.com
+        </div>
+        <div class="text-lg text-white/60 tracking-wider">+44 7480 488817 · grant@aifusionautomations.com</div>
+      </div></div>
+    </div>
+
+    <!-- 9 OUTRO (81.78-84.78s) -->
+    <div class="slide" data-idx="9">
+      <div class="bg-img" style="background-image: url(img/tech.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-6 text-center">
+        <div class="text-6xl font-black tracking-tight chrome">aifusionautomations.com</div>
+        <div class="eyebrow">Your best salesperson. Always on.</div>
+      </div></div>
+    </div>
+
+  </div>
+</div>
+
+<div id="controls">
+  <button id="play-pause" class="ctrl-btn" aria-label="Pause">⏸</button>
+  <div id="scrub-bar"><div id="scrub-fill"></div><div id="scrub-knob"></div></div>
+  <div id="time-display">0:00 / 1:25</div>
+</div>
+
+<audio id="narr" src="narration.mp3" preload="auto"></audio>
+<audio id="bgm" src="music.mp3" preload="auto"></audio>
+
+<script>
+  const SCHEDULE = [
+    { idx: 0, start: 0.0,  end: 3.0   },
+    { idx: 1, start: 3.0,  end: 17.22 },
+    { idx: 2, start: 17.22, end: 20.74 },
+    { idx: 3, start: 20.74, end: 30.74 },
+    { idx: 4, start: 30.74, end: 47.34 },
+    { idx: 5, start: 47.34, end: 62.46 },
+    { idx: 6, start: 62.46, end: 70.94 },
+    { idx: 7, start: 70.94, end: 76.56 },
+    { idx: 8, start: 76.56, end: 82.0  },
+    { idx: 9, start: 82.0,  end: 85.0  },
+  ];
+  const TOTAL = 85.0;
+  const NARR_START = 3.0;
+
+  const narration = document.getElementById('narr');
+  const bgm = document.getElementById('bgm');
+  const slides = document.querySelectorAll('.slide');
+  const overlay = document.getElementById('play-overlay');
+  const canvas = document.getElementById('canvas');
+  const controls = document.getElementById('controls');
+  const playPauseBtn = document.getElementById('play-pause');
+  const scrubBar = document.getElementById('scrub-bar');
+  const scrubFill = document.getElementById('scrub-fill');
+  const scrubKnob = document.getElementById('scrub-knob');
+  const timeDisplay = document.getElementById('time-display');
+
+  function fitStage() { canvas.style.setProperty('--scale', Math.min(window.innerWidth / 1920, window.innerHeight / 1080)); }
+  window.addEventListener('resize', fitStage); fitStage();
+
+  let compStart = 0, currentIdx = -1, paused = false, rafId = null, started = false;
+
+  function setSlide(idx) { if (idx === currentIdx) return; currentIdx = idx; slides.forEach((s, i) => s.classList.toggle('active', i === idx)); }
+  function fmtTime(s) { const m = Math.floor(s / 60); const sec = Math.floor(s % 60).toString().padStart(2,'0'); return m + ':' + sec; }
+  function updateProgress(t) { const pct = Math.min(100, (t/TOTAL)*100); scrubFill.style.width = pct+'%'; scrubKnob.style.left = pct+'%'; timeDisplay.textContent = fmtTime(Math.min(t,TOTAL))+' / '+fmtTime(TOTAL); }
+
+  function tick() {
+    if (paused) return;
+    const t = (Date.now() - compStart) / 1000;
+    if (t >= TOTAL) { setSlide(SCHEDULE.length-1); updateProgress(TOTAL); paused = true; document.body.classList.add('paused'); playPauseBtn.innerHTML = '▶'; return; }
+    for (let i = SCHEDULE.length - 1; i >= 0; i--) { if (t >= SCHEDULE[i].start) { setSlide(SCHEDULE[i].idx); break; } }
+    updateProgress(t);
+    rafId = requestAnimationFrame(tick);
+  }
+  function play() { paused = false; document.body.classList.remove('paused'); playPauseBtn.innerHTML = '⏸'; const t = (Date.now() - compStart)/1000; if (t >= NARR_START) narration.play().catch(() => {}); bgm.play().catch(() => {}); rafId = requestAnimationFrame(tick); }
+  function pause() { paused = true; document.body.classList.add('paused'); playPauseBtn.innerHTML = '▶'; narration.pause(); bgm.pause(); if (rafId) cancelAnimationFrame(rafId); }
+  function seek(clientX) {
+    const rect = scrubBar.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(1, (clientX - rect.left)/rect.width));
+    const newT = pct * TOTAL;
+    compStart = Date.now() - newT * 1000;
+    if (newT >= NARR_START) narration.currentTime = Math.min(newT - NARR_START, narration.duration || 78.8); else { narration.pause(); narration.currentTime = 0; }
+    bgm.currentTime = Math.min(newT, bgm.duration || TOTAL);
+    for (let i = SCHEDULE.length - 1; i >= 0; i--) { if (newT >= SCHEDULE[i].start) { setSlide(SCHEDULE[i].idx); break; } }
+    updateProgress(newT);
+    if (!paused) { if (newT >= NARR_START) narration.play().catch(() => {}); bgm.play().catch(() => {}); }
+  }
+  playPauseBtn.addEventListener('click', (e) => { e.stopPropagation(); if (!started) return; const t = (Date.now()-compStart)/1000; if (t >= TOTAL) { seek(scrubBar.getBoundingClientRect().left); play(); return; } paused ? play() : pause(); });
+  scrubBar.addEventListener('click', (e) => { if (!started) return; seek(e.clientX); });
+  let hideTimeout;
+  function showControls() { if (!started) return; controls.classList.add('visible'); clearTimeout(hideTimeout); hideTimeout = setTimeout(() => { if (!paused) controls.classList.remove('visible'); }, 2800); }
+  document.body.addEventListener('mousemove', showControls);
+  controls.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+
+  document.getElementById('play-button').addEventListener('click', () => {
+    overlay.classList.add('hidden'); started = true; compStart = Date.now();
+    bgm.volume = 0.18; bgm.play().catch(() => {});
+    setTimeout(() => { narration.volume = 1.0; narration.play().catch(() => {}); }, NARR_START * 1000);
+    updateProgress(0); showControls(); rafId = requestAnimationFrame(tick);
+  });
+  setSlide(0); updateProgress(0);
+</script>
+
+</body>
+</html>
