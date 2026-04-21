@@ -603,41 +603,27 @@ section{position:relative;z-index:1}
       <h2 class="section-title">Ready to Transform Your Business?</h2>
       <p class="section-desc">Book a free 15-minute consultation. We will discuss your business, identify automation opportunities, and show you what is possible &mdash; no obligation, no hard sell.</p>
 
-      <!-- NOTE: Form action URL needs verification. The GHL form endpoint may be different for GitHub Pages hosted forms.
-           Form ID: V7ShHp89pWErpDYzPi7U
-           Current endpoint: https://backend.leadconnectorhq.com/appengine/appointment
-           This may need to be updated to use a different submission method (e.g., GHL API or webhook). -->
-      <form class="contact-form" id="contact-form" action="https://backend.leadconnectorhq.com/appengine/appointment" method="POST">
-        <input type="hidden" name="formId" value="V7ShHp89pWErpDYzPi7U">
-        <input type="hidden" name="location_id" value="wIZS4RjMCtzdxqUQZunV">
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="name">Full Name</label>
-            <input type="text" id="name" name="full_name" placeholder="Your name" required>
-          </div>
-          <div class="form-group">
-            <label for="email">Email Address</label>
-            <input type="email" id="email" name="email" placeholder="you@company.com" required>
-          </div>
-          <div class="form-group">
-            <label for="phone">Phone Number</label>
-            <input type="tel" id="phone" name="phone" placeholder="+44 7XXX XXXXXX">
-          </div>
-          <div class="form-group">
-            <label for="business">Your Business</label>
-            <input type="text" id="business" name="company_name" placeholder="Company name">
-          </div>
-          <div class="form-group full">
-            <label for="message">How can we help?</label>
-            <textarea id="message" name="message" placeholder="Tell us briefly about your business and what you would like to automate..."></textarea>
-          </div>
+      <!-- GHL Intro Call Form — native embed, submissions go straight into AIFA GHL CRM -->
+      <div class="contact-form" style="max-width:720px;margin:0 auto">
+        <iframe
+          src="https://link.aifusionautomations.com/widget/form/lS0nKZSRwsBvI4BUU92p"
+          style="width:100%;min-height:460px;border:none;border-radius:12px;background:var(--bg-card)"
+          id="inline-lS0nKZSRwsBvI4BUU92p"
+          data-layout='{"id":"INLINE"}'
+          data-trigger-type="alwaysShow"
+          data-activation-type="alwaysActivated"
+          data-deactivation-type="neverDeactivate"
+          data-form-name="Intro Call Form"
+          data-height="402"
+          data-layout-iframe-id="inline-lS0nKZSRwsBvI4BUU92p"
+          data-form-id="lS0nKZSRwsBvI4BUU92p"
+          title="Intro Call Form"></iframe>
+        <div class="form-actions" style="margin-top:1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+          <span class="form-or" style="margin:0 auto">or</span>
         </div>
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary" style="width:100%">Send Message &rarr;</button>
-          <span class="form-or">or</span>
-          <a href="https://link.aifusionautomations.com/widget/booking/5MSAczS5HPvcvB5OSZ5f" target="_blank" rel="noopener" class="btn btn-secondary" style="width:100%">Book Directly on Our Calendar</a>
-        </div>
-      </form>
+        <a href="https://link.aifusionautomations.com/widget/booking/5MSAczS5HPvcvB5OSZ5f" target="_blank" rel="noopener" class="btn btn-secondary" style="width:100%;margin-top:1rem">Book Directly on Our Calendar</a>
+      </div>
+      <script src="https://link.aifusionautomations.com/js/form_embed.js" defer></script>
     </div>
   </div>
 </section>
