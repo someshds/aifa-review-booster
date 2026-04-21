@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>AIFA — White-label CRM Platform</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --brand-deep: #92400e;
+      --brand-mid: #d97706;
+      --brand-light: #fbbf24;
+      --brand-cream: #fef3c7;
+      --canvas: #1a0f02;
+      --cyan: #22d3ee; --blue: #3b82f6; --pink: #ec4899; --gold: #fbbf24; --emerald: #10b981; --red: #ef4444;
+    }
+    html, body { margin: 0; padding: 0; background: #000; font-family: 'Inter', system-ui, sans-serif; color: #fff; overflow: hidden; }
+    .stage { position: fixed; inset: 0; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .canvas { position: relative; width: 1920px; height: 1080px; background: var(--canvas); transform-origin: center; transform: scale(var(--scale, 1)); overflow: hidden; }
+
+    .slide { position: absolute; inset: 0; opacity: 0; transition: opacity 0.7s cubic-bezier(.4,0,.2,1); pointer-events: none; overflow: hidden; }
+    .slide.active { opacity: 1; }
+    .bg-img { position: absolute; inset: 0; background-size: cover; background-position: center; transform: scale(1.02); transition: transform 12s ease-out; filter: grayscale(0.2); }
+    .slide.active .bg-img { transform: scale(1.14); }
+    .bg-dark { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(26,15,2,0.4) 0%, rgba(26,15,2,0.3) 35%, rgba(26,15,2,0.6) 100%); }
+    .bg-tint { position: absolute; inset: 0; mix-blend-mode: color; opacity: 0.30; }
+    .tint-brand { background: linear-gradient(135deg, var(--brand-deep) 0%, var(--brand-mid) 100%); }
+    .tint-red   { background: linear-gradient(135deg, #991b1b 0%, var(--red) 100%); }
+    .tint-emerald { background: linear-gradient(135deg, #065f46 0%, var(--emerald) 100%); }
+
+    .content { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 5; padding: 80px; }
+    .reveal > * { opacity: 0; transform: translateY(14px); transition: opacity 0.7s cubic-bezier(.4,0,.2,1), transform 0.7s cubic-bezier(.4,0,.2,1); }
+    .slide.active .reveal > * { opacity: 1; transform: translateY(0); }
+    .slide.active .reveal > *:nth-child(1) { transition-delay: 0.15s; }
+    .slide.active .reveal > *:nth-child(2) { transition-delay: 0.35s; }
+    .slide.active .reveal > *:nth-child(3) { transition-delay: 0.55s; }
+    .slide.active .reveal > *:nth-child(4) { transition-delay: 0.75s; }
+    .slide.active .reveal > *:nth-child(5) { transition-delay: 0.95s; }
+    .slide.active .reveal > *:nth-child(6) { transition-delay: 1.15s; }
+
+    .chrome { background: linear-gradient(180deg, #ffffff 0%, #f3f4f6 50%, #d1d5db 100%); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 4px 40px rgba(255,255,255,0.15); }
+    .chrome-brand { background: linear-gradient(180deg, #ffffff 0%, var(--brand-cream) 45%, var(--brand-light) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 4px 50px rgba(251,191,36,0.55); }
+    .glow-red { color: #fca5a5; text-shadow: 0 0 25px rgba(239,68,68,0.75); }
+
+    .eyebrow { font-size: 22px; font-weight: 600; letter-spacing: 0.5em; text-transform: uppercase; color: var(--brand-light); }
+    .chip { display: inline-flex; padding: 12px 22px; border-radius: 100px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.22); backdrop-filter: blur(12px); font-size: 20px; font-weight: 600; }
+    .chip-brand { background: rgba(251,191,36,0.15); border-color: rgba(251,191,36,0.5); color: var(--brand-cream); }
+
+    .disconnected-tool {
+      padding: 24px 20px; border-radius: 18px;
+      background: linear-gradient(145deg, rgba(239,68,68,0.14), rgba(239,68,68,0.03));
+      border: 1.5px solid rgba(239,68,68,0.4);
+      text-align: center;
+      min-width: 180px;
+    }
+    .disconnected-tool .ico { font-size: 36px; margin-bottom: 8px; color: #fca5a5; }
+    .disconnected-tool .nm { font-size: 17px; font-weight: 700; color: #fff; }
+    .disconnected-tool .sub { font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: #f87171; margin-top: 4px; }
+
+    .module-tile {
+      padding: 18px 14px; border-radius: 14px;
+      background: linear-gradient(145deg, rgba(251,191,36,0.18), rgba(217,119,6,0.05));
+      border: 1.5px solid rgba(251,191,36,0.5);
+      backdrop-filter: blur(10px);
+      text-align: center;
+    }
+    .module-tile .ico { font-size: 28px; color: var(--brand-light); filter: drop-shadow(0 0 14px rgba(251,191,36,0.7)); }
+    .module-tile .nm { font-size: 15px; font-weight: 800; color: #fff; margin-top: 6px; letter-spacing: 0.02em; line-height: 1.15; }
+
+    .step-card {
+      padding: 18px 26px; border-radius: 14px;
+      background: rgba(251,191,36,0.12); border: 1.5px solid rgba(251,191,36,0.4);
+      backdrop-filter: blur(8px);
+      display: flex; align-items: center; gap: 16px;
+      min-width: 360px;
+    }
+    .step-card .n { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--brand-mid), var(--brand-light)); color: var(--brand-deep); font-weight: 900; font-size: 16px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .step-card .txt { font-size: 20px; font-weight: 600; color: #fff; }
+
+    /* Player controls */
+    #controls { position: fixed; bottom: 0; left: 0; right: 0; padding: 18px 28px 14px; display: flex; align-items: center; gap: 18px; background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.75) 100%); z-index: 60; opacity: 0; pointer-events: none; transition: opacity 0.35s cubic-bezier(.4,0,.2,1); }
+    #controls.visible, .paused #controls { opacity: 1; pointer-events: auto; }
+    .ctrl-btn { width: 46px; height: 46px; border-radius: 50%; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: #fff; font-size: 17px; backdrop-filter: blur(12px); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.2s, transform 0.2s; font-family: system-ui, sans-serif; }
+    .ctrl-btn:hover { background: rgba(255,255,255,0.28); transform: scale(1.05); }
+    #scrub-bar { flex: 1; height: 6px; background: rgba(255,255,255,0.18); border-radius: 3px; cursor: pointer; position: relative; }
+    #scrub-bar::before { content: ''; position: absolute; top: -8px; bottom: -8px; left: 0; right: 0; }
+    #scrub-fill { height: 100%; width: 0%; border-radius: 3px; background: linear-gradient(90deg, var(--brand-mid), var(--brand-light)); box-shadow: 0 0 15px rgba(251,191,36,0.7); transition: width 0.1s linear; pointer-events: none; }
+    #scrub-knob { position: absolute; top: 50%; transform: translate(-50%, -50%); width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.8); opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+    #controls.visible #scrub-knob, .paused #scrub-knob { opacity: 1; }
+    #time-display { color: rgba(255,255,255,0.88); font-size: 13px; font-family: 'JetBrains Mono', monospace; min-width: 92px; text-align: right; letter-spacing: 0.5px; }
+    #play-overlay { position: fixed; inset: 0; background: rgba(26,15,2,0.95); display: flex; align-items: center; justify-content: center; z-index: 100; cursor: pointer; transition: opacity 0.4s; }
+    #play-overlay.hidden { opacity: 0; pointer-events: none; }
+    #play-button { padding: 26px 52px; border-radius: 100px; background: linear-gradient(135deg, var(--brand-mid), var(--brand-light)); color: var(--brand-deep); font-size: 28px; font-weight: 800; box-shadow: 0 0 80px rgba(251,191,36,0.7); letter-spacing: 0.5px; }
+  </style>
+</head>
+<body>
+
+<div id="play-overlay"><button id="play-button">▶ Play White-label CRM — 88s</button></div>
+
+<div class="stage"><div class="canvas" id="canvas">
+
+    <!-- 0 INTRO (0-3s) -->
+    <div class="slide" data-idx="0">
+      <div class="bg-img" style="background-image: url(img/tech.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-6 text-center">
+        <div class="text-6xl font-black tracking-tight chrome">AI Fusion Automations</div>
+        <div class="eyebrow">White-label Platform</div>
+      </div></div>
+    </div>
+
+    <!-- 1 PAIN HOOK (3-7.22s) -->
+    <div class="slide" data-idx="1">
+      <div class="bg-img" style="background-image: url(img/stress.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-red"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-4 text-center max-w-[1400px]">
+        <div class="text-[5.5rem] font-black tracking-tight leading-[1.05] chrome">Most small businesses pay for</div>
+        <div class="text-[9rem] font-black tracking-tighter leading-none glow-red">SIX TOOLS</div>
+        <div class="text-3xl font-medium text-white/85">that barely talk to each other.</div>
+      </div></div>
+    </div>
+
+    <!-- 2 DISCONNECTED TOOLS (7.22-17.92s) — 6 pill grid -->
+    <div class="slide" data-idx="2">
+      <div class="bg-img" style="background-image: url(img/workspace.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-red"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-8 max-w-[1600px]">
+        <div class="eyebrow" style="color:#fca5a5">The status quo</div>
+        <div class="grid grid-cols-6 gap-4 w-full">
+          <div class="disconnected-tool"><div class="ico">👥</div><div class="nm">CRM</div><div class="sub">App 1</div></div>
+          <div class="disconnected-tool"><div class="ico">✉️</div><div class="nm">Email</div><div class="sub">App 2</div></div>
+          <div class="disconnected-tool"><div class="ico">📅</div><div class="nm">Booking</div><div class="sub">App 3</div></div>
+          <div class="disconnected-tool"><div class="ico">💳</div><div class="nm">Invoicing</div><div class="sub">App 4</div></div>
+          <div class="disconnected-tool"><div class="ico">⭐</div><div class="nm">Reviews</div><div class="sub">App 5</div></div>
+          <div class="disconnected-tool"><div class="ico">🎯</div><div class="nm">Funnels</div><div class="sub">App 6</div></div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- 3 "Six six six" (17.92-24.04s) -->
+    <div class="slide" data-idx="3">
+      <div class="bg-img" style="background-image: url(img/stress.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-red"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-6 text-center">
+        <div class="flex gap-10 text-[8rem] font-black tracking-tighter leading-none glow-red">
+          <span>6</span><span>·</span><span>6</span><span>·</span><span>6</span>
+        </div>
+        <div class="flex gap-10 text-2xl font-semibold uppercase tracking-[0.3em] text-white/85">
+          <span>Subscriptions</span><span>Logins</span><span>Data silos</span>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- 4 CHECKING 4 APPS (24.04-30.22s) -->
+    <div class="slide" data-idx="4">
+      <div class="bg-img" style="background-image: url(img/stress.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-red"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-4 text-center max-w-[1500px]">
+        <div class="text-[4.5rem] font-black tracking-tight leading-[1.1] chrome">
+          Need to know where a customer is right now?
+        </div>
+        <div class="text-4xl font-bold text-white/85 mt-2">You're checking <span class="glow-red">four different apps.</span></div>
+      </div></div>
+    </div>
+
+    <!-- 5 SOLUTION (30.22-35.08s) -->
+    <div class="slide" data-idx="5">
+      <div class="bg-img" style="background-image: url(img/success.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-4 text-center">
+        <div class="eyebrow">We replace all of it</div>
+        <div class="text-[7.5rem] font-black tracking-tighter leading-none chrome-brand whitespace-nowrap">ONE PLATFORM</div>
+        <div class="text-3xl font-medium text-white/90">Branded as <span class="chrome-brand font-black">yours.</span></div>
+      </div></div>
+    </div>
+
+    <!-- 6 EIGHT MODULES (35.08-51.16s) -->
+    <div class="slide" data-idx="6">
+      <div class="bg-img" style="background-image: url(img/workspace.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-6 max-w-[1600px]">
+        <div class="flex flex-col items-center gap-1">
+          <div class="font-mono text-lg font-semibold tracking-[0.2em] text-yellow-200">EIGHT MODULES · ONE LOGIN</div>
+          <div class="text-5xl font-black tracking-tight chrome-brand">Every tool your business needs.</div>
+        </div>
+        <div class="grid grid-cols-4 gap-3 w-full">
+          <div class="module-tile"><div class="ico">👥</div><div class="nm">CRM &amp; Pipelines</div></div>
+          <div class="module-tile"><div class="ico">🌐</div><div class="nm">Websites &amp; Funnels</div></div>
+          <div class="module-tile"><div class="ico">💬</div><div class="nm">Email · SMS · WhatsApp</div></div>
+          <div class="module-tile"><div class="ico">⭐</div><div class="nm">Reputation &amp; Reviews</div></div>
+          <div class="module-tile"><div class="ico">🎙️</div><div class="nm">Voice AI</div></div>
+          <div class="module-tile"><div class="ico">📅</div><div class="nm">Online Booking</div></div>
+          <div class="module-tile"><div class="ico">💳</div><div class="nm">Invoicing &amp; Payments</div></div>
+          <div class="module-tile"><div class="ico">⚙️</div><div class="nm">Workflow Automation</div></div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- 7 ALL CONNECTED (51.16-61.80s) -->
+    <div class="slide" data-idx="7">
+      <div class="bg-img" style="background-image: url(img/team.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-6 text-center max-w-[1600px]">
+        <div class="text-[6.5rem] font-black tracking-tighter leading-none chrome-brand whitespace-nowrap">ALL CONNECTED.</div>
+        <div class="flex gap-4 flex-wrap justify-center">
+          <div class="chip chip-brand">Every channel</div>
+          <div class="chip chip-brand">Every tool</div>
+          <div class="chip chip-brand">All talking to each other</div>
+          <div class="chip chip-brand">All under your logo</div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- 8 WE SET IT UP (61.80-69.88s) — 4 steps -->
+    <div class="slide" data-idx="8">
+      <div class="bg-img" style="background-image: url(img/team.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-6 max-w-[1400px]">
+        <div class="eyebrow">We handle every step</div>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="step-card"><div class="n">1</div><div class="txt">Set it up end to end</div></div>
+          <div class="step-card"><div class="n">2</div><div class="txt">Migrate your data</div></div>
+          <div class="step-card"><div class="n">3</div><div class="txt">Train your team</div></div>
+          <div class="step-card"><div class="n">4</div><div class="txt">Stay on to improve it</div></div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- 9 SUMMARY (69.88-80.52s) — 8 become 1, faster/cleaner/cheaper -->
+    <div class="slide" data-idx="9">
+      <div class="bg-img" style="background-image: url(img/success.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-emerald"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-5 text-center max-w-[1600px]">
+        <div class="flex items-center gap-8 text-[6rem] font-black tracking-tighter leading-none">
+          <span class="glow-red">8</span>
+          <span class="text-5xl text-white/60">→</span>
+          <span class="chrome-brand">1</span>
+        </div>
+        <div class="text-3xl font-semibold text-white/90 mt-1">Your customer data lives in <span class="chrome-brand font-black">one place.</span></div>
+        <div class="flex gap-4 justify-center">
+          <div class="chip" style="background:rgba(16,185,129,0.15);border-color:rgba(16,185,129,0.5)">Faster</div>
+          <div class="chip" style="background:rgba(16,185,129,0.15);border-color:rgba(16,185,129,0.5)">Cleaner</div>
+          <div class="chip" style="background:rgba(16,185,129,0.15);border-color:rgba(16,185,129,0.5)">Cheaper</div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- 10 CTA (80.52-84.58s) -->
+    <div class="slide" data-idx="10">
+      <div class="bg-img" style="background-image: url(img/success.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-5 text-center max-w-[1500px]">
+        <div class="eyebrow">See it live</div>
+        <div class="text-[5.5rem] font-black tracking-tight leading-[1.02] chrome-brand">Book a platform tour</div>
+        <div class="mt-2 inline-flex items-center gap-4 px-14 py-5 rounded-full text-3xl font-extrabold"
+             style="background: linear-gradient(135deg, var(--brand-mid), var(--brand-light)); color: var(--brand-deep); box-shadow: 0 0 80px rgba(251,191,36,0.6), 0 20px 40px rgba(0,0,0,0.3);">
+          Book a Tour <span class="text-4xl">→</span>
+        </div>
+        <div class="font-mono text-3xl tracking-wide mt-1 text-white/95">
+          <span style="color: var(--brand-light)">→</span>
+          <span style="color: var(--brand-light);" class="font-bold">aifusionautomations</span>.com
+        </div>
+        <div class="text-lg text-white/60 tracking-wider">+44 7480 488817 · grant@aifusionautomations.com</div>
+      </div></div>
+    </div>
+
+    <!-- 11 OUTRO -->
+    <div class="slide" data-idx="11">
+      <div class="bg-img" style="background-image: url(img/tech.jpg);"></div>
+      <div class="bg-dark"></div><div class="bg-tint tint-brand"></div>
+      <div class="content"><div class="reveal flex flex-col items-center gap-6 text-center">
+        <div class="text-6xl font-black tracking-tight chrome">aifusionautomations.com</div>
+        <div class="eyebrow">Eight tools. One login. Your brand.</div>
+      </div></div>
+    </div>
+
+</div></div>
+
+<div id="controls">
+  <button id="play-pause" class="ctrl-btn">⏸</button>
+  <div id="scrub-bar"><div id="scrub-fill"></div><div id="scrub-knob"></div></div>
+  <div id="time-display">0:00 / 1:28</div>
+</div>
+
+<audio id="narr" src="narration.mp3" preload="auto"></audio>
+<audio id="bgm" src="music.mp3" preload="auto"></audio>
+
+<script>
+  const SCHEDULE = [
+    { idx: 0,  start: 0.0,  end: 3.0  },
+    { idx: 1,  start: 3.0,  end: 10.22 },
+    { idx: 2,  start: 10.22, end: 20.92 },
+    { idx: 3,  start: 20.92, end: 27.04 },
+    { idx: 4,  start: 27.04, end: 33.22 },
+    { idx: 5,  start: 33.22, end: 38.08 },
+    { idx: 6,  start: 38.08, end: 54.16 },
+    { idx: 7,  start: 54.16, end: 64.80 },
+    { idx: 8,  start: 64.80, end: 72.88 },
+    { idx: 9,  start: 72.88, end: 83.52 },
+    { idx: 10, start: 83.52, end: 85.58 },
+    { idx: 11, start: 85.58, end: 88.0 },
+  ];
+  const TOTAL = 88.0;
+  const NARR_START = 3.0;
+
+  const narration = document.getElementById('narr');
+  const bgm = document.getElementById('bgm');
+  const slides = document.querySelectorAll('.slide');
+  const overlay = document.getElementById('play-overlay');
+  const canvas = document.getElementById('canvas');
+  const controls = document.getElementById('controls');
+  const playPauseBtn = document.getElementById('play-pause');
+  const scrubBar = document.getElementById('scrub-bar');
+  const scrubFill = document.getElementById('scrub-fill');
+  const scrubKnob = document.getElementById('scrub-knob');
+  const timeDisplay = document.getElementById('time-display');
+
+  function fitStage() { canvas.style.setProperty('--scale', Math.min(window.innerWidth / 1920, window.innerHeight / 1080)); }
+  window.addEventListener('resize', fitStage); fitStage();
+
+  let compStart = 0, currentIdx = -1, paused = false, rafId = null, started = false;
+  function setSlide(idx) { if (idx === currentIdx) return; currentIdx = idx; slides.forEach((s, i) => s.classList.toggle('active', i === idx)); }
+  function fmtTime(s) { const m = Math.floor(s / 60); const sec = Math.floor(s % 60).toString().padStart(2,'0'); return m + ':' + sec; }
+  function updateProgress(t) { const pct = Math.min(100, (t/TOTAL)*100); scrubFill.style.width = pct+'%'; scrubKnob.style.left = pct+'%'; timeDisplay.textContent = fmtTime(Math.min(t,TOTAL))+' / '+fmtTime(TOTAL); }
+
+  function tick() {
+    if (paused) return;
+    const t = (Date.now() - compStart) / 1000;
+    if (t >= TOTAL) { setSlide(SCHEDULE.length-1); updateProgress(TOTAL); paused = true; document.body.classList.add('paused'); playPauseBtn.innerHTML = '▶'; return; }
+    for (let i = SCHEDULE.length - 1; i >= 0; i--) { if (t >= SCHEDULE[i].start) { setSlide(SCHEDULE[i].idx); break; } }
+    updateProgress(t);
+    rafId = requestAnimationFrame(tick);
+  }
+  function play() { paused = false; document.body.classList.remove('paused'); playPauseBtn.innerHTML = '⏸'; const t = (Date.now() - compStart)/1000; if (t >= NARR_START) narration.play().catch(() => {}); bgm.play().catch(() => {}); rafId = requestAnimationFrame(tick); }
+  function pause() { paused = true; document.body.classList.add('paused'); playPauseBtn.innerHTML = '▶'; narration.pause(); bgm.pause(); if (rafId) cancelAnimationFrame(rafId); }
+  function seek(clientX) {
+    const rect = scrubBar.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(1, (clientX - rect.left)/rect.width));
+    const newT = pct * TOTAL;
+    compStart = Date.now() - newT * 1000;
+    if (newT >= NARR_START) narration.currentTime = Math.min(newT - NARR_START, narration.duration || 81.6); else { narration.pause(); narration.currentTime = 0; }
+    bgm.currentTime = Math.min(newT, bgm.duration || TOTAL);
+    for (let i = SCHEDULE.length - 1; i >= 0; i--) { if (newT >= SCHEDULE[i].start) { setSlide(SCHEDULE[i].idx); break; } }
+    updateProgress(newT);
+    if (!paused) { if (newT >= NARR_START) narration.play().catch(() => {}); bgm.play().catch(() => {}); }
+  }
+  playPauseBtn.addEventListener('click', (e) => { e.stopPropagation(); if (!started) return; const t = (Date.now()-compStart)/1000; if (t >= TOTAL) { seek(scrubBar.getBoundingClientRect().left); play(); return; } paused ? play() : pause(); });
+  scrubBar.addEventListener('click', (e) => { if (!started) return; seek(e.clientX); });
+  let hideTimeout;
+  function showControls() { if (!started) return; controls.classList.add('visible'); clearTimeout(hideTimeout); hideTimeout = setTimeout(() => { if (!paused) controls.classList.remove('visible'); }, 2800); }
+  document.body.addEventListener('mousemove', showControls);
+  controls.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+
+  document.getElementById('play-button').addEventListener('click', () => {
+    overlay.classList.add('hidden'); started = true; compStart = Date.now();
+    bgm.volume = 0.18; bgm.play().catch(() => {});
+    setTimeout(() => { narration.volume = 1.0; narration.play().catch(() => {}); }, NARR_START * 1000);
+    updateProgress(0); showControls(); rafId = requestAnimationFrame(tick);
+  });
+  setSlide(0); updateProgress(0);
+</script>
+
+</body>
+</html>
