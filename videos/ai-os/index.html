@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>AIFA — AI Operating Systems (v3)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --aifa-deep: #5b21b6;
+      --aifa-mid: #7c3aed;
+      --aifa-light: #a78bfa;
+      --aifa-cream: #f5f3ff;
+      --aifa-canvas: #0a0612;
+      --cyan: #22d3ee;
+      --blue: #3b82f6;
+      --pink: #ec4899;
+      --gold: #fbbf24;
+      --emerald: #10b981;
+      --red: #ef4444;
+    }
+    html, body { margin: 0; padding: 0; background: #000; font-family: 'Inter', system-ui, sans-serif; color: #fff; overflow: hidden; }
+    .stage { position: fixed; inset: 0; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .canvas { position: relative; width: 1920px; height: 1080px; background: var(--aifa-canvas); transform-origin: center; transform: scale(var(--scale, 1)); overflow: hidden; }
+
+    /* ─── Slide container ─────────────────────────────── */
+    .slide {
+      position: absolute; inset: 0;
+      opacity: 0;
+      transition: opacity 0.7s cubic-bezier(.4, 0, .2, 1);
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .slide.active { opacity: 1; }
+
+    /* ─── Background image layer (Ken Burns) ──────────── */
+    .bg-img {
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center;
+      transform: scale(1.02);
+      transition: transform 9s ease-out;
+      filter: grayscale(0.2);
+    }
+    .slide.active .bg-img { transform: scale(1.12); }
+
+    /* ─── Dark overlay for text legibility ────────────── */
+    .bg-dark {
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg,
+        rgba(10,6,18,0.35) 0%,
+        rgba(10,6,18,0.25) 35%,
+        rgba(10,6,18,0.55) 100%);
+    }
+
+    /* ─── Scene accent tint overlay ───────────────────── */
+    .bg-tint { position: absolute; inset: 0; mix-blend-mode: color; opacity: 0.30; }
+    .tint-purple  { background: linear-gradient(135deg, #5b21b6 0%, #7c3aed 100%); }
+    .tint-cyan    { background: linear-gradient(135deg, #0e7490 0%, #22d3ee 100%); }
+    .tint-blue    { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); }
+    .tint-pink    { background: linear-gradient(135deg, #9d174d 0%, #ec4899 100%); }
+    .tint-gold    { background: linear-gradient(135deg, #92400e 0%, #fbbf24 100%); }
+    .tint-red     { background: linear-gradient(135deg, #991b1b 0%, #ef4444 100%); }
+    .tint-emerald { background: linear-gradient(135deg, #065f46 0%, #10b981 100%); }
+
+    /* ─── Content layer ──────────────────────────────── */
+    .content {
+      position: absolute; inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
+      padding: 80px;
+    }
+
+    /* ─── Staggered reveal ────────────────────────────── */
+    .reveal > * {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.7s cubic-bezier(.4, 0, .2, 1), transform 0.7s cubic-bezier(.4, 0, .2, 1);
+    }
+    .slide.active .reveal > * { opacity: 1; transform: translateY(0); }
+    .slide.active .reveal > *:nth-child(1) { transition-delay: 0.15s; }
+    .slide.active .reveal > *:nth-child(2) { transition-delay: 0.35s; }
+    .slide.active .reveal > *:nth-child(3) { transition-delay: 0.55s; }
+    .slide.active .reveal > *:nth-child(4) { transition-delay: 0.75s; }
+    .slide.active .reveal > *:nth-child(5) { transition-delay: 0.95s; }
+    .slide.active .reveal > *:nth-child(6) { transition-delay: 1.15s; }
+
+    /* ─── Typography helpers ──────────────────────────── */
+    .chrome {
+      background: linear-gradient(180deg, #ffffff 0%, #f3f4f6 50%, #d1d5db 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      text-shadow: 0 4px 40px rgba(255, 255, 255, 0.15);
+    }
+    .chrome-cyan {
+      background: linear-gradient(180deg, #ffffff 0%, #cffafe 50%, var(--cyan) 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      text-shadow: 0 4px 40px rgba(34, 211, 238, 0.4);
+    }
+    .chrome-blue {
+      background: linear-gradient(180deg, #ffffff 0%, #dbeafe 50%, var(--blue) 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      text-shadow: 0 4px 40px rgba(59, 130, 246, 0.4);
+    }
+    .chrome-pink {
+      background: linear-gradient(180deg, #ffffff 0%, #fce7f3 50%, var(--pink) 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      text-shadow: 0 4px 40px rgba(236, 72, 153, 0.4);
+    }
+    .chrome-gold {
+      background: linear-gradient(180deg, #ffffff 0%, #fef3c7 50%, var(--gold) 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      text-shadow: 0 4px 40px rgba(251, 191, 36, 0.45);
+    }
+    .glow-cyan { color: var(--cyan); text-shadow: 0 0 30px rgba(34, 211, 238, 0.8); }
+    .glow-pink { color: var(--pink); text-shadow: 0 0 30px rgba(236, 72, 153, 0.8); }
+    .glow-gold { color: var(--gold); text-shadow: 0 0 30px rgba(251, 191, 36, 0.8); }
+    .glow-red  { color: #fca5a5; text-shadow: 0 0 25px rgba(239, 68, 68, 0.75); }
+
+    /* Eyebrow (uppercase label) */
+    .eyebrow {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--aifa-light);
+    }
+
+    /* Feature icon (circle) */
+    .feat-icon {
+      width: 96px; height: 96px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 42px;
+      backdrop-filter: blur(10px);
+    }
+    .feat-icon.cyan    { background: rgba(34,211,238,0.15); border: 1.5px solid rgba(34,211,238,0.55); color: var(--cyan); box-shadow: 0 0 40px rgba(34,211,238,0.35); }
+    .feat-icon.blue    { background: rgba(59,130,246,0.15); border: 1.5px solid rgba(59,130,246,0.55); color: var(--blue); box-shadow: 0 0 40px rgba(59,130,246,0.35); }
+    .feat-icon.pink    { background: rgba(236,72,153,0.15); border: 1.5px solid rgba(236,72,153,0.55); color: var(--pink); box-shadow: 0 0 40px rgba(236,72,153,0.35); }
+    .feat-icon.gold    { background: rgba(251,191,36,0.15); border: 1.5px solid rgba(251,191,36,0.55); color: var(--gold); box-shadow: 0 0 40px rgba(251,191,36,0.35); }
+    .feat-icon.emerald { background: rgba(16,185,129,0.15); border: 1.5px solid rgba(16,185,129,0.55); color: var(--emerald); box-shadow: 0 0 40px rgba(16,185,129,0.35); }
+    .feat-icon.purple  { background: rgba(167,139,250,0.15); border: 1.5px solid rgba(167,139,250,0.55); color: var(--aifa-light); box-shadow: 0 0 40px rgba(167,139,250,0.35); }
+
+    /* Pill chip */
+    .chip {
+      display: inline-flex;
+      padding: 14px 28px;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.22);
+      backdrop-filter: blur(12px);
+      font-size: 22px; font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    /* Red X */
+    .red-x {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none;
+    }
+    .red-x::before, .red-x::after {
+      content: ''; position: absolute;
+      width: 60%; height: 10px; border-radius: 5px;
+      background: linear-gradient(90deg, #f87171, var(--red), #dc2626);
+      box-shadow: 0 0 30px rgba(239,68,68,0.9), 0 0 60px rgba(239,68,68,0.4);
+    }
+    .red-x::before { transform: rotate(45deg); }
+    .red-x::after  { transform: rotate(-45deg); }
+
+    /* ─── Player controls ─────────────────────────────── */
+    #controls {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      padding: 18px 28px 14px;
+      display: flex; align-items: center; gap: 18px;
+      background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.75) 100%);
+      z-index: 60;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s cubic-bezier(.4,0,.2,1);
+    }
+    #controls.visible, .paused #controls { opacity: 1; pointer-events: auto; }
+    .ctrl-btn {
+      width: 46px; height: 46px; border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #fff; font-size: 17px;
+      backdrop-filter: blur(12px);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s, transform 0.2s;
+      font-family: system-ui, sans-serif;
+    }
+    .ctrl-btn:hover { background: rgba(255,255,255,0.28); transform: scale(1.05); }
+    .ctrl-btn:active { transform: scale(0.95); }
+    #scrub-bar {
+      flex: 1; height: 6px;
+      background: rgba(255,255,255,0.18);
+      border-radius: 3px;
+      cursor: pointer;
+      position: relative;
+    }
+    #scrub-bar::before {
+      content: ''; position: absolute; top: -8px; bottom: -8px; left: 0; right: 0;
+    }
+    #scrub-fill {
+      height: 100%; width: 0%; border-radius: 3px;
+      background: linear-gradient(90deg, var(--aifa-mid), var(--aifa-light), var(--cyan));
+      box-shadow: 0 0 15px rgba(167,139,250,0.7);
+      transition: width 0.1s linear;
+      pointer-events: none;
+    }
+    #scrub-knob {
+      position: absolute;
+      top: 50%; transform: translate(-50%, -50%);
+      width: 14px; height: 14px; border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 10px rgba(255,255,255,0.8);
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+    #controls.visible #scrub-knob, .paused #scrub-knob { opacity: 1; }
+    #time-display {
+      color: rgba(255,255,255,0.88);
+      font-size: 13px;
+      font-family: 'JetBrains Mono', monospace;
+      min-width: 92px; text-align: right;
+      letter-spacing: 0.5px;
+    }
+
+    /* Play overlay */
+    #play-overlay {
+      position: fixed; inset: 0; background: rgba(10,6,18,0.95);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 100; cursor: pointer;
+      transition: opacity 0.4s;
+    }
+    #play-overlay.hidden { opacity: 0; pointer-events: none; }
+    #play-button {
+      padding: 26px 52px; border-radius: 100px;
+      background: linear-gradient(135deg, var(--aifa-mid), var(--aifa-light) 50%, var(--cyan) 100%);
+      color: #fff; font-size: 28px; font-weight: 800;
+      box-shadow: 0 0 80px rgba(167,139,250,0.7);
+      letter-spacing: 0.5px;
+    }
+
+    /* Pulsing dot (day/night) */
+    .dot { display: inline-block; width: 52px; height: 52px; border-radius: 50%; }
+    .dot-sun  { background: radial-gradient(circle, #fef3c7, var(--gold)); box-shadow: 0 0 40px rgba(251,191,36,0.85); }
+    .dot-moon { background: radial-gradient(circle at 70% 40%, #f5f3ff, var(--aifa-light)); box-shadow: 0 0 40px rgba(167,139,250,0.8); }
+  </style>
+</head>
+<body>
+
+<div id="play-overlay">
+  <button id="play-button">▶ Play AIFA promo — 77s</button>
+</div>
+
+<div class="stage">
+  <div class="canvas" id="canvas">
+
+    <!-- ─────────────────────────────────────────────
+         SLIDE 0 — INTRO BUMPER (0–3s)
+         ───────────────────────────────────────────── -->
+    <div class="slide" data-idx="0">
+      <div class="bg-img" style="background-image: url(img/tech.jpg);"></div>
+      <div class="bg-dark"></div>
+      <div class="bg-tint tint-purple"></div>
+      <div class="content">
+        <div class="reveal flex flex-col items-center gap-6 text-center">
+          <div class="text-6xl font-black tracking-tight chrome">AI Fusion Automations</div>
+          <div class="eyebrow">AI Operating Systems</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─────────────────────────────────────────────
+         SLIDE 1 — OPENING HOOK (3–11.78s)
+         Stressed small biz owner bg → problem statement
+         ───────────────────────────────────────────── -->
+    <div class="slide" data-idx="1">
+      <div class="bg-img" style="background-image: url(img/stress.jpg);"></div>
+      <div class="bg-dark"></div>
+      <div class="bg-tint tint-cyan"></div>
+      <div class="content">
+        <div class="reveal flex flex-col items-start gap-8 max-w-[1400px]">
+          <div class="text-[5.5rem] font-black tracking-tight leading-[1.05] chrome">
+            Most small businesses don't need another tool.
+          </div>
+          <div class="text-5xl font-semibold leading-tight chrome" style="max-width: 1200px;">
+            They need the <span class="font-black glow-cyan">right A.I.</span> — wired to the systems you already have.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─────────────────────────────────────────────
+         SLIDE 2 — SERVICE NAME (11.78–14.70s)
+         Clean tech workspace bg → reveal brand
+         ───────────────────────────────────────────── -->
+    <div class="slide" data-idx="2">
+      <div class="bg-img" style="background-image: url(img/tech.jpg);"></div>
+      <div class="bg-dark"></div>
+      <div class="bg-tint tint-gold"></div>
+      <div class="content">
+        <div class="reveal flex flex-col items-center gap-4 text-center">
+          <div class="eyebrow">This is</div>
+          <div class="text-[6.5rem] font-black tracking-[-0.04em] chrome-gold leading-[0.95] whitespace-nowrap">
+            A.I. OPERATING SYSTEM
+          </div>
+          <div class="text-3xl font-medium text-white/90">— what we build.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─────────────────────────────────────────────
+         SLIDE 3 — ANTI-CHATBOT (14.70–17.28s)
+         Stress bg + red tint + NOT
+         ───────────────────────────────────────────── -->
+    <div class="slide" data-idx="3">
+      <div class="bg-img" style="background-image: url(img/stress.jpg);"></div>
+      <div class="bg-dark"></div>
+      <div class="bg-tint tint-red"></div>
+      <div class="content">
+        <div class="reveal flex flex-col items-center gap-4 text-center max-w-[1400px]">
+          <div class="text-7xl font-black tracking-[0.2em] glow-red uppercase">Not</div>
+          <div class="text-[4.5rem] font-extrabold leading-[1.05] chrome">
+            a chatbot bolted onto your website.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─────────────────────────────────────────────
+         SLIDE 4 — ANTI-DEMO (17.28–19.94s)
+         Empty conf room + red
+         ───────────────────────────────────────────── -->
+    <div class="slide" data-idx="4">
+      <div class="bg-img" style="background-image: url(img/conference.jpg);"></div>
+      <div class="bg-dark"></div>
+      <div class="bg-tint tint-red"></div>
+      <div class="content">
+        <div class="reveal flex flex-col items-center gap-4 text-center max-w-[1400px]">
+          <div class="text-7xl font-black tracking-[0.2em] glow-red uppercase">Not</div>
+          <div class="text-[4.5rem] font-extrabold leading-[1.05] chrome">
+            a shiny demo you watched at a conference.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─────────────────────────────────────────────
+         SLIDE 5 — VISION (19.94–30.10s)
+         Team collaborating bg + cyan
+         ───────────────────────────────────────────── -->
+    <div class="slide" data-idx="5">
+      <div class="bg-img" style="background-image: url(img/team.jpg);"></div>
+      <div class="bg-dark"></div>
+      <div class="bg-tint tint-cyan"></div>
+      <div class="content">
+        <div class="reveal flex flex-col items-center gap-10 max-w-[1500px]">
+          <div class="text-center flex flex-col gap-3">
+            <div class="text-[7rem] font-black tracking-tighter leading-none chrome-cyan">ALWAYS-ON</div>
+            <div class="text-3xl font-medium text-white/85">across your whole business</div>
+          </div>
+          <div class="flex gap-5 flex-wrap justify-center">
+            <div class="chip"><span class="glow-cyan font-extrabold mr-2">●</span>Captures every lead</div>
+            <div class="chip"><span class="glow-gold font-extrabold mr-2">●</span>Books every call</div>
+            <div class="chip"><span class="glow-pink font-extrabold mr-2">●</span>Follows up every quote</div>
+            <div class="chip" style="background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.4);"><span style="color: var(--emerald); text-shadow: 0 0 20px rgba(16,185,129,0.8);" class="font-extrabold mr-2">●</span>Flags what matters</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─────────────────────────────────────────────
+         SLIDE 6 — BUILD IT (30.10–31.89s)
+         Team meeting bg
+         ───────────────────────────────────────────── -->
+    <div class="slide" data-idx="6">
+      <div class="bg-img" style="background-image: url(img/team.jpg);"></div>
+      <div class="bg-dark"></div>
+      <div class="bg-tint tint-purple"></div>
+      <div class="content">
+        <div class="reveal flex flex-col items-center gap-4 text-center">
+          <div class="eyebrow">Here's</div>
+          <div class="text-[7rem] font-black tracking-tighter leading-none chrome whitespace-nowrap">HOW WE BUILD IT</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─────────────────────────────────────────────
+         SLIDE 7 — MAP (31.90–39.30s)
+         Workspace bg + blue
+         ───────────────────────────────────────────── -->
+    <div class="slide" data-idx="7">
+      <div class="bg-img" style="background-image: url(img/workspace.jpg);"></div>
+      <div class="bg-dark"></div>
+      <div class="bg-tint tint-blue"></div>
+      <div class="content">
+        <div class="reveal flex flex-col items-start gap-4 max-w-[1400px]">
+          <div class="font-mono text-xl font-semibold tracking-[0.2em] text-blue-200">STEP 01 · MAP</div>
+          <div class="text-[9rem] font-black tracking-tighter leading-[0.9] chrome-blue">MAP</div>
+          <div class="text-4xl font-medium text-white/90 leading-snug" style="max-width: 1200px;">
+            Every <span class="font-bold text-white">enquiry</span>, every <span class="font-bold text-white">handoff</span>, every place work <span class="font-black text-blue-200">slips through the cracks.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─────────────────────────────────────────────
+         SLIDE 8 — WIRE (39.30–53.72s)
+         Workspace bg — 5 icons in horizontal row (no cards)
+         ───────────────────────────────────────────── -->
+    <div class="slide" data-idx="8">
+      <div class="bg-img" style="background-image: url(img/workspace.jpg);"></div>
+      <div class="bg-dark"></div>
+      <div class="bg-tint tint-purple"></div>
+      <div class="content">
+        <div class="reveal flex flex-col items-center gap-12 max-w-[1500px]">
+          <div class="flex flex-col items-center gap-2">
+            <div class="font-mono text-xl font-semibold tracking-[0.2em] text-purple-200">STEP 02 · WIRE</div>
+            <div class="text-[6.5rem] font-black tracking-tighter leading-none chrome">WIRE IT IN</div>
+          </div>
+          <div class="flex justify-center gap-10">
+            <div class="flex flex-col items-center gap-3 w-[220px] text-center">
+              <div class="feat-icon cyan">☎</div>
+              <div class="text-xl font-bold text-white">Voice AI</div>
+              <div class="text-sm text-white/70">Answers missed calls</div>
+            </div>
+            <div class="flex flex-col items-center gap-3 w-[220px] text-center">
+              <div class="feat-icon blue">◆</div>
+              <div class="text-xl font-bold text-white">Lead Scoring</div>
+              <div class="text-sm text-white/70">Hot leads first</div>
+            </div>
+            <div class="flex flex-col items-center gap-3 w-[220px] text-center">
+              <div class="feat-icon gold">⚙</div>
+              <div class="text-xl font-bold text-white">Workflows</div>
+              <div class="text-sm text-white/70">Quotes &amp; invoices</div>
+            </div>
+            <div class="flex flex-col items-center gap-3 w-[220px] text-center">
+              <div class="feat-icon pink">★</div>
+              <div class="text-xl font-bold text-white">Review Replies</div>
+              <div class="text-sm text-white/70">Automated, on-brand</div>
+            </div>
+            <div class="flex flex-col items-center gap-3 w-[220px] text-center">
+              <div class="feat-icon emerald">●</div>
+              <div class="text-xl font-bold text-white">Bookings</div>
+              <div class="text-sm text-white/70">Confirmed 24/7</div>
+            </div>
+          </div>
+          <div class="text-4xl font-extrabold chrome">— all of it, connected.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─────────────────────────────────────────────
+         SLIDE 9 — TRAIN (53.72–58.60s)
+         Team bg + pink
+         ───────────────────────────────────────────── -->
+    <div class="slide" data-idx="9">
+      <div class="bg-img" style="background-image: url(img/team.jpg);"></div>
+      <div class="bg-dark"></div>
+      <div class="bg-tint tint-pink"></div>
+      <div class="content">
+        <div class="reveal flex flex-col items-end gap-5 text-right max-w-[1500px] ml-auto">
+          <div class="font-mono text-xl font-semibold tracking-[0.2em] text-pink-200">STEP 03 · TRAIN</div>
+          <div class="text-[9rem] font-black tracking-tighter leading-[0.9] chrome-pink">TRAIN IT</div>
+          <div class="text-3xl font-medium text-white/85 max-w-[1000px]">
+            on how you actually work.
+          </div>
+          <div class="flex gap-4 flex-wrap justify-end">
+            <div class="chip">Your services</div>
+            <div class="chip">Your tone</div>
+            <div class="chip">Your edge cases</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─────────────────────────────────────────────
+         SLIDE 10 — RUNS (58.60–67.31s)
+         Dusk/night bg + gold
+         ───────────────────────────────────────────── -->
+    <div class="slide" data-idx="10">
+      <div class="bg-img" style="background-image: url(img/dusk.jpg);"></div>
+      <div class="bg-dark"></div>
+      <div class="bg-tint tint-gold"></div>
+      <div class="content">
+        <div class="reveal flex flex-col items-center gap-8 max-w-[1500px]">
+          <div class="flex flex-col items-center gap-4 text-center">
+            <div class="text-[8.5rem] font-black tracking-tighter leading-none chrome-gold">IT RUNS.</div>
+            <div class="flex items-center gap-6 text-3xl font-bold text-white/90 tracking-widest">
+              <span class="dot dot-sun"></span>
+              <span>Day</span>
+              <span class="opacity-40">·</span>
+              <span>Night</span>
+              <span class="dot dot-moon"></span>
+            </div>
+          </div>
+          <div class="flex gap-6 justify-center">
+            <div class="text-center">
+              <div class="text-xl font-black tracking-[0.25em] glow-red uppercase mb-1">Stop</div>
+              <div class="text-2xl font-bold text-white">dropping leads</div>
+            </div>
+            <div class="text-4xl text-white/30">·</div>
+            <div class="text-center">
+              <div class="text-xl font-black tracking-[0.25em] glow-red uppercase mb-1">Stop</div>
+              <div class="text-2xl font-bold text-white">missing calls</div>
+            </div>
+            <div class="text-4xl text-white/30">·</div>
+            <div class="text-center">
+              <div class="text-xl font-black tracking-[0.25em] glow-red uppercase mb-1">Stop</div>
+              <div class="text-2xl font-bold text-white">losing revenue</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─────────────────────────────────────────────
+         SLIDE 11 — SUMMARY (67.32–71.10s)
+         Confident businessperson bg + purple
+         ───────────────────────────────────────────── -->
+    <div class="slide" data-idx="11">
+      <div class="bg-img" style="background-image: url(img/success.jpg);"></div>
+      <div class="bg-dark"></div>
+      <div class="bg-tint tint-purple"></div>
+      <div class="content">
+        <div class="reveal flex flex-col items-center gap-3 text-center max-w-[1500px]">
+          <div class="text-[5.5rem] font-black tracking-tight leading-[1.0] chrome">
+            One operating system.
+          </div>
+          <div class="text-5xl font-semibold text-white/90">
+            Your whole business, <span class="chrome-gold font-black">covered.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─────────────────────────────────────────────
+         SLIDE 12 — CTA (71.10–74.50s)
+         Success bg + gradient
+         ───────────────────────────────────────────── -->
+    <div class="slide" data-idx="12">
+      <div class="bg-img" style="background-image: url(img/success.jpg);"></div>
+      <div class="bg-dark"></div>
+      <div class="bg-tint tint-purple"></div>
+      <div class="content">
+        <div class="reveal flex flex-col items-center gap-5 text-center max-w-[1500px]">
+          <div class="eyebrow">Start here</div>
+          <div class="text-[5.5rem] font-black tracking-tight leading-[1.02] chrome">
+            Book a free strategy call
+          </div>
+          <div class="mt-2 inline-flex items-center gap-4 px-14 py-5 rounded-full text-3xl font-extrabold text-white"
+               style="background: linear-gradient(135deg, var(--aifa-mid) 0%, var(--pink) 55%, var(--gold) 100%); box-shadow: 0 0 80px rgba(167,139,250,0.65), 0 0 40px rgba(236,72,153,0.35), 0 20px 40px rgba(0,0,0,0.3);">
+            Book a Call <span class="text-4xl">→</span>
+          </div>
+          <div class="font-mono text-3xl tracking-wide mt-1 text-white/95">
+            <span class="text-purple-300">→</span>
+            <span style="background: linear-gradient(90deg, var(--aifa-light), var(--cyan)); -webkit-background-clip: text; background-clip: text; color: transparent;" class="font-bold">aifusionautomations</span>.com
+          </div>
+          <div class="text-lg text-white/60 tracking-wider">+44 7480 488817 · grant@aifusionautomations.com</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─────────────────────────────────────────────
+         SLIDE 13 — OUTRO (74.50–77.50s)
+         ───────────────────────────────────────────── -->
+    <div class="slide" data-idx="13">
+      <div class="bg-img" style="background-image: url(img/tech.jpg);"></div>
+      <div class="bg-dark"></div>
+      <div class="bg-tint tint-purple"></div>
+      <div class="content">
+        <div class="reveal flex flex-col items-center gap-6 text-center">
+          <div class="text-6xl font-black tracking-tight chrome">aifusionautomations.com</div>
+          <div class="eyebrow">AIFA — AI Fusion Automations</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="controls">
+  <button id="play-pause" class="ctrl-btn" aria-label="Pause">&#9208;</button>
+  <div id="scrub-bar">
+    <div id="scrub-fill"></div>
+    <div id="scrub-knob"></div>
+  </div>
+  <div id="time-display">0:00 / 1:17</div>
+</div>
+
+<audio id="narr" src="narration.mp3" preload="auto"></audio>
+<audio id="bgm" src="music.mp3" preload="auto"></audio>
+
+<script>
+  const SCHEDULE = [
+    { idx: 0,  start: 0.0,   end: 3.0   },
+    { idx: 1,  start: 3.0,   end: 11.78 },
+    { idx: 2,  start: 11.78, end: 14.70 },
+    { idx: 3,  start: 14.70, end: 17.28 },
+    { idx: 4,  start: 17.28, end: 19.94 },
+    { idx: 5,  start: 19.94, end: 30.10 },
+    { idx: 6,  start: 30.10, end: 31.89 },
+    { idx: 7,  start: 31.90, end: 39.30 },
+    { idx: 8,  start: 39.30, end: 53.72 },
+    { idx: 9,  start: 53.72, end: 58.60 },
+    { idx: 10, start: 58.60, end: 67.31 },
+    { idx: 11, start: 67.32, end: 71.10 },
+    { idx: 12, start: 71.10, end: 74.50 },
+    { idx: 13, start: 74.50, end: 77.50 },
+  ];
+  const TOTAL = 77.50;
+
+  const narration = document.getElementById('narr');
+  const bgm = document.getElementById('bgm');
+  const slides = document.querySelectorAll('.slide');
+  const overlay = document.getElementById('play-overlay');
+  const canvas = document.getElementById('canvas');
+  const controls = document.getElementById('controls');
+  const playPauseBtn = document.getElementById('play-pause');
+  const scrubBar = document.getElementById('scrub-bar');
+  const scrubFill = document.getElementById('scrub-fill');
+  const scrubKnob = document.getElementById('scrub-knob');
+  const timeDisplay = document.getElementById('time-display');
+
+  function fitStage() {
+    const sx = window.innerWidth / 1920;
+    const sy = window.innerHeight / 1080;
+    canvas.style.setProperty('--scale', Math.min(sx, sy));
+  }
+  window.addEventListener('resize', fitStage);
+  fitStage();
+
+  let compStart = 0;
+  let currentIdx = -1;
+  let paused = false;
+  let rafId = null;
+  let started = false;
+
+  function setSlide(idx) {
+    if (idx === currentIdx) return;
+    currentIdx = idx;
+    slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+  }
+
+  function fmtTime(s) {
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60).toString().padStart(2, '0');
+    return m + ':' + sec;
+  }
+
+  function updateProgress(t) {
+    const pct = Math.min(100, (t / TOTAL) * 100);
+    scrubFill.style.width = pct + '%';
+    scrubKnob.style.left = pct + '%';
+    timeDisplay.textContent = fmtTime(Math.min(t, TOTAL)) + ' / ' + fmtTime(TOTAL);
+  }
+
+  function tick() {
+    if (paused) return;
+    const t = (Date.now() - compStart) / 1000;
+    if (t >= TOTAL) {
+      setSlide(13);
+      updateProgress(TOTAL);
+      paused = true;
+      document.body.classList.add('paused');
+      playPauseBtn.innerHTML = '&#9654;';
+      playPauseBtn.setAttribute('aria-label', 'Replay');
+      return;
+    }
+    for (let i = SCHEDULE.length - 1; i >= 0; i--) {
+      if (t >= SCHEDULE[i].start) { setSlide(SCHEDULE[i].idx); break; }
+    }
+    updateProgress(t);
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function play() {
+    paused = false;
+    document.body.classList.remove('paused');
+    playPauseBtn.innerHTML = '&#9208;';
+    playPauseBtn.setAttribute('aria-label', 'Pause');
+    const t = (Date.now() - compStart) / 1000;
+    if (t >= 3) { narration.play().catch(() => {}); }
+    bgm.play().catch(() => {});
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function pause() {
+    paused = true;
+    document.body.classList.add('paused');
+    playPauseBtn.innerHTML = '&#9654;';
+    playPauseBtn.setAttribute('aria-label', 'Play');
+    narration.pause();
+    bgm.pause();
+    if (rafId) cancelAnimationFrame(rafId);
+  }
+
+  function seek(clientX) {
+    const rect = scrubBar.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    const newT = pct * TOTAL;
+    compStart = Date.now() - newT * 1000;
+    // Reset completion state
+    if (newT < TOTAL) {
+      playPauseBtn.innerHTML = paused ? '&#9654;' : '&#9208;';
+    }
+    // Seek audio — narration is offset by 3s
+    if (newT >= 3) {
+      narration.currentTime = Math.min(newT - 3, narration.duration || 71.52);
+    } else {
+      narration.currentTime = 0;
+      narration.pause();
+    }
+    bgm.currentTime = Math.min(newT, bgm.duration || 77.5);
+    // Force slide update
+    for (let i = SCHEDULE.length - 1; i >= 0; i--) {
+      if (newT >= SCHEDULE[i].start) { setSlide(SCHEDULE[i].idx); break; }
+    }
+    updateProgress(newT);
+    if (!paused) {
+      if (newT >= 3) narration.play().catch(() => {});
+      bgm.play().catch(() => {});
+    }
+  }
+
+  // Click to play-pause; click scrub bar to seek
+  playPauseBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!started) return;
+    // If ended, replay from 0
+    const t = (Date.now() - compStart) / 1000;
+    if (t >= TOTAL) {
+      seek(scrubBar.getBoundingClientRect().left);
+      play();
+      return;
+    }
+    paused ? play() : pause();
+  });
+  scrubBar.addEventListener('click', (e) => {
+    if (!started) return;
+    seek(e.clientX);
+  });
+
+  // Show controls on mouse move, auto-hide
+  let hideTimeout;
+  function showControls() {
+    if (!started) return;
+    controls.classList.add('visible');
+    clearTimeout(hideTimeout);
+    hideTimeout = setTimeout(() => {
+      if (!paused) controls.classList.remove('visible');
+    }, 2800);
+  }
+  document.body.addEventListener('mousemove', showControls);
+  controls.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); });
+
+  document.getElementById('play-button').addEventListener('click', () => {
+    overlay.classList.add('hidden');
+    started = true;
+    compStart = Date.now();
+    bgm.volume = 0.18;
+    bgm.play().catch(() => {});
+    setTimeout(() => { narration.volume = 1.0; narration.play().catch(() => {}); }, 3000);
+    updateProgress(0);
+    showControls();
+    rafId = requestAnimationFrame(tick);
+  });
+
+  setSlide(0);
+  updateProgress(0);
+</script>
+
+</body>
+</html>
