@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Idea Validator — Validate your next big idea in minutes | AI Fusion Automations</title>
+<meta name="description" content="Free Idea Validator: score your startup or app idea across six dimensions in under 3 minutes and get an actionable next-step plan. Built by AI Fusion Automations." />
+<link rel="canonical" href="https://tools.aifusionautomations.com/idea-validator.html" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Idea Validator — Free startup idea scoring in 3 minutes" />
+<meta property="og:description" content="Score your app or business idea across six dimensions and get a tailored next-step plan." />
+<meta property="og:url" content="https://tools.aifusionautomations.com/idea-validator.html" />
+<meta property="og:site_name" content="AI Fusion Automations" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Idea Validator — Free startup idea scoring in 3 minutes" />
+<meta name="twitter:description" content="Score your app or business idea across six dimensions and get a tailored next-step plan." />
+<link rel="icon" href="/favicon.ico" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
+<style>
+  :root {
+    --bg: #0e1418;
+    --bg-grid: rgba(80, 120, 140, 0.08);
+    --card: #1a2329;
+    --card-2: #1f2a31;
+    --card-border: #2a3942;
+    --text: #e5edf2;
+    --text-dim: #8a9aa6;
+    --accent: #5be5d2;
+    --accent-2: #4ed1bf;
+    --accent-glow: rgba(91, 229, 210, 0.45);
+    --green: #4ade80;
+    --yellow: #fbbf24;
+    --red: #ef4444;
+    --btn-dark: #2a3942;
+    --btn-dark-hover: #354752;
+    --pixel: 'VT323', 'Press Start 2P', monospace;
+    --sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image:
+      linear-gradient(var(--bg-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: -1px -1px;
+  }
+  .app {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 56px 20px 80px;
+    min-height: 100vh;
+  }
+  .brand { text-align: center; margin-bottom: 32px; }
+  .brand h1 {
+    font-family: var(--pixel);
+    font-weight: 400;
+    font-size: 64px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-shadow: 0 0 18px var(--accent-glow);
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+  .brand p {
+    color: var(--text-dim);
+    font-size: 15px;
+  }
+
+  /* Card */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 32px 28px;
+    box-shadow: 0 0 0 1px rgba(91, 229, 210, 0.04), 0 24px 60px -30px rgba(0,0,0,0.6);
+  }
+  .card h2 {
+    font-family: var(--pixel);
+    font-weight: 400;
+    font-size: 30px;
+    letter-spacing: 1px;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+  .card .helper {
+    color: var(--text);
+    font-size: 15px;
+    margin-bottom: 16px;
+  }
+
+  /* Textarea */
+  textarea {
+    width: 100%;
+    min-height: 110px;
+    background: #141c21;
+    color: var(--text);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 14px 14px;
+    font-family: var(--sans);
+    font-size: 14px;
+    resize: vertical;
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  textarea::placeholder { color: #5d6d77; }
+  textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(91, 229, 210, 0.15);
+  }
+
+  /* Buttons */
+  .actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 22px;
+  }
+  .actions.split { justify-content: center; }
+  .btn {
+    border: none;
+    cursor: pointer;
+    padding: 12px 28px;
+    border-radius: 10px;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: .2px;
+    transition: transform .08s ease, background .15s ease, box-shadow .15s ease, opacity .15s ease;
+  }
+  .btn:active { transform: translateY(1px); }
+  .btn-primary {
+    background: linear-gradient(180deg, #5be5d2 0%, #3ec6b0 100%);
+    color: #07221d;
+    box-shadow: 0 6px 18px -6px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.25);
+  }
+  .btn-primary:hover { box-shadow: 0 10px 24px -6px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.25); }
+  .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
+  .btn-dark {
+    background: var(--btn-dark);
+    color: var(--text);
+  }
+  .btn-dark:hover { background: var(--btn-dark-hover); }
+
+  /* Industry grid */
+  .industry-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 6px;
+  }
+  .industry-tile {
+    background: var(--card-2);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 18px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .15s ease, transform .08s ease, box-shadow .15s ease, background .15s ease;
+    user-select: none;
+  }
+  .industry-tile:hover {
+    border-color: #3a4f5a;
+    background: #233039;
+  }
+  .industry-tile.selected {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(91, 229, 210, 0.12), 0 0 16px -4px var(--accent-glow);
+  }
+  .industry-tile .icon {
+    width: 28px; height: 28px;
+    margin: 0 auto 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-dim);
+  }
+  .industry-tile.selected .icon { color: var(--accent); }
+  .industry-tile .label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.25;
+  }
+
+  /* Progress */
+  .progress-wrap { margin-bottom: 18px; }
+  .progress-bar {
+    height: 4px;
+    background: #1f2a31;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4ed1bf 0%, #5be5d2 100%);
+    width: 0;
+    transition: width .35s ease;
+    box-shadow: 0 0 12px var(--accent-glow);
+  }
+  .progress-label {
+    text-align: center;
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  /* Question */
+  .question h2 {
+    font-family: var(--pixel);
+    font-weight: 400;
+    font-size: 26px;
+    line-height: 1.25;
+    color: var(--accent);
+    margin-bottom: 18px;
+    letter-spacing: 1px;
+  }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option {
+    background: var(--card-2);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    cursor: pointer;
+    color: var(--text);
+    font-size: 14px;
+    transition: border-color .15s ease, background .15s ease, box-shadow .15s ease;
+    user-select: none;
+  }
+  .option:hover { background: #233039; border-color: #3a4f5a; }
+  .option.selected {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent), 0 0 14px -4px var(--accent-glow);
+  }
+
+  /* Results */
+  .results-card { text-align: center; }
+  .results-card h2 {
+    font-family: var(--pixel);
+    font-weight: 400;
+    font-size: 32px;
+    color: var(--accent);
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+  }
+  .industry-line {
+    color: var(--accent);
+    font-size: 13px;
+    margin-bottom: 18px;
+  }
+  .score-ring-wrap {
+    display: flex; justify-content: center; align-items: center;
+    margin: 8px 0 18px;
+  }
+  .score-ring { position: relative; width: 180px; height: 180px; }
+  .score-ring svg { transform: rotate(-90deg); }
+  .score-num {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--pixel);
+    font-size: 56px;
+    color: var(--text);
+  }
+  .verdict-card {
+    background: var(--card-2);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 18px 18px;
+    margin-top: 6px;
+    text-align: left;
+  }
+  .verdict-title {
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .verdict-body {
+    color: var(--text-dim);
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 18px;
+  }
+  .metric-tile {
+    background: var(--card-2);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 14px 14px;
+  }
+  .metric-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .metric-bar {
+    height: 5px;
+    background: #2a3942;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .metric-fill { height: 100%; border-radius: 3px; }
+  .metric-fill.green { background: linear-gradient(90deg, #34d399, #4ade80); }
+  .metric-fill.yellow { background: linear-gradient(90deg, #fbbf24, #f59e0b); }
+  .metric-fill.red { background: linear-gradient(90deg, #f87171, #ef4444); }
+
+  .recs {
+    margin-top: 22px;
+    text-align: left;
+  }
+  .recs h3 {
+    font-family: var(--pixel);
+    font-weight: 400;
+    font-size: 22px;
+    color: var(--accent);
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+  }
+  .rec {
+    background: var(--card-2);
+    border: 1px solid var(--card-border);
+    border-left: 3px solid var(--green);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    font-size: 13.5px;
+    color: var(--text);
+  }
+  .rec strong { color: var(--text); }
+  .rec.warn { border-left-color: var(--yellow); }
+  .rec.bad  { border-left-color: var(--red); }
+
+  /* Lead capture */
+  .lead-card {
+    margin-top: 22px;
+    background: linear-gradient(180deg, rgba(91, 229, 210, 0.06), rgba(91, 229, 210, 0.02));
+    border: 1px solid rgba(91, 229, 210, 0.25);
+    border-radius: 12px;
+    padding: 18px 18px;
+    text-align: left;
+  }
+  .lead-card h3 {
+    font-family: var(--pixel);
+    font-weight: 400;
+    font-size: 22px;
+    color: var(--accent);
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+  }
+  .lead-card p {
+    color: var(--text-dim);
+    font-size: 13.5px;
+    line-height: 1.55;
+    margin-bottom: 14px;
+  }
+  .lead-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 8px;
+  }
+  .lead-form input {
+    background: #141c21;
+    color: var(--text);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 12px 12px;
+    font-family: var(--sans);
+    font-size: 14px;
+    transition: border-color .15s ease, box-shadow .15s ease;
+    min-width: 0;
+  }
+  .lead-form input::placeholder { color: #5d6d77; }
+  .lead-form input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(91, 229, 210, 0.15);
+  }
+  .lead-success {
+    color: var(--accent);
+    font-size: 14px;
+    text-align: center;
+    padding: 14px 0;
+  }
+  @media (max-width: 560px) {
+    .lead-form { grid-template-columns: 1fr; }
+  }
+
+  /* Animations */
+  .step { animation: fadeIn .35s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  .hidden { display: none !important; }
+
+  /* PDF print styles — used when html2pdf renders the snapshot */
+  .pdf-mode { background: #ffffff !important; color: #0e1418 !important; }
+  .pdf-mode .card { background: #ffffff !important; border-color: #d6e0e6 !important; box-shadow: none !important; }
+  .pdf-mode .verdict-card,
+  .pdf-mode .metric-tile,
+  .pdf-mode .rec,
+  .pdf-mode .lead-card { background: #f6fafb !important; border-color: #d6e0e6 !important; color: #0e1418 !important; }
+  .pdf-mode h2, .pdf-mode h3, .pdf-mode .verdict-title, .pdf-mode .industry-line { color: #0a8a78 !important; text-shadow: none !important; }
+  .pdf-mode .score-num, .pdf-mode .metric-name, .pdf-mode .verdict-body, .pdf-mode .rec, .pdf-mode .rec strong { color: #0e1418 !important; }
+  .pdf-mode .metric-bar { background: #e0e8ed !important; }
+
+  /* Responsive */
+  @media (max-width: 560px) {
+    .brand h1 { font-size: 48px; }
+    .industry-grid { grid-template-columns: repeat(2, 1fr); }
+    .card { padding: 24px 18px; }
+    .question h2, .results-card h2 { font-size: 22px; }
+    .metrics-grid { grid-template-columns: 1fr; }
+    .score-ring, .score-ring svg { width: 150px; height: 150px; }
+    .score-num { font-size: 46px; }
+  }
+
+  /* Footer */
+  .site-footer {
+    text-align: center;
+    margin-top: 36px;
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+  .site-footer a { color: var(--accent); text-decoration: none; }
+  .site-footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+  <div class="app">
+    <div class="brand">
+      <h1>Idea Validator</h1>
+      <p>Validate your next big idea in minutes</p>
+    </div>
+
+    <!-- STEP 1: Idea -->
+    <section id="step-idea" class="step">
+      <div class="card">
+        <h2>What's your idea?</h2>
+        <p class="helper">Describe your app or business idea in 1–2 sentences</p>
+        <textarea id="idea-text" placeholder="e.g. An app that helps remote teams schedule casual coffee chats to build stronger relationships and prevent isolation."></textarea>
+        <div class="actions">
+          <button class="btn btn-primary" id="btn-start-validation" disabled>Start Validation</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 2: Industry -->
+    <section id="step-industry" class="step hidden">
+      <div class="card">
+        <h2>What industry is this in?</h2>
+        <div class="industry-grid" id="industry-grid"></div>
+        <div class="actions">
+          <button class="btn btn-dark" data-nav="back-to-idea">Back</button>
+          <button class="btn btn-primary" id="btn-start-questions" disabled>Start Questions</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 3: Questions -->
+    <section id="step-questions" class="step hidden">
+      <div class="progress-wrap">
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+        <div class="progress-label" id="progress-label">Question 1 of 8</div>
+      </div>
+      <div class="card question">
+        <h2 id="question-title"></h2>
+        <div class="options" id="options"></div>
+        <div class="actions">
+          <button class="btn btn-dark" id="btn-back" style="display:none;">Back</button>
+          <button class="btn btn-primary" id="btn-next" disabled>Next Question</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 4: Results / Footer below -->
+    <section id="step-results" class="step hidden">
+      <div class="card results-card" id="results-card">
+        <h2>Your Validation Results</h2>
+        <div class="industry-line" id="industry-line"></div>
+        <div class="score-ring-wrap">
+          <div class="score-ring">
+            <svg width="180" height="180" viewBox="0 0 180 180">
+              <defs>
+                <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#5be5d2" />
+                  <stop offset="100%" stop-color="#4ed1bf" />
+                </linearGradient>
+              </defs>
+              <circle cx="90" cy="90" r="76" stroke="#23323b" stroke-width="10" fill="none"></circle>
+              <circle id="score-arc" cx="90" cy="90" r="76" stroke="url(#ringGrad)" stroke-width="10" fill="none"
+                      stroke-linecap="round" stroke-dasharray="477.5" stroke-dashoffset="477.5"></circle>
+            </svg>
+            <div class="score-num" id="score-num">0</div>
+          </div>
+        </div>
+        <div class="verdict-card">
+          <div class="verdict-title" id="verdict-title"></div>
+          <div class="verdict-body" id="verdict-body"></div>
+        </div>
+
+        <div class="metrics-grid" id="metrics-grid"></div>
+
+        <div class="recs" id="recs-wrap">
+          <h3>Actionable Recommendations</h3>
+          <div id="recs-list"></div>
+        </div>
+
+        <div class="lead-card no-print" id="lead-card">
+          <h3>Get a tailored next-step plan</h3>
+          <p>Want Grant from AI Fusion Automations to review your idea and send a 1-page action plan? Drop your email and we'll be in touch.</p>
+          <form class="lead-form" id="lead-form" autocomplete="on">
+            <input type="text" id="lead-name" placeholder="Your name" required>
+            <input type="email" id="lead-email" placeholder="you@email.com" required>
+            <button type="submit" class="btn btn-primary" id="lead-submit">Send</button>
+          </form>
+        </div>
+        <div class="lead-success hidden" id="lead-success">✓ Thanks — we'll be in touch within one working day.</div>
+
+        <div class="actions no-print">
+          <button class="btn btn-dark" id="btn-restart">Start Over</button>
+          <button class="btn btn-dark" id="btn-pdf">Download PDF</button>
+          <button class="btn btn-primary" id="btn-share">Share Results</button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      Built by <a href="https://aifusionautomations.com" target="_blank" rel="noopener">AI Fusion Automations</a> · <a href="/">More free tools</a>
+    </footer>
+  </div>
+
+<script>
+(() => {
+  const $ = (sel) => document.querySelector(sel);
+  const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+
+  // ---------- Data ----------
+  const INDUSTRIES = [
+    { id: 'saas',     label: 'SaaS / Software',     icon: 'computer' },
+    { id: 'ecom',     label: 'E-commerce / Retail', icon: 'cart' },
+    { id: 'health',   label: 'Health / Wellness',   icon: 'heart' },
+    { id: 'edu',      label: 'Education / EdTech',  icon: 'book' },
+    { id: 'fintech',  label: 'Finance / FinTech',   icon: 'bank' },
+    { id: 'ai',       label: 'AI / Machine Learning', icon: 'chip' },
+    { id: 'creator',  label: 'Creator Economy',     icon: 'pencil' },
+    { id: 'realestate', label: 'Real Estate',       icon: 'house' },
+    { id: 'food',     label: 'Food / Restaurant',   icon: 'utensils' },
+    { id: 'other',    label: 'Other',               icon: 'dot' }
+  ];
+
+  // 8 questions. Each option carries a category and a score 0..10.
+  // Categories map to the six metric tiles on the results screen.
+  const QUESTIONS = [
+    {
+      id: 'q1',
+      title: "How clearly can you describe the problem you're solving?",
+      category: 'problem',
+      options: [
+        { label: 'Vague notion', score: 2 },
+        { label: 'Somewhat clear', score: 6 },
+        { label: 'Crystal clear with examples', score: 10 }
+      ]
+    },
+    {
+      id: 'q2',
+      title: 'Who specifically needs this?',
+      category: 'market',
+      options: [
+        { label: 'Everyone', score: 2 },
+        { label: 'A broad group', score: 6 },
+        { label: 'A specific niche I understand deeply', score: 10 }
+      ]
+    },
+    {
+      id: 'q3',
+      title: 'What do people currently use to solve this?',
+      category: 'competitive',
+      options: [
+        { label: 'Nothing exists', score: 4 },
+        { label: 'Several alternatives', score: 8 },
+        { label: 'Many competitors', score: 6 }
+      ]
+    },
+    {
+      id: 'q4',
+      title: 'Why would someone choose YOUR solution?',
+      category: 'competitive',
+      options: [
+        { label: 'Not sure yet', score: 2 },
+        { label: 'Slightly better UX/price', score: 5 },
+        { label: 'Fundamentally different approach', score: 10 }
+      ]
+    },
+    {
+      id: 'q5',
+      title: 'How will this make money?',
+      category: 'business',
+      options: [
+        { label: "Haven't figured that out", score: 2 },
+        { label: 'Ads or freemium', score: 6 },
+        { label: 'Clear paid model with willing buyers', score: 10 }
+      ]
+    },
+    {
+      id: 'q6',
+      title: 'Could you build a basic version in a weekend?',
+      category: 'execution',
+      options: [
+        { label: 'No, it needs months', score: 3 },
+        { label: 'Maybe in a few weeks', score: 7 },
+        { label: "Yes, it's focused enough", score: 10 }
+      ]
+    },
+    {
+      id: 'q7',
+      title: 'Have you talked to potential users?',
+      category: 'market',
+      options: [
+        { label: 'No', score: 2 },
+        { label: 'Informal conversations', score: 6 },
+        { label: 'Yes, people are asking for this', score: 10 }
+      ]
+    },
+    {
+      id: 'q8',
+      title: 'Are you the right person to build this?',
+      category: 'founder',
+      options: [
+        { label: "I just think it's cool", score: 3 },
+        { label: 'I have some experience', score: 6 },
+        { label: 'I live this problem daily', score: 10 }
+      ]
+    }
+  ];
+
+  const METRIC_DEFS = [
+    { key: 'problem',     label: 'Problem-Solution Fit' },
+    { key: 'market',      label: 'Market Opportunity' },
+    { key: 'competitive', label: 'Competitive Advantage' },
+    { key: 'business',    label: 'Business Viability' },
+    { key: 'execution',   label: 'Execution Readiness' },
+    { key: 'founder',     label: 'Founder Fit' }
+  ];
+
+  // ---------- State ----------
+  const state = {
+    idea: '',
+    industry: null,
+    answers: {},     // qid -> option index
+    qIndex: 0
+  };
+
+  // ---------- Icons (inline SVG) ----------
+  function icon(name) {
+    const stroke = 'currentColor';
+    switch (name) {
+      case 'computer':
+        return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>`;
+      case 'cart':
+        return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/><path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.4a2 2 0 0 0 2-1.5L21 8H6"/></svg>`;
+      case 'heart':
+        return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
+      case 'book':
+        return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`;
+      case 'bank':
+        return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-6 9 6"/><path d="M5 10v8M9 10v8M15 10v8M19 10v8"/><path d="M3 21h18"/></svg>`;
+      case 'chip':
+        return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3"/></svg>`;
+      case 'pencil':
+        return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>`;
+      case 'house':
+        return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a2 2 0 0 1-2 2h-4v-7h-6v7H5a2 2 0 0 1-2-2z"/></svg>`;
+      case 'utensils':
+        return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7a3 3 0 0 0 3 3v10"/><path d="M9 2v20"/><path d="M15 2v8a3 3 0 0 0 3 3h0V2"/><path d="M18 13v9"/></svg>`;
+      case 'dot':
+      default:
+        return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/></svg>`;
+    }
+  }
+
+  // ---------- Step navigation ----------
+  function show(stepId) {
+    ['step-idea','step-industry','step-questions','step-results'].forEach(id => {
+      document.getElementById(id).classList.toggle('hidden', id !== stepId);
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ---------- Step 1: Idea ----------
+  const ideaText = $('#idea-text');
+  const btnStartValidation = $('#btn-start-validation');
+  ideaText.addEventListener('input', () => {
+    state.idea = ideaText.value.trim();
+    btnStartValidation.disabled = state.idea.length < 5;
+  });
+  btnStartValidation.addEventListener('click', () => {
+    renderIndustry();
+    show('step-industry');
+  });
+
+  // ---------- Step 2: Industry ----------
+  function renderIndustry() {
+    const grid = $('#industry-grid');
+    grid.innerHTML = '';
+    INDUSTRIES.forEach(ind => {
+      const tile = document.createElement('div');
+      tile.className = 'industry-tile' + (state.industry === ind.id ? ' selected' : '');
+      tile.dataset.id = ind.id;
+      tile.innerHTML = `<div class="icon">${icon(ind.icon)}</div><div class="label">${ind.label}</div>`;
+      tile.addEventListener('click', () => {
+        state.industry = ind.id;
+        renderIndustry();
+        $('#btn-start-questions').disabled = false;
+      });
+      grid.appendChild(tile);
+    });
+  }
+  document.querySelector('[data-nav="back-to-idea"]').addEventListener('click', () => show('step-idea'));
+  $('#btn-start-questions').addEventListener('click', () => {
+    state.qIndex = 0;
+    renderQuestion();
+    show('step-questions');
+  });
+
+  // ---------- Step 3: Questions ----------
+  const progressFill = $('#progress-fill');
+  const progressLabel = $('#progress-label');
+  const questionTitle = $('#question-title');
+  const optionsWrap = $('#options');
+  const btnBack = $('#btn-back');
+  const btnNext = $('#btn-next');
+
+  function renderQuestion() {
+    const q = QUESTIONS[state.qIndex];
+    const total = QUESTIONS.length;
+    const pct = ((state.qIndex) / total) * 100;
+    progressFill.style.width = pct + '%';
+    progressLabel.textContent = `Question ${state.qIndex + 1} of ${total}`;
+    questionTitle.textContent = q.title;
+
+    optionsWrap.innerHTML = '';
+    q.options.forEach((opt, i) => {
+      const el = document.createElement('div');
+      el.className = 'option' + (state.answers[q.id] === i ? ' selected' : '');
+      el.textContent = opt.label;
+      el.addEventListener('click', () => {
+        state.answers[q.id] = i;
+        renderQuestion();
+        btnNext.disabled = false;
+      });
+      optionsWrap.appendChild(el);
+    });
+
+    btnBack.style.display = state.qIndex === 0 ? 'none' : '';
+    btnNext.disabled = state.answers[q.id] === undefined;
+    btnNext.textContent = (state.qIndex === total - 1) ? 'See Results' : 'Next Question';
+  }
+  btnBack.addEventListener('click', () => {
+    if (state.qIndex > 0) { state.qIndex--; renderQuestion(); }
+  });
+  btnNext.addEventListener('click', () => {
+    if (state.qIndex < QUESTIONS.length - 1) {
+      state.qIndex++;
+      renderQuestion();
+      // bump bar to 100% on the very last interaction
+      if (state.qIndex === QUESTIONS.length - 1) {
+        progressFill.style.width = ((state.qIndex) / QUESTIONS.length) * 100 + '%';
+      }
+    } else {
+      progressFill.style.width = '100%';
+      computeAndShowResults();
+      show('step-results');
+    }
+  });
+
+  // ---------- Step 4: Results ----------
+  function computeAndShowResults() {
+    // Aggregate per-category scores. Each category's max = 10 * #questions in it.
+    const sums = {};
+    const maxes = {};
+    QUESTIONS.forEach(q => {
+      const ans = state.answers[q.id];
+      const score = (ans === undefined) ? 0 : q.options[ans].score;
+      sums[q.category] = (sums[q.category] || 0) + score;
+      maxes[q.category] = (maxes[q.category] || 0) + 10;
+    });
+
+    const metrics = METRIC_DEFS.map(m => {
+      const max = maxes[m.key] || 10;
+      const got = sums[m.key] || 0;
+      const pct = Math.round((got / max) * 100);
+      return { ...m, pct };
+    });
+
+    const overall = Math.round(metrics.reduce((acc, m) => acc + m.pct, 0) / metrics.length);
+    renderResults(overall, metrics);
+  }
+
+  function verdictFor(score, weakMetrics) {
+    if (score >= 85) return {
+      title: '🚀 Strong validation signal.',
+      body: 'Your idea has the markers of a viable opportunity. Keep moving — talk to more users and start prototyping.'
+    };
+    if (score >= 70) return {
+      title: '✦ Promising, but needs work.',
+      body: weakMetrics.length
+        ? `Your idea has strong potential, but needs improvement in: ${weakMetrics.join(' and ')}. Address these gaps before building to increase your chances of success.`
+        : 'Your idea is solid. Sharpen the weakest areas to push it from good to compelling.'
+    };
+    if (score >= 50) return {
+      title: '⚠ Mixed signals.',
+      body: 'There are some good ingredients, but several risks remain. Get more user conversations and tighten your differentiation before investing more time.'
+    };
+    return {
+      title: '✕ Major gaps to close.',
+      body: 'Your idea is too early to validate confidently. Focus on understanding the problem and the people, then revisit this scorecard.'
+    };
+  }
+
+  function recommendationsFor(metrics) {
+    const lib = {
+      problem: 'Problem-Solution Fit: Talk to 5 people in your target group this week. Ask them to describe the problem in their own words.',
+      market: 'Market Opportunity: Define a 1-sentence ICP (e.g. "indie devs running solo SaaS"). Vague targets kill validation.',
+      competitive: 'Competitive Advantage: Study your top 3 competitors. Find what they all miss and make that your differentiator.',
+      business: 'Business Viability: Research how similar tools price. Check if people already pay for alternatives to validate willingness to pay.',
+      execution: 'Execution Readiness: Cut scope. Identify the smallest possible version that still solves the core problem.',
+      founder: 'Founder Fit: Partner with someone who lives this problem daily, or immerse yourself deeper in the target market.'
+    };
+    return metrics
+      .slice()
+      .sort((a, b) => a.pct - b.pct)
+      .filter(m => m.pct < 80)
+      .slice(0, 3)
+      .map(m => ({ key: m.key, text: lib[m.key], severity: m.pct < 40 ? 'bad' : (m.pct < 65 ? 'warn' : 'ok') }));
+  }
+
+  function renderResults(overall, metrics) {
+    // Industry line
+    const industryLabel = (INDUSTRIES.find(i => i.id === state.industry) || {}).label || 'Other';
+    $('#industry-line').textContent = `Industry: ${industryLabel}`;
+
+    // Score ring + counter animation
+    const radius = 76;
+    const circ = 2 * Math.PI * radius;
+    const arc = $('#score-arc');
+    arc.style.strokeDasharray = circ.toFixed(2);
+    arc.style.strokeDashoffset = circ.toFixed(2);
+    requestAnimationFrame(() => {
+      arc.style.transition = 'stroke-dashoffset 1.1s cubic-bezier(.2,.8,.2,1)';
+      arc.style.strokeDashoffset = (circ * (1 - overall / 100)).toFixed(2);
+    });
+    animateNumber($('#score-num'), 0, overall, 1100);
+
+    // Verdict
+    const weak = metrics.filter(m => m.pct < 60).map(m => m.label);
+    const v = verdictFor(overall, weak);
+    $('#verdict-title').textContent = v.title;
+    $('#verdict-body').textContent = v.body;
+
+    // Metrics grid
+    const grid = $('#metrics-grid');
+    grid.innerHTML = '';
+    metrics.forEach(m => {
+      const cls = m.pct >= 70 ? 'green' : (m.pct >= 45 ? 'yellow' : 'red');
+      const tile = document.createElement('div');
+      tile.className = 'metric-tile';
+      tile.innerHTML = `
+        <div class="metric-name">${m.label}</div>
+        <div class="metric-bar"><div class="metric-fill ${cls}" style="width:0%"></div></div>
+      `;
+      grid.appendChild(tile);
+      requestAnimationFrame(() => {
+        tile.querySelector('.metric-fill').style.transition = 'width .9s cubic-bezier(.2,.8,.2,1)';
+        tile.querySelector('.metric-fill').style.width = m.pct + '%';
+      });
+    });
+
+    // Recommendations
+    const recsList = $('#recs-list');
+    recsList.innerHTML = '';
+    const recs = recommendationsFor(metrics);
+    if (recs.length === 0) {
+      const r = document.createElement('div');
+      r.className = 'rec';
+      r.innerHTML = '<strong>Nice work.</strong> All six dimensions look healthy. Keep validating with real users and start building.';
+      recsList.appendChild(r);
+    } else {
+      recs.forEach(rec => {
+        const el = document.createElement('div');
+        el.className = 'rec' + (rec.severity === 'bad' ? ' bad' : (rec.severity === 'warn' ? ' warn' : ''));
+        const [head, ...rest] = rec.text.split(':');
+        el.innerHTML = `<strong>${head}:</strong>${rest.join(':')}`;
+        recsList.appendChild(el);
+      });
+    }
+  }
+
+  function animateNumber(el, from, to, duration) {
+    const start = performance.now();
+    function tick(now) {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      el.textContent = Math.round(from + (to - from) * eased);
+      if (t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  // Restart / Share
+  $('#btn-restart').addEventListener('click', () => {
+    state.idea = '';
+    state.industry = null;
+    state.answers = {};
+    state.qIndex = 0;
+    ideaText.value = '';
+    btnStartValidation.disabled = true;
+    // Reset lead form
+    $('#lead-form').reset();
+    $('#lead-form').classList.remove('hidden');
+    $('#lead-card').classList.remove('hidden');
+    $('#lead-success').classList.add('hidden');
+    show('step-idea');
+  });
+
+  // Lead capture
+  // Optional integrations (set these if you wire up GHL or a webhook):
+  //   window.IDEA_VALIDATOR_WEBHOOK = 'https://hooks.zapier.com/...';
+  //   window.IDEA_VALIDATOR_GHL_FORM = 'https://api.leadconnectorhq.com/widget/form/<formId>';
+  $('#lead-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = $('#lead-name').value.trim();
+    const email = $('#lead-email').value.trim();
+    if (!name || !email) return;
+    const submitBtn = $('#lead-submit');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+
+    const payload = {
+      source: 'idea-validator',
+      name, email,
+      idea: state.idea,
+      industry: (INDUSTRIES.find(i => i.id === state.industry) || {}).label || 'Other',
+      score: parseInt($('#score-num').textContent, 10) || 0,
+      answers: state.answers,
+      ts: new Date().toISOString()
+    };
+
+    try {
+      // Always log locally so the lead isn't lost if no integration is wired
+      const leads = JSON.parse(localStorage.getItem('iv_leads') || '[]');
+      leads.push(payload);
+      localStorage.setItem('iv_leads', JSON.stringify(leads));
+
+      // Optional webhook (e.g. Zapier / Make / GHL inbound webhook)
+      if (window.IDEA_VALIDATOR_WEBHOOK) {
+        fetch(window.IDEA_VALIDATOR_WEBHOOK, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          mode: 'no-cors'
+        }).catch(() => {});
+      }
+    } catch {}
+
+    // Show success
+    $('#lead-form').classList.add('hidden');
+    $('#lead-card').classList.add('hidden');
+    $('#lead-success').classList.remove('hidden');
+  });
+
+  // PDF export
+  $('#btn-pdf').addEventListener('click', async () => {
+    const card = $('#results-card');
+    if (!window.html2pdf) {
+      // Fallback: print dialog
+      window.print();
+      return;
+    }
+    const btn = $('#btn-pdf');
+    const original = btn.textContent;
+    btn.textContent = 'Generating...';
+    btn.disabled = true;
+    document.body.classList.add('pdf-mode');
+    try {
+      const opt = {
+        margin: [10, 10, 10, 10],
+        filename: 'idea-validator-results.pdf',
+        image: { type: 'jpeg', quality: 0.96 },
+        html2canvas: { scale: 2, backgroundColor: '#ffffff', useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      await window.html2pdf().set(opt).from(card).save();
+    } catch (err) {
+      console.error('PDF export failed', err);
+      alert('PDF export failed. Try the Share button instead.');
+    } finally {
+      document.body.classList.remove('pdf-mode');
+      btn.textContent = original;
+      btn.disabled = false;
+    }
+  });
+
+  $('#btn-share').addEventListener('click', async () => {
+    const ind = (INDUSTRIES.find(i => i.id === state.industry) || {}).label || 'Other';
+    const score = $('#score-num').textContent;
+    const text = `I just validated my idea on Idea Validator — scored ${score}/100 in ${ind}. Try it for your next idea.`;
+    if (navigator.share) {
+      try { await navigator.share({ title: 'Idea Validator', text }); return; } catch {}
+    }
+    try {
+      await navigator.clipboard.writeText(text);
+      const btn = $('#btn-share');
+      const original = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = original, 1600);
+    } catch {
+      alert(text);
+    }
+  });
+
+  // Init
+  show('step-idea');
+})();
+</script>
+</body>
+</html>
