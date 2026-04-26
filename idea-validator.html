@@ -19,6 +19,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
+<script>window.IDEA_VALIDATOR_WEBHOOK = 'https://services.leadconnectorhq.com/hooks/wIZS4RjMCtzdxqUQZunV/webhook-trigger/1dd4e792-dd25-4bf9-983e-aeae99bab89e';</script>
 <style>
   :root {
     --bg: #0e1418;
@@ -963,10 +964,12 @@
       localStorage.setItem('iv_leads', JSON.stringify(leads));
 
       // Optional webhook (e.g. Zapier / Make / GHL inbound webhook)
+      // Use text/plain so the request stays a "simple request" (no CORS preflight) —
+      // GHL inbound webhooks parse the JSON body regardless of content-type.
       if (window.IDEA_VALIDATOR_WEBHOOK) {
         fetch(window.IDEA_VALIDATOR_WEBHOOK, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
           body: JSON.stringify(payload),
           mode: 'no-cors'
         }).catch(() => {});
