@@ -17,441 +17,553 @@
 <link rel="icon" href="/favicon.ico" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
 <script>window.IDEA_VALIDATOR_WEBHOOK = 'https://services.leadconnectorhq.com/hooks/wIZS4RjMCtzdxqUQZunV/webhook-trigger/1dd4e792-dd25-4bf9-983e-aeae99bab89e';</script>
 <style>
-  :root {
-    --bg: #0e1418;
-    --bg-grid: rgba(80, 120, 140, 0.08);
-    --card: #1a2329;
-    --card-2: #1f2a31;
-    --card-border: #2a3942;
-    --text: #e5edf2;
-    --text-dim: #8a9aa6;
-    --accent: #5be5d2;
-    --accent-2: #4ed1bf;
-    --accent-glow: rgba(91, 229, 210, 0.45);
-    --green: #4ade80;
-    --yellow: #fbbf24;
-    --red: #ef4444;
-    --btn-dark: #2a3942;
-    --btn-dark-hover: #354752;
-    --pixel: 'VT323', 'Press Start 2P', monospace;
-    --sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --primary:#7c3aed;
+    --primary-light:#a78bfa;
+    --primary-dark:#5b21b6;
+    --accent:#06b6d4;
+    --accent-light:#22d3ee;
+    --bg:#0f0f1a;
+    --bg-card:#1a1a2e;
+    --bg-card-2:#222240;
+    --bg-input:#13131f;
+    --text:#f1f5f9;
+    --text-muted:#94a3b8;
+    --text-dim:#64748b;
+    --border:#2d2d4a;
+    --border-strong:#3d3d5a;
+    --success:#10b981;
+    --warning:#f59e0b;
+    --danger:#ef4444;
+    --shadow-card: 0 12px 40px -12px rgba(0,0,0,.6);
+    --shadow-glow: 0 12px 40px -8px rgba(124,58,237,.35);
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; }
-  body {
-    font-family: var(--sans);
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-    background-image:
-      linear-gradient(var(--bg-grid) 1px, transparent 1px),
-      linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px);
-    background-size: 40px 40px;
-    background-position: -1px -1px;
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.6;
+    min-height:100vh;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
   }
-  .app {
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 56px 20px 80px;
-    min-height: 100vh;
+
+  /* Floating orbs (matches AIFA homepage aesthetic) */
+  .orb{position:fixed;border-radius:50%;filter:blur(100px);pointer-events:none;z-index:0}
+  .orb-1{width:480px;height:480px;background:rgba(124,58,237,.18);top:-15%;right:-10%;animation:float-orb 12s ease-in-out infinite}
+  .orb-2{width:380px;height:380px;background:rgba(6,182,212,.12);bottom:-10%;left:-15%;animation:float-orb 14s ease-in-out infinite reverse}
+  @keyframes float-orb{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,-40px)}}
+
+  /* App shell */
+  .app{
+    position:relative;
+    z-index:1;
+    max-width:680px;
+    margin:0 auto;
+    padding:64px 24px 96px;
   }
-  .brand { text-align: center; margin-bottom: 32px; }
-  .brand h1 {
-    font-family: var(--pixel);
-    font-weight: 400;
-    font-size: 64px;
-    letter-spacing: 2px;
-    color: var(--accent);
-    text-shadow: 0 0 18px var(--accent-glow);
-    line-height: 1;
-    margin-bottom: 10px;
+
+  /* Brand */
+  .brand{text-align:center;margin-bottom:40px}
+  .brand-badge{
+    display:inline-flex;align-items:center;gap:.5rem;
+    background:rgba(124,58,237,.12);
+    border:1px solid rgba(124,58,237,.3);
+    color:var(--primary-light);
+    font-size:.75rem;font-weight:600;
+    padding:.4rem 1rem;border-radius:20px;
+    margin-bottom:1.25rem;
+    text-transform:uppercase;letter-spacing:.08em;
   }
-  .brand p {
-    color: var(--text-dim);
-    font-size: 15px;
+  .brand-badge-dot{width:6px;height:6px;background:var(--success);border-radius:50%;animation:pulse-dot 2s infinite}
+  @keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.3}}
+  .brand h1{
+    font-size:clamp(2rem, 6vw, 2.75rem);
+    font-weight:800;
+    line-height:1.1;
+    letter-spacing:-.02em;
+    margin-bottom:.75rem;
+    background:linear-gradient(135deg,#fff 0%, var(--primary-light) 60%, var(--accent-light) 100%);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
   }
+  .brand p{color:var(--text-muted);font-size:1rem;max-width:440px;margin:0 auto}
 
   /* Card */
-  .card {
-    background: var(--card);
-    border: 1px solid var(--card-border);
-    border-radius: 14px;
-    padding: 32px 28px;
-    box-shadow: 0 0 0 1px rgba(91, 229, 210, 0.04), 0 24px 60px -30px rgba(0,0,0,0.6);
+  .card{
+    background:var(--bg-card);
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:32px;
+    box-shadow:var(--shadow-card);
+    position:relative;
+    overflow:hidden;
   }
-  .card h2 {
-    font-family: var(--pixel);
-    font-weight: 400;
-    font-size: 30px;
-    letter-spacing: 1px;
-    color: var(--accent);
-    margin-bottom: 14px;
+  .card::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:1px;
+    background:linear-gradient(90deg,transparent, rgba(124,58,237,.4), rgba(6,182,212,.4), transparent);
   }
-  .card .helper {
-    color: var(--text);
-    font-size: 15px;
-    margin-bottom: 16px;
+  .card h2{
+    font-size:1.5rem;
+    font-weight:700;
+    letter-spacing:-.01em;
+    color:var(--text);
+    margin-bottom:.5rem;
+    line-height:1.3;
+  }
+  .card .helper{
+    color:var(--text-muted);
+    font-size:.95rem;
+    margin-bottom:20px;
   }
 
-  /* Textarea */
-  textarea {
-    width: 100%;
-    min-height: 110px;
-    background: #141c21;
-    color: var(--text);
-    border: 1px solid var(--card-border);
-    border-radius: 10px;
-    padding: 14px 14px;
-    font-family: var(--sans);
-    font-size: 14px;
-    resize: vertical;
-    transition: border-color .15s ease, box-shadow .15s ease;
+  /* Inputs */
+  textarea, .lead-form input{
+    width:100%;
+    background:var(--bg-input);
+    color:var(--text);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:14px 16px;
+    font-family:inherit;
+    font-size:.95rem;
+    transition:border-color .2s, box-shadow .2s, background .2s;
   }
-  textarea::placeholder { color: #5d6d77; }
-  textarea:focus {
-    outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(91, 229, 210, 0.15);
+  textarea{min-height:120px;resize:vertical;line-height:1.6}
+  textarea::placeholder, .lead-form input::placeholder{color:var(--text-dim)}
+  textarea:focus, .lead-form input:focus{
+    outline:none;
+    border-color:var(--primary);
+    background:#161622;
+    box-shadow:0 0 0 3px rgba(124,58,237,.18);
+  }
+  .input-counter{
+    margin-top:.5rem;
+    font-size:.75rem;
+    color:var(--text-dim);
+    text-align:right;
   }
 
   /* Buttons */
-  .actions {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-top: 22px;
+  .actions{
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    margin-top:24px;
+    flex-wrap:wrap;
   }
-  .actions.split { justify-content: center; }
-  .btn {
-    border: none;
-    cursor: pointer;
-    padding: 12px 28px;
-    border-radius: 10px;
-    font-family: var(--sans);
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: .2px;
-    transition: transform .08s ease, background .15s ease, box-shadow .15s ease, opacity .15s ease;
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+    padding:.85rem 1.75rem;
+    border-radius:10px;
+    font-size:.9rem;font-weight:600;
+    font-family:inherit;
+    cursor:pointer;
+    border:none;
+    transition:transform .15s ease, box-shadow .2s ease, background .2s ease, opacity .2s ease, border-color .2s ease;
+    line-height:1;
+    white-space:nowrap;
   }
-  .btn:active { transform: translateY(1px); }
-  .btn-primary {
-    background: linear-gradient(180deg, #5be5d2 0%, #3ec6b0 100%);
-    color: #07221d;
-    box-shadow: 0 6px 18px -6px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.25);
+  .btn:active{transform:translateY(1px)}
+  .btn-primary{
+    background:linear-gradient(135deg, var(--primary), var(--accent));
+    color:#fff;
+    box-shadow:0 4px 14px -2px rgba(124,58,237,.4);
   }
-  .btn-primary:hover { box-shadow: 0 10px 24px -6px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.25); }
-  .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
-  .btn-dark {
-    background: var(--btn-dark);
-    color: var(--text);
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 24px -4px rgba(124,58,237,.55)}
+  .btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+  .btn-secondary{
+    background:rgba(255,255,255,.05);
+    color:var(--text);
+    border:1px solid var(--border);
   }
-  .btn-dark:hover { background: var(--btn-dark-hover); }
+  .btn-secondary:hover{background:rgba(255,255,255,.09);border-color:var(--border-strong);transform:translateY(-1px)}
 
   /* Industry grid */
-  .industry-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-    margin-top: 6px;
+  .industry-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:12px;
+    margin-top:4px;
   }
-  .industry-tile {
-    background: var(--card-2);
-    border: 1px solid var(--card-border);
-    border-radius: 12px;
-    padding: 18px 10px;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color .15s ease, transform .08s ease, box-shadow .15s ease, background .15s ease;
-    user-select: none;
+  .industry-tile{
+    background:var(--bg-card-2);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:18px 12px;
+    text-align:center;
+    cursor:pointer;
+    transition:transform .15s, border-color .2s, background .2s, box-shadow .2s;
+    user-select:none;
+    position:relative;
   }
-  .industry-tile:hover {
-    border-color: #3a4f5a;
-    background: #233039;
+  .industry-tile:hover{
+    border-color:var(--border-strong);
+    background:#28284a;
+    transform:translateY(-2px);
   }
-  .industry-tile.selected {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(91, 229, 210, 0.12), 0 0 16px -4px var(--accent-glow);
+  .industry-tile.selected{
+    border-color:var(--primary);
+    background:linear-gradient(135deg, rgba(124,58,237,.18), rgba(6,182,212,.10));
+    box-shadow:0 0 0 1px var(--primary), 0 8px 24px -8px rgba(124,58,237,.5);
   }
-  .industry-tile .icon {
-    width: 28px; height: 28px;
-    margin: 0 auto 8px;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--text-dim);
+  .industry-tile .icon{
+    width:38px;height:38px;
+    margin:0 auto 10px;
+    border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--text-muted);
+    background:rgba(124,58,237,.08);
+    transition:color .2s, background .2s;
   }
-  .industry-tile.selected .icon { color: var(--accent); }
-  .industry-tile .label {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text);
-    line-height: 1.25;
+  .industry-tile.selected .icon{
+    color:#fff;
+    background:linear-gradient(135deg, var(--primary), var(--accent));
+  }
+  .industry-tile .label{
+    font-size:.85rem;
+    font-weight:600;
+    color:var(--text);
+    line-height:1.3;
   }
 
   /* Progress */
-  .progress-wrap { margin-bottom: 18px; }
-  .progress-bar {
-    height: 4px;
-    background: #1f2a31;
-    border-radius: 2px;
-    overflow: hidden;
-    margin-bottom: 12px;
+  .progress-wrap{margin-bottom:24px}
+  .progress-bar{
+    height:6px;
+    background:var(--bg-card);
+    border:1px solid var(--border);
+    border-radius:99px;
+    overflow:hidden;
+    margin-bottom:12px;
   }
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #4ed1bf 0%, #5be5d2 100%);
-    width: 0;
-    transition: width .35s ease;
-    box-shadow: 0 0 12px var(--accent-glow);
+  .progress-fill{
+    height:100%;
+    background:linear-gradient(90deg, var(--primary), var(--accent));
+    width:0;
+    border-radius:99px;
+    transition:width .4s cubic-bezier(.2,.8,.2,1);
+    box-shadow:0 0 16px -2px rgba(124,58,237,.5);
   }
-  .progress-label {
-    text-align: center;
-    color: var(--accent);
-    font-size: 13px;
-    font-weight: 600;
+  .progress-label{
+    text-align:center;
+    color:var(--text-muted);
+    font-size:.8rem;
+    font-weight:600;
+    letter-spacing:.04em;
+    text-transform:uppercase;
   }
+  .progress-label .accent{color:var(--primary-light)}
 
   /* Question */
-  .question h2 {
-    font-family: var(--pixel);
-    font-weight: 400;
-    font-size: 26px;
-    line-height: 1.25;
-    color: var(--accent);
-    margin-bottom: 18px;
-    letter-spacing: 1px;
+  .question h2{
+    font-size:1.4rem;
+    font-weight:700;
+    line-height:1.35;
+    margin-bottom:20px;
+    letter-spacing:-.01em;
+    color:var(--text);
   }
-  .options { display: flex; flex-direction: column; gap: 10px; }
-  .option {
-    background: var(--card-2);
-    border: 1px solid var(--card-border);
-    border-radius: 10px;
-    padding: 14px 16px;
-    cursor: pointer;
-    color: var(--text);
-    font-size: 14px;
-    transition: border-color .15s ease, background .15s ease, box-shadow .15s ease;
-    user-select: none;
+  .options{display:flex;flex-direction:column;gap:10px}
+  .option{
+    background:var(--bg-card-2);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:16px 18px;
+    cursor:pointer;
+    color:var(--text);
+    font-size:.95rem;
+    font-weight:500;
+    transition:transform .12s, border-color .2s, background .2s, box-shadow .2s;
+    user-select:none;
+    display:flex;
+    align-items:center;
+    gap:12px;
   }
-  .option:hover { background: #233039; border-color: #3a4f5a; }
-  .option.selected {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 1px var(--accent), 0 0 14px -4px var(--accent-glow);
+  .option:hover{
+    background:#28284a;
+    border-color:var(--border-strong);
+    transform:translateX(2px);
+  }
+  .option-radio{
+    width:18px;height:18px;
+    border-radius:50%;
+    border:2px solid var(--border-strong);
+    flex-shrink:0;
+    transition:border-color .2s, background .2s;
+    position:relative;
+  }
+  .option.selected{
+    border-color:var(--primary);
+    background:linear-gradient(135deg, rgba(124,58,237,.14), rgba(6,182,212,.06));
+    box-shadow:0 0 0 1px var(--primary), 0 6px 20px -6px rgba(124,58,237,.4);
+  }
+  .option.selected .option-radio{
+    border-color:var(--primary);
+    background:linear-gradient(135deg, var(--primary), var(--accent));
+  }
+  .option.selected .option-radio::after{
+    content:'';position:absolute;
+    top:50%;left:50%;transform:translate(-50%,-50%);
+    width:6px;height:6px;background:#fff;border-radius:50%;
   }
 
   /* Results */
-  .results-card { text-align: center; }
-  .results-card h2 {
-    font-family: var(--pixel);
-    font-weight: 400;
-    font-size: 32px;
-    color: var(--accent);
-    margin-bottom: 6px;
-    letter-spacing: 1px;
+  .results-card{text-align:center}
+  .results-card h2{
+    font-size:1.65rem;
+    font-weight:800;
+    margin-bottom:.25rem;
+    letter-spacing:-.01em;
+    background:linear-gradient(135deg, #fff, var(--primary-light));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
   }
-  .industry-line {
-    color: var(--accent);
-    font-size: 13px;
-    margin-bottom: 18px;
+  .industry-line{
+    color:var(--text-muted);
+    font-size:.85rem;
+    margin-bottom:24px;
   }
-  .score-ring-wrap {
-    display: flex; justify-content: center; align-items: center;
-    margin: 8px 0 18px;
+  .industry-line .pill{
+    display:inline-flex;align-items:center;gap:.4rem;
+    background:rgba(124,58,237,.12);
+    border:1px solid rgba(124,58,237,.3);
+    color:var(--primary-light);
+    padding:.25rem .75rem;border-radius:99px;
+    font-size:.75rem;font-weight:600;
   }
-  .score-ring { position: relative; width: 180px; height: 180px; }
-  .score-ring svg { transform: rotate(-90deg); }
-  .score-num {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--pixel);
-    font-size: 56px;
-    color: var(--text);
+  .score-ring-wrap{display:flex;justify-content:center;align-items:center;margin:8px 0 24px}
+  .score-ring{position:relative;width:200px;height:200px}
+  .score-ring svg{transform:rotate(-90deg);filter:drop-shadow(0 0 20px rgba(124,58,237,.3))}
+  .score-num{
+    position:absolute;inset:0;
+    display:flex;align-items:center;justify-content:center;flex-direction:column;
   }
-  .verdict-card {
-    background: var(--card-2);
-    border: 1px solid var(--card-border);
-    border-radius: 12px;
-    padding: 18px 18px;
-    margin-top: 6px;
-    text-align: left;
+  .score-num .num{
+    font-size:3.5rem;
+    font-weight:800;
+    line-height:1;
+    background:linear-gradient(135deg, #fff, var(--primary-light));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
   }
-  .verdict-title {
-    color: var(--accent);
-    font-weight: 600;
-    margin-bottom: 8px;
+  .score-num .of{
+    font-size:.7rem;
+    color:var(--text-dim);
+    font-weight:600;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    margin-top:4px;
   }
-  .verdict-body {
-    color: var(--text-dim);
-    font-size: 13.5px;
-    line-height: 1.55;
+  .verdict-card{
+    background:var(--bg-card-2);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:18px 20px;
+    margin-top:6px;
+    text-align:left;
+  }
+  .verdict-title{
+    color:var(--text);
+    font-size:1rem;
+    font-weight:700;
+    margin-bottom:.4rem;
+    display:flex;align-items:center;gap:.5rem;
+  }
+  .verdict-body{
+    color:var(--text-muted);
+    font-size:.9rem;
+    line-height:1.6;
   }
 
-  .metrics-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-top: 18px;
+  .metrics-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-top:18px;
   }
-  .metric-tile {
-    background: var(--card-2);
-    border: 1px solid var(--card-border);
-    border-radius: 10px;
-    padding: 14px 14px;
+  .metric-tile{
+    background:var(--bg-card-2);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:14px 16px;
+    text-align:left;
   }
-  .metric-name {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 8px;
+  .metric-name{
+    font-size:.8rem;
+    font-weight:600;
+    color:var(--text);
+    margin-bottom:8px;
+    display:flex;justify-content:space-between;align-items:center;
   }
-  .metric-bar {
-    height: 5px;
-    background: #2a3942;
-    border-radius: 3px;
-    overflow: hidden;
-  }
-  .metric-fill { height: 100%; border-radius: 3px; }
-  .metric-fill.green { background: linear-gradient(90deg, #34d399, #4ade80); }
-  .metric-fill.yellow { background: linear-gradient(90deg, #fbbf24, #f59e0b); }
-  .metric-fill.red { background: linear-gradient(90deg, #f87171, #ef4444); }
+  .metric-name .pct{color:var(--text-dim);font-weight:600;font-size:.75rem}
+  .metric-bar{height:5px;background:rgba(255,255,255,.05);border-radius:99px;overflow:hidden}
+  .metric-fill{height:100%;border-radius:99px;width:0}
+  .metric-fill.green{background:linear-gradient(90deg, #34d399, #10b981)}
+  .metric-fill.yellow{background:linear-gradient(90deg, #fbbf24, #f59e0b)}
+  .metric-fill.red{background:linear-gradient(90deg, #fb7185, #ef4444)}
 
-  .recs {
-    margin-top: 22px;
-    text-align: left;
+  .recs{margin-top:24px;text-align:left}
+  .recs h3{
+    font-size:1.05rem;
+    font-weight:700;
+    color:var(--text);
+    margin-bottom:12px;
+    display:flex;align-items:center;gap:.5rem;
   }
-  .recs h3 {
-    font-family: var(--pixel);
-    font-weight: 400;
-    font-size: 22px;
-    color: var(--accent);
-    margin-bottom: 12px;
-    letter-spacing: 1px;
+  .recs h3::before{
+    content:'';
+    width:4px;height:18px;
+    background:linear-gradient(180deg, var(--primary), var(--accent));
+    border-radius:2px;
   }
-  .rec {
-    background: var(--card-2);
-    border: 1px solid var(--card-border);
-    border-left: 3px solid var(--green);
-    border-radius: 8px;
-    padding: 12px 14px;
-    margin-bottom: 10px;
-    font-size: 13.5px;
-    color: var(--text);
+  .rec{
+    background:var(--bg-card-2);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:14px 16px;
+    margin-bottom:8px;
+    font-size:.875rem;
+    color:var(--text-muted);
+    line-height:1.55;
+    border-left:3px solid var(--success);
   }
-  .rec strong { color: var(--text); }
-  .rec.warn { border-left-color: var(--yellow); }
-  .rec.bad  { border-left-color: var(--red); }
+  .rec strong{color:var(--text);font-weight:600}
+  .rec.warn{border-left-color:var(--warning)}
+  .rec.bad{border-left-color:var(--danger)}
 
   /* Lead capture */
-  .lead-card {
-    margin-top: 22px;
-    background: linear-gradient(180deg, rgba(91, 229, 210, 0.06), rgba(91, 229, 210, 0.02));
-    border: 1px solid rgba(91, 229, 210, 0.25);
-    border-radius: 12px;
-    padding: 18px 18px;
-    text-align: left;
+  .lead-card{
+    margin-top:24px;
+    background:linear-gradient(135deg, rgba(124,58,237,.10), rgba(6,182,212,.06));
+    border:1px solid rgba(124,58,237,.25);
+    border-radius:16px;
+    padding:22px 22px;
+    text-align:left;
+    position:relative;
+    overflow:hidden;
   }
-  .lead-card h3 {
-    font-family: var(--pixel);
-    font-weight: 400;
-    font-size: 22px;
-    color: var(--accent);
-    margin-bottom: 6px;
-    letter-spacing: 1px;
+  .lead-card::before{
+    content:'';position:absolute;
+    top:-50%;right:-30%;width:300px;height:300px;
+    background:radial-gradient(circle, rgba(124,58,237,.12), transparent 70%);
+    pointer-events:none;
   }
-  .lead-card p {
-    color: var(--text-dim);
-    font-size: 13.5px;
-    line-height: 1.55;
-    margin-bottom: 14px;
+  .lead-card h3{
+    font-size:1.1rem;
+    font-weight:700;
+    color:var(--text);
+    margin-bottom:.5rem;
+    position:relative;
   }
-  .lead-form {
-    display: grid;
-    grid-template-columns: 1fr 1fr auto;
-    gap: 8px;
+  .lead-card p{
+    color:var(--text-muted);
+    font-size:.875rem;
+    line-height:1.6;
+    margin-bottom:16px;
+    position:relative;
   }
-  .lead-form input {
-    background: #141c21;
-    color: var(--text);
-    border: 1px solid var(--card-border);
-    border-radius: 10px;
-    padding: 12px 12px;
-    font-family: var(--sans);
-    font-size: 14px;
-    transition: border-color .15s ease, box-shadow .15s ease;
-    min-width: 0;
+  .lead-form{
+    display:grid;
+    grid-template-columns:1fr 1fr auto;
+    gap:8px;
+    position:relative;
   }
-  .lead-form input::placeholder { color: #5d6d77; }
-  .lead-form input:focus {
-    outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(91, 229, 210, 0.15);
+  .lead-form input{min-width:0;padding:12px 14px;font-size:.9rem}
+  .lead-success{
+    color:var(--success);
+    font-size:.95rem;
+    font-weight:600;
+    text-align:center;
+    padding:18px 0;
+    display:flex;align-items:center;justify-content:center;gap:.5rem;
   }
-  .lead-success {
-    color: var(--accent);
-    font-size: 14px;
-    text-align: center;
-    padding: 14px 0;
-  }
-  @media (max-width: 560px) {
-    .lead-form { grid-template-columns: 1fr; }
-  }
-
-  /* Animations */
-  .step { animation: fadeIn .35s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-  .hidden { display: none !important; }
-
-  /* PDF print styles — used when html2pdf renders the snapshot */
-  .pdf-mode { background: #ffffff !important; color: #0e1418 !important; }
-  .pdf-mode .card { background: #ffffff !important; border-color: #d6e0e6 !important; box-shadow: none !important; }
-  .pdf-mode .verdict-card,
-  .pdf-mode .metric-tile,
-  .pdf-mode .rec,
-  .pdf-mode .lead-card { background: #f6fafb !important; border-color: #d6e0e6 !important; color: #0e1418 !important; }
-  .pdf-mode h2, .pdf-mode h3, .pdf-mode .verdict-title, .pdf-mode .industry-line { color: #0a8a78 !important; text-shadow: none !important; }
-  .pdf-mode .score-num, .pdf-mode .metric-name, .pdf-mode .verdict-body, .pdf-mode .rec, .pdf-mode .rec strong { color: #0e1418 !important; }
-  .pdf-mode .metric-bar { background: #e0e8ed !important; }
-
-  /* Responsive */
-  @media (max-width: 560px) {
-    .brand h1 { font-size: 48px; }
-    .industry-grid { grid-template-columns: repeat(2, 1fr); }
-    .card { padding: 24px 18px; }
-    .question h2, .results-card h2 { font-size: 22px; }
-    .metrics-grid { grid-template-columns: 1fr; }
-    .score-ring, .score-ring svg { width: 150px; height: 150px; }
-    .score-num { font-size: 46px; }
+  @media (max-width:560px){
+    .lead-form{grid-template-columns:1fr}
   }
 
   /* Footer */
-  .site-footer {
-    text-align: center;
-    margin-top: 36px;
-    color: var(--text-dim);
-    font-size: 13px;
+  .site-footer{
+    text-align:center;
+    margin-top:36px;
+    color:var(--text-dim);
+    font-size:.8rem;
   }
-  .site-footer a { color: var(--accent); text-decoration: none; }
-  .site-footer a:hover { text-decoration: underline; }
+  .site-footer a{color:var(--text-muted);text-decoration:none;transition:color .2s}
+  .site-footer a:hover{color:var(--primary-light)}
+
+  /* Animations */
+  .step{animation:fadeIn .4s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .hidden{display:none !important}
+
+  /* PDF print mode */
+  .pdf-mode{background:#ffffff !important;color:#0f172a !important}
+  .pdf-mode .orb{display:none}
+  .pdf-mode .card,
+  .pdf-mode .verdict-card,
+  .pdf-mode .metric-tile,
+  .pdf-mode .rec,
+  .pdf-mode .lead-card{
+    background:#ffffff !important;
+    border-color:#e2e8f0 !important;
+    box-shadow:none !important;
+    color:#0f172a !important;
+  }
+  .pdf-mode h2,
+  .pdf-mode h3,
+  .pdf-mode .results-card h2,
+  .pdf-mode .score-num .num{
+    color:#0f172a !important;
+    -webkit-text-fill-color:#0f172a !important;
+    background:none !important;
+  }
+  .pdf-mode .verdict-body,
+  .pdf-mode .industry-line,
+  .pdf-mode .metric-name,
+  .pdf-mode .metric-name .pct,
+  .pdf-mode .rec,
+  .pdf-mode .lead-card p,
+  .pdf-mode .score-num .of{color:#475569 !important}
+  .pdf-mode .metric-bar{background:#e2e8f0 !important}
+
+  /* Responsive */
+  @media (max-width:560px){
+    .app{padding:48px 18px 72px}
+    .card{padding:24px 20px;border-radius:16px}
+    .industry-grid{grid-template-columns:repeat(2, 1fr)}
+    .question h2, .results-card h2{font-size:1.25rem}
+    .metrics-grid{grid-template-columns:1fr}
+    .score-ring, .score-ring svg{width:170px;height:170px}
+    .score-num .num{font-size:3rem}
+    .actions .btn{flex:1;min-width:120px}
+  }
 </style>
 </head>
 <body>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
   <div class="app">
-    <div class="brand">
+    <header class="brand">
+      <span class="brand-badge"><span class="brand-badge-dot"></span> Free · 3 minutes · No sign-up</span>
       <h1>Idea Validator</h1>
-      <p>Validate your next big idea in minutes</p>
-    </div>
+      <p>Score your startup or app idea across six dimensions and get a tailored next-step plan.</p>
+    </header>
 
     <!-- STEP 1: Idea -->
     <section id="step-idea" class="step">
       <div class="card">
         <h2>What's your idea?</h2>
-        <p class="helper">Describe your app or business idea in 1–2 sentences</p>
-        <textarea id="idea-text" placeholder="e.g. An app that helps remote teams schedule casual coffee chats to build stronger relationships and prevent isolation."></textarea>
+        <p class="helper">Describe your app or business idea in 1–2 sentences.</p>
+        <textarea id="idea-text" maxlength="600" placeholder="e.g. An app that helps remote teams schedule casual coffee chats to build stronger relationships and prevent isolation."></textarea>
+        <div class="input-counter"><span id="idea-count">0</span> / 600</div>
         <div class="actions">
-          <button class="btn btn-primary" id="btn-start-validation" disabled>Start Validation</button>
+          <button class="btn btn-primary" id="btn-start-validation" disabled>Start Validation →</button>
         </div>
       </div>
     </section>
@@ -460,10 +572,11 @@
     <section id="step-industry" class="step hidden">
       <div class="card">
         <h2>What industry is this in?</h2>
+        <p class="helper">Pick the closest fit — this helps us calibrate the scoring.</p>
         <div class="industry-grid" id="industry-grid"></div>
         <div class="actions">
-          <button class="btn btn-dark" data-nav="back-to-idea">Back</button>
-          <button class="btn btn-primary" id="btn-start-questions" disabled>Start Questions</button>
+          <button class="btn btn-secondary" data-nav="back-to-idea">Back</button>
+          <button class="btn btn-primary" id="btn-start-questions" disabled>Start Questions →</button>
         </div>
       </div>
     </section>
@@ -472,39 +585,44 @@
     <section id="step-questions" class="step hidden">
       <div class="progress-wrap">
         <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
-        <div class="progress-label" id="progress-label">Question 1 of 8</div>
+        <div class="progress-label">Question <span class="accent" id="progress-current">1</span> of 8</div>
       </div>
       <div class="card question">
         <h2 id="question-title"></h2>
         <div class="options" id="options"></div>
         <div class="actions">
-          <button class="btn btn-dark" id="btn-back" style="display:none;">Back</button>
-          <button class="btn btn-primary" id="btn-next" disabled>Next Question</button>
+          <button class="btn btn-secondary" id="btn-back" style="display:none;">Back</button>
+          <button class="btn btn-primary" id="btn-next" disabled>Next →</button>
         </div>
       </div>
     </section>
 
-    <!-- STEP 4: Results / Footer below -->
+    <!-- STEP 4: Results -->
     <section id="step-results" class="step hidden">
       <div class="card results-card" id="results-card">
         <h2>Your Validation Results</h2>
-        <div class="industry-line" id="industry-line"></div>
+        <div class="industry-line"><span class="pill" id="industry-line"></span></div>
+
         <div class="score-ring-wrap">
           <div class="score-ring">
-            <svg width="180" height="180" viewBox="0 0 180 180">
+            <svg width="200" height="200" viewBox="0 0 200 200">
               <defs>
                 <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#5be5d2" />
-                  <stop offset="100%" stop-color="#4ed1bf" />
+                  <stop offset="0%" stop-color="#a78bfa" />
+                  <stop offset="100%" stop-color="#22d3ee" />
                 </linearGradient>
               </defs>
-              <circle cx="90" cy="90" r="76" stroke="#23323b" stroke-width="10" fill="none"></circle>
-              <circle id="score-arc" cx="90" cy="90" r="76" stroke="url(#ringGrad)" stroke-width="10" fill="none"
-                      stroke-linecap="round" stroke-dasharray="477.5" stroke-dashoffset="477.5"></circle>
+              <circle cx="100" cy="100" r="86" stroke="rgba(255,255,255,0.06)" stroke-width="10" fill="none"></circle>
+              <circle id="score-arc" cx="100" cy="100" r="86" stroke="url(#ringGrad)" stroke-width="10" fill="none"
+                      stroke-linecap="round" stroke-dasharray="540" stroke-dashoffset="540"></circle>
             </svg>
-            <div class="score-num" id="score-num">0</div>
+            <div class="score-num">
+              <div class="num" id="score-num">0</div>
+              <div class="of">out of 100</div>
+            </div>
           </div>
         </div>
+
         <div class="verdict-card">
           <div class="verdict-title" id="verdict-title"></div>
           <div class="verdict-body" id="verdict-body"></div>
@@ -518,131 +636,67 @@
         </div>
 
         <div class="lead-card no-print" id="lead-card">
-          <h3>Get a tailored next-step plan</h3>
-          <p>Want Grant from AI Fusion Automations to review your idea and send a 1-page action plan? Drop your email and we'll be in touch.</p>
+          <h3>Want a personal review?</h3>
+          <p>Drop your name and email and Grant from AI Fusion Automations will review your idea and send a 1-page action plan within 48 hours. No pitch, just a sharp next step.</p>
           <form class="lead-form" id="lead-form" autocomplete="on">
             <input type="text" id="lead-name" placeholder="Your name" required>
             <input type="email" id="lead-email" placeholder="you@email.com" required>
             <button type="submit" class="btn btn-primary" id="lead-submit">Send</button>
           </form>
         </div>
-        <div class="lead-success hidden" id="lead-success">✓ Thanks — we'll be in touch within one working day.</div>
+        <div class="lead-success hidden" id="lead-success">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Thanks — we'll be in touch within 48 hours.
+        </div>
 
         <div class="actions no-print">
-          <button class="btn btn-dark" id="btn-restart">Start Over</button>
-          <button class="btn btn-dark" id="btn-pdf">Download PDF</button>
+          <button class="btn btn-secondary" id="btn-restart">Start Over</button>
+          <button class="btn btn-secondary" id="btn-pdf">Download PDF</button>
           <button class="btn btn-primary" id="btn-share">Share Results</button>
         </div>
       </div>
     </section>
 
     <footer class="site-footer">
-      Built by <a href="https://aifusionautomations.com" target="_blank" rel="noopener">AI Fusion Automations</a> · <a href="/">More free tools</a>
+      Built by <a href="https://aifusionautomations.com" target="_blank" rel="noopener">AI Fusion Automations</a>
     </footer>
   </div>
 
 <script>
 (() => {
   const $ = (sel) => document.querySelector(sel);
-  const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
   // ---------- Data ----------
   const INDUSTRIES = [
-    { id: 'saas',     label: 'SaaS / Software',     icon: 'computer' },
-    { id: 'ecom',     label: 'E-commerce / Retail', icon: 'cart' },
-    { id: 'health',   label: 'Health / Wellness',   icon: 'heart' },
-    { id: 'edu',      label: 'Education / EdTech',  icon: 'book' },
-    { id: 'fintech',  label: 'Finance / FinTech',   icon: 'bank' },
-    { id: 'ai',       label: 'AI / Machine Learning', icon: 'chip' },
-    { id: 'creator',  label: 'Creator Economy',     icon: 'pencil' },
-    { id: 'realestate', label: 'Real Estate',       icon: 'house' },
-    { id: 'food',     label: 'Food / Restaurant',   icon: 'utensils' },
-    { id: 'other',    label: 'Other',               icon: 'dot' }
+    { id: 'saas',       label: 'SaaS / Software',     icon: 'computer' },
+    { id: 'ecom',       label: 'E-commerce / Retail', icon: 'cart' },
+    { id: 'health',     label: 'Health / Wellness',   icon: 'heart' },
+    { id: 'edu',        label: 'Education / EdTech',  icon: 'book' },
+    { id: 'fintech',    label: 'Finance / FinTech',   icon: 'bank' },
+    { id: 'ai',         label: 'AI / Machine Learning', icon: 'chip' },
+    { id: 'creator',    label: 'Creator Economy',     icon: 'pencil' },
+    { id: 'realestate', label: 'Real Estate',         icon: 'house' },
+    { id: 'food',       label: 'Food / Restaurant',   icon: 'utensils' },
+    { id: 'other',      label: 'Other',               icon: 'sparkle' }
   ];
 
-  // 8 questions. Each option carries a category and a score 0..10.
-  // Categories map to the six metric tiles on the results screen.
   const QUESTIONS = [
-    {
-      id: 'q1',
-      title: "How clearly can you describe the problem you're solving?",
-      category: 'problem',
-      options: [
-        { label: 'Vague notion', score: 2 },
-        { label: 'Somewhat clear', score: 6 },
-        { label: 'Crystal clear with examples', score: 10 }
-      ]
-    },
-    {
-      id: 'q2',
-      title: 'Who specifically needs this?',
-      category: 'market',
-      options: [
-        { label: 'Everyone', score: 2 },
-        { label: 'A broad group', score: 6 },
-        { label: 'A specific niche I understand deeply', score: 10 }
-      ]
-    },
-    {
-      id: 'q3',
-      title: 'What do people currently use to solve this?',
-      category: 'competitive',
-      options: [
-        { label: 'Nothing exists', score: 4 },
-        { label: 'Several alternatives', score: 8 },
-        { label: 'Many competitors', score: 6 }
-      ]
-    },
-    {
-      id: 'q4',
-      title: 'Why would someone choose YOUR solution?',
-      category: 'competitive',
-      options: [
-        { label: 'Not sure yet', score: 2 },
-        { label: 'Slightly better UX/price', score: 5 },
-        { label: 'Fundamentally different approach', score: 10 }
-      ]
-    },
-    {
-      id: 'q5',
-      title: 'How will this make money?',
-      category: 'business',
-      options: [
-        { label: "Haven't figured that out", score: 2 },
-        { label: 'Ads or freemium', score: 6 },
-        { label: 'Clear paid model with willing buyers', score: 10 }
-      ]
-    },
-    {
-      id: 'q6',
-      title: 'Could you build a basic version in a weekend?',
-      category: 'execution',
-      options: [
-        { label: 'No, it needs months', score: 3 },
-        { label: 'Maybe in a few weeks', score: 7 },
-        { label: "Yes, it's focused enough", score: 10 }
-      ]
-    },
-    {
-      id: 'q7',
-      title: 'Have you talked to potential users?',
-      category: 'market',
-      options: [
-        { label: 'No', score: 2 },
-        { label: 'Informal conversations', score: 6 },
-        { label: 'Yes, people are asking for this', score: 10 }
-      ]
-    },
-    {
-      id: 'q8',
-      title: 'Are you the right person to build this?',
-      category: 'founder',
-      options: [
-        { label: "I just think it's cool", score: 3 },
-        { label: 'I have some experience', score: 6 },
-        { label: 'I live this problem daily', score: 10 }
-      ]
-    }
+    { id: 'q1', title: "How clearly can you describe the problem you're solving?", category: 'problem',
+      options: [{ label: 'Vague notion', score: 2 }, { label: 'Somewhat clear', score: 6 }, { label: 'Crystal clear with examples', score: 10 }] },
+    { id: 'q2', title: 'Who specifically needs this?', category: 'market',
+      options: [{ label: 'Everyone', score: 2 }, { label: 'A broad group', score: 6 }, { label: 'A specific niche I understand deeply', score: 10 }] },
+    { id: 'q3', title: 'What do people currently use to solve this?', category: 'competitive',
+      options: [{ label: 'Nothing exists', score: 4 }, { label: 'Several alternatives', score: 8 }, { label: 'Many competitors', score: 6 }] },
+    { id: 'q4', title: 'Why would someone choose YOUR solution?', category: 'competitive',
+      options: [{ label: 'Not sure yet', score: 2 }, { label: 'Slightly better UX or price', score: 5 }, { label: 'Fundamentally different approach', score: 10 }] },
+    { id: 'q5', title: 'How will this make money?', category: 'business',
+      options: [{ label: "Haven't figured that out", score: 2 }, { label: 'Ads or freemium', score: 6 }, { label: 'Clear paid model with willing buyers', score: 10 }] },
+    { id: 'q6', title: 'Could you build a basic version in a weekend?', category: 'execution',
+      options: [{ label: 'No, it needs months', score: 3 }, { label: 'Maybe in a few weeks', score: 7 }, { label: "Yes, it's focused enough", score: 10 }] },
+    { id: 'q7', title: 'Have you talked to potential users?', category: 'market',
+      options: [{ label: 'No', score: 2 }, { label: 'Informal conversations', score: 6 }, { label: 'Yes, people are asking for this', score: 10 }] },
+    { id: 'q8', title: 'Are you the right person to build this?', category: 'founder',
+      options: [{ label: "I just think it's cool", score: 3 }, { label: 'I have some experience', score: 6 }, { label: 'I live this problem daily', score: 10 }] }
   ];
 
   const METRIC_DEFS = [
@@ -654,43 +708,28 @@
     { key: 'founder',     label: 'Founder Fit' }
   ];
 
-  // ---------- State ----------
-  const state = {
-    idea: '',
-    industry: null,
-    answers: {},     // qid -> option index
-    qIndex: 0
-  };
+  const state = { idea: '', industry: null, answers: {}, qIndex: 0 };
 
-  // ---------- Icons (inline SVG) ----------
+  // ---------- Icons ----------
   function icon(name) {
-    const stroke = 'currentColor';
+    const s = 'currentColor';
+    const w = 'stroke-width="2"';
+    const a = `width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${s}" ${w} stroke-linecap="round" stroke-linejoin="round"`;
     switch (name) {
-      case 'computer':
-        return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>`;
-      case 'cart':
-        return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/><path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.4a2 2 0 0 0 2-1.5L21 8H6"/></svg>`;
-      case 'heart':
-        return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
-      case 'book':
-        return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`;
-      case 'bank':
-        return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-6 9 6"/><path d="M5 10v8M9 10v8M15 10v8M19 10v8"/><path d="M3 21h18"/></svg>`;
-      case 'chip':
-        return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3"/></svg>`;
-      case 'pencil':
-        return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>`;
-      case 'house':
-        return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a2 2 0 0 1-2 2h-4v-7h-6v7H5a2 2 0 0 1-2-2z"/></svg>`;
-      case 'utensils':
-        return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7a3 3 0 0 0 3 3v10"/><path d="M9 2v20"/><path d="M15 2v8a3 3 0 0 0 3 3h0V2"/><path d="M18 13v9"/></svg>`;
-      case 'dot':
-      default:
-        return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/></svg>`;
+      case 'computer': return `<svg ${a}><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>`;
+      case 'cart': return `<svg ${a}><circle cx="9" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/><path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.4a2 2 0 0 0 2-1.5L21 8H6"/></svg>`;
+      case 'heart': return `<svg ${a}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
+      case 'book': return `<svg ${a}><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`;
+      case 'bank': return `<svg ${a}><path d="M3 10l9-6 9 6"/><path d="M5 10v8M9 10v8M15 10v8M19 10v8"/><path d="M3 21h18"/></svg>`;
+      case 'chip': return `<svg ${a}><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3"/></svg>`;
+      case 'pencil': return `<svg ${a}><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>`;
+      case 'house': return `<svg ${a}><path d="M3 11l9-7 9 7v9a2 2 0 0 1-2 2h-4v-7h-6v7H5a2 2 0 0 1-2-2z"/></svg>`;
+      case 'utensils': return `<svg ${a}><path d="M3 2v7a3 3 0 0 0 3 3v10"/><path d="M9 2v20"/><path d="M15 2v8a3 3 0 0 0 3 3h0V2"/><path d="M18 13v9"/></svg>`;
+      case 'sparkle':
+      default: return `<svg ${a}><path d="M12 3l1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2L12 3z"/></svg>`;
     }
   }
 
-  // ---------- Step navigation ----------
   function show(stepId) {
     ['step-idea','step-industry','step-questions','step-results'].forEach(id => {
       document.getElementById(id).classList.toggle('hidden', id !== stepId);
@@ -700,15 +739,14 @@
 
   // ---------- Step 1: Idea ----------
   const ideaText = $('#idea-text');
+  const ideaCount = $('#idea-count');
   const btnStartValidation = $('#btn-start-validation');
   ideaText.addEventListener('input', () => {
     state.idea = ideaText.value.trim();
-    btnStartValidation.disabled = state.idea.length < 5;
+    ideaCount.textContent = ideaText.value.length;
+    btnStartValidation.disabled = state.idea.length < 10;
   });
-  btnStartValidation.addEventListener('click', () => {
-    renderIndustry();
-    show('step-industry');
-  });
+  btnStartValidation.addEventListener('click', () => { renderIndustry(); show('step-industry'); });
 
   // ---------- Step 2: Industry ----------
   function renderIndustry() {
@@ -729,14 +767,12 @@
   }
   document.querySelector('[data-nav="back-to-idea"]').addEventListener('click', () => show('step-idea'));
   $('#btn-start-questions').addEventListener('click', () => {
-    state.qIndex = 0;
-    renderQuestion();
-    show('step-questions');
+    state.qIndex = 0; renderQuestion(); show('step-questions');
   });
 
   // ---------- Step 3: Questions ----------
   const progressFill = $('#progress-fill');
-  const progressLabel = $('#progress-label');
+  const progressCurrent = $('#progress-current');
   const questionTitle = $('#question-title');
   const optionsWrap = $('#options');
   const btnBack = $('#btn-back');
@@ -747,14 +783,14 @@
     const total = QUESTIONS.length;
     const pct = ((state.qIndex) / total) * 100;
     progressFill.style.width = pct + '%';
-    progressLabel.textContent = `Question ${state.qIndex + 1} of ${total}`;
+    progressCurrent.textContent = state.qIndex + 1;
     questionTitle.textContent = q.title;
 
     optionsWrap.innerHTML = '';
     q.options.forEach((opt, i) => {
       const el = document.createElement('div');
       el.className = 'option' + (state.answers[q.id] === i ? ' selected' : '');
-      el.textContent = opt.label;
+      el.innerHTML = `<div class="option-radio"></div><div>${opt.label}</div>`;
       el.addEventListener('click', () => {
         state.answers[q.id] = i;
         renderQuestion();
@@ -765,19 +801,12 @@
 
     btnBack.style.display = state.qIndex === 0 ? 'none' : '';
     btnNext.disabled = state.answers[q.id] === undefined;
-    btnNext.textContent = (state.qIndex === total - 1) ? 'See Results' : 'Next Question';
+    btnNext.textContent = (state.qIndex === total - 1) ? 'See Results →' : 'Next →';
   }
-  btnBack.addEventListener('click', () => {
-    if (state.qIndex > 0) { state.qIndex--; renderQuestion(); }
-  });
+  btnBack.addEventListener('click', () => { if (state.qIndex > 0) { state.qIndex--; renderQuestion(); } });
   btnNext.addEventListener('click', () => {
     if (state.qIndex < QUESTIONS.length - 1) {
-      state.qIndex++;
-      renderQuestion();
-      // bump bar to 100% on the very last interaction
-      if (state.qIndex === QUESTIONS.length - 1) {
-        progressFill.style.width = ((state.qIndex) / QUESTIONS.length) * 100 + '%';
-      }
+      state.qIndex++; renderQuestion();
     } else {
       progressFill.style.width = '100%';
       computeAndShowResults();
@@ -787,44 +816,38 @@
 
   // ---------- Step 4: Results ----------
   function computeAndShowResults() {
-    // Aggregate per-category scores. Each category's max = 10 * #questions in it.
-    const sums = {};
-    const maxes = {};
+    const sums = {}, maxes = {};
     QUESTIONS.forEach(q => {
       const ans = state.answers[q.id];
       const score = (ans === undefined) ? 0 : q.options[ans].score;
       sums[q.category] = (sums[q.category] || 0) + score;
       maxes[q.category] = (maxes[q.category] || 0) + 10;
     });
-
-    const metrics = METRIC_DEFS.map(m => {
-      const max = maxes[m.key] || 10;
-      const got = sums[m.key] || 0;
-      const pct = Math.round((got / max) * 100);
-      return { ...m, pct };
-    });
-
+    const metrics = METRIC_DEFS.map(m => ({
+      ...m,
+      pct: Math.round(((sums[m.key] || 0) / (maxes[m.key] || 10)) * 100)
+    }));
     const overall = Math.round(metrics.reduce((acc, m) => acc + m.pct, 0) / metrics.length);
     renderResults(overall, metrics);
   }
 
-  function verdictFor(score, weakMetrics) {
+  function verdictFor(score, weak) {
     if (score >= 85) return {
-      title: '🚀 Strong validation signal.',
+      title: '🚀 Strong validation signal',
       body: 'Your idea has the markers of a viable opportunity. Keep moving — talk to more users and start prototyping.'
     };
     if (score >= 70) return {
-      title: '✦ Promising, but needs work.',
-      body: weakMetrics.length
-        ? `Your idea has strong potential, but needs improvement in: ${weakMetrics.join(' and ')}. Address these gaps before building to increase your chances of success.`
+      title: '✨ Promising, but needs work',
+      body: weak.length
+        ? `Your idea has strong potential, but needs improvement in ${weak.join(' and ')}. Address these gaps before building to increase your chances of success.`
         : 'Your idea is solid. Sharpen the weakest areas to push it from good to compelling.'
     };
     if (score >= 50) return {
-      title: '⚠ Mixed signals.',
+      title: '⚠️ Mixed signals',
       body: 'There are some good ingredients, but several risks remain. Get more user conversations and tighten your differentiation before investing more time.'
     };
     return {
-      title: '✕ Major gaps to close.',
+      title: '⚪ Major gaps to close',
       body: 'Your idea is too early to validate confidently. Focus on understanding the problem and the people, then revisit this scorecard.'
     };
   }
@@ -838,8 +861,7 @@
       execution: 'Execution Readiness: Cut scope. Identify the smallest possible version that still solves the core problem.',
       founder: 'Founder Fit: Partner with someone who lives this problem daily, or immerse yourself deeper in the target market.'
     };
-    return metrics
-      .slice()
+    return metrics.slice()
       .sort((a, b) => a.pct - b.pct)
       .filter(m => m.pct < 80)
       .slice(0, 3)
@@ -847,29 +869,25 @@
   }
 
   function renderResults(overall, metrics) {
-    // Industry line
     const industryLabel = (INDUSTRIES.find(i => i.id === state.industry) || {}).label || 'Other';
-    $('#industry-line').textContent = `Industry: ${industryLabel}`;
+    $('#industry-line').textContent = industryLabel;
 
-    // Score ring + counter animation
-    const radius = 76;
+    const radius = 86;
     const circ = 2 * Math.PI * radius;
     const arc = $('#score-arc');
     arc.style.strokeDasharray = circ.toFixed(2);
     arc.style.strokeDashoffset = circ.toFixed(2);
     requestAnimationFrame(() => {
-      arc.style.transition = 'stroke-dashoffset 1.1s cubic-bezier(.2,.8,.2,1)';
+      arc.style.transition = 'stroke-dashoffset 1.2s cubic-bezier(.2,.8,.2,1)';
       arc.style.strokeDashoffset = (circ * (1 - overall / 100)).toFixed(2);
     });
-    animateNumber($('#score-num'), 0, overall, 1100);
+    animateNumber($('#score-num'), 0, overall, 1200);
 
-    // Verdict
     const weak = metrics.filter(m => m.pct < 60).map(m => m.label);
     const v = verdictFor(overall, weak);
     $('#verdict-title').textContent = v.title;
     $('#verdict-body').textContent = v.body;
 
-    // Metrics grid
     const grid = $('#metrics-grid');
     grid.innerHTML = '';
     metrics.forEach(m => {
@@ -877,17 +895,16 @@
       const tile = document.createElement('div');
       tile.className = 'metric-tile';
       tile.innerHTML = `
-        <div class="metric-name">${m.label}</div>
+        <div class="metric-name">${m.label}<span class="pct">${m.pct}%</span></div>
         <div class="metric-bar"><div class="metric-fill ${cls}" style="width:0%"></div></div>
       `;
       grid.appendChild(tile);
       requestAnimationFrame(() => {
-        tile.querySelector('.metric-fill').style.transition = 'width .9s cubic-bezier(.2,.8,.2,1)';
+        tile.querySelector('.metric-fill').style.transition = 'width 1s cubic-bezier(.2,.8,.2,1)';
         tile.querySelector('.metric-fill').style.width = m.pct + '%';
       });
     });
 
-    // Recommendations
     const recsList = $('#recs-list');
     recsList.innerHTML = '';
     const recs = recommendationsFor(metrics);
@@ -918,15 +935,10 @@
     requestAnimationFrame(tick);
   }
 
-  // Restart / Share
+  // Restart / Lead capture / PDF / Share
   $('#btn-restart').addEventListener('click', () => {
-    state.idea = '';
-    state.industry = null;
-    state.answers = {};
-    state.qIndex = 0;
-    ideaText.value = '';
-    btnStartValidation.disabled = true;
-    // Reset lead form
+    state.idea = ''; state.industry = null; state.answers = {}; state.qIndex = 0;
+    ideaText.value = ''; ideaCount.textContent = '0'; btnStartValidation.disabled = true;
     $('#lead-form').reset();
     $('#lead-form').classList.remove('hidden');
     $('#lead-card').classList.remove('hidden');
@@ -934,10 +946,6 @@
     show('step-idea');
   });
 
-  // Lead capture
-  // Optional integrations (set these if you wire up GHL or a webhook):
-  //   window.IDEA_VALIDATOR_WEBHOOK = 'https://hooks.zapier.com/...';
-  //   window.IDEA_VALIDATOR_GHL_FORM = 'https://api.leadconnectorhq.com/widget/form/<formId>';
   $('#lead-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const name = $('#lead-name').value.trim();
@@ -958,14 +966,10 @@
     };
 
     try {
-      // Always log locally so the lead isn't lost if no integration is wired
       const leads = JSON.parse(localStorage.getItem('iv_leads') || '[]');
       leads.push(payload);
       localStorage.setItem('iv_leads', JSON.stringify(leads));
 
-      // Optional webhook (e.g. Zapier / Make / GHL inbound webhook)
-      // Use text/plain so the request stays a "simple request" (no CORS preflight) —
-      // GHL inbound webhooks parse the JSON body regardless of content-type.
       if (window.IDEA_VALIDATOR_WEBHOOK) {
         fetch(window.IDEA_VALIDATOR_WEBHOOK, {
           method: 'POST',
@@ -976,20 +980,14 @@
       }
     } catch {}
 
-    // Show success
     $('#lead-form').classList.add('hidden');
     $('#lead-card').classList.add('hidden');
     $('#lead-success').classList.remove('hidden');
   });
 
-  // PDF export
   $('#btn-pdf').addEventListener('click', async () => {
     const card = $('#results-card');
-    if (!window.html2pdf) {
-      // Fallback: print dialog
-      window.print();
-      return;
-    }
+    if (!window.html2pdf) { window.print(); return; }
     const btn = $('#btn-pdf');
     const original = btn.textContent;
     btn.textContent = 'Generating...';
@@ -1032,7 +1030,6 @@
     }
   });
 
-  // Init
   show('step-idea');
 })();
 </script>
