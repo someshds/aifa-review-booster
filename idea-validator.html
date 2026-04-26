@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
 <script>window.IDEA_VALIDATOR_WEBHOOK = 'https://services.leadconnectorhq.com/hooks/wIZS4RjMCtzdxqUQZunV/webhook-trigger/1dd4e792-dd25-4bf9-983e-aeae99bab89e';</script>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
@@ -985,28 +985,262 @@
     $('#lead-success').classList.remove('hidden');
   });
 
-  $('#btn-pdf').addEventListener('click', async () => {
-    const card = $('#results-card');
-    if (!window.html2pdf) { window.print(); return; }
+  // ---------- PDF generation (native jsPDF, not canvas rasterization) ----------
+  function buildPdf() {
+    const jsPDFCtor = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+    if (!jsPDFCtor) throw new Error('jsPDF not loaded');
+    const doc = new jsPDFCtor({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+
+    // Recompute all results so the PDF data matches the screen exactly
+    const sums = {}, maxes = {};
+    QUESTIONS.forEach(q => {
+      const ans = state.answers[q.id];
+      const score = (ans === undefined) ? 0 : q.options[ans].score;
+      sums[q.category] = (sums[q.category] || 0) + score;
+      maxes[q.category] = (maxes[q.category] || 0) + 10;
+    });
+    const metrics = METRIC_DEFS.map(m => ({
+      ...m,
+      pct: Math.round(((sums[m.key] || 0) / (maxes[m.key] || 10)) * 100)
+    }));
+    const overall = Math.round(metrics.reduce((acc, m) => acc + m.pct, 0) / metrics.length);
+    const weak = metrics.filter(m => m.pct < 60).map(m => m.label);
+    // Strip emoji from verdict title — jsPDF's standard fonts can't render them
+    const v0 = verdictFor(overall, weak);
+    const verdict = { title: v0.title.replace(/^[^A-Za-z]+/, '').trim(), body: v0.body };
+    const recs = recommendationsFor(metrics);
+    const industryLabel = (INDUSTRIES.find(i => i.id === state.industry) || {}).label || 'Other';
+
+    // ── Brand colors ──
+    const C = {
+      primary: [124, 58, 237],
+      accent:  [6, 182, 212],
+      text:    [15, 23, 42],
+      muted:   [100, 116, 139],
+      faint:   [148, 163, 184],
+      border:  [226, 232, 240],
+      bgSoft:  [248, 250, 252],
+      green:   [16, 185, 129],
+      yellow:  [245, 158, 11],
+      red:     [239, 68, 68],
+      white:   [255, 255, 255]
+    };
+
+    const PW = 210, PH = 297, M = 14;
+    const W = PW - 2 * M;
+    let y = M;
+
+    // ───── Header band ─────
+    doc.setFillColor(...C.primary);
+    doc.roundedRect(M, y, W, 16, 2.5, 2.5, 'F');
+    // Accent stripe at the right edge
+    doc.setFillColor(...C.accent);
+    doc.roundedRect(M + W - 4, y, 4, 16, 2.5, 2.5, 'F');
+    doc.setFillColor(...C.primary);
+    doc.rect(M + W - 8, y, 6, 16, 'F');
+    // Title
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.setTextColor(...C.white);
+    doc.text('IDEA VALIDATOR', M + 5, y + 7);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(220, 215, 250);
+    doc.text('Validation report · tools.aifusionautomations.com', M + 5, y + 12);
+    // Date (right side, before the accent stripe)
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(...C.white);
+    const dateStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    doc.text(dateStr, M + W - 12, y + 10, { align: 'right' });
+
+    y += 22;
+
+    // ───── Idea box ─────
+    doc.setFillColor(...C.bgSoft);
+    doc.setDrawColor(...C.border);
+    const ideaLines = doc.splitTextToSize(state.idea || '(no idea provided)', W - 8);
+    const ideaShown = ideaLines.slice(0, 4);
+    const ideaH = 8 + ideaShown.length * 4.6;
+    doc.roundedRect(M, y, W, ideaH, 2, 2, 'FD');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(7.5);
+    doc.setTextColor(...C.muted);
+    doc.text('YOUR IDEA', M + 4, y + 5);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9.5);
+    doc.setTextColor(...C.text);
+    doc.text(ideaShown, M + 4, y + 10);
+    y += ideaH + 5;
+
+    // ───── Score panel (industry pill + big score + verdict) ─────
+    const panelH = 50;
+    doc.setDrawColor(...C.border);
+    doc.setFillColor(...C.white);
+    doc.roundedRect(M, y, W, panelH, 2.5, 2.5, 'FD');
+
+    // Industry pill (top-left)
+    const indW = doc.getTextWidth(industryLabel) + 6;
+    doc.setFillColor(243, 232, 255);
+    doc.roundedRect(M + 5, y + 5, indW, 6, 3, 3, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(7.5);
+    doc.setTextColor(...C.primary);
+    doc.text(industryLabel.toUpperCase(), M + 5 + indW / 2, y + 9, { align: 'center' });
+
+    // Big score (left side)
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(46);
+    doc.setTextColor(...C.primary);
+    doc.text(String(overall), M + 8, y + 36);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(...C.muted);
+    doc.text('OUT OF 100', M + 8, y + 43);
+
+    // Score progress bar (right of the number, vertical separation)
+    const barX = M + 60;
+    const barW = W - 60 - 5;
+    // Verdict title
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(...C.text);
+    doc.text(verdict.title, barX, y + 11);
+    // Progress bar
+    doc.setFillColor(...C.border);
+    doc.roundedRect(barX, y + 14, barW, 3, 1.5, 1.5, 'F');
+    const overallColor = overall >= 70 ? C.green : overall >= 50 ? C.yellow : C.red;
+    doc.setFillColor(...overallColor);
+    const overallW = Math.max(2, barW * (overall / 100));
+    doc.roundedRect(barX, y + 14, overallW, 3, 1.5, 1.5, 'F');
+    // Verdict body
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8.5);
+    doc.setTextColor(...C.muted);
+    const vBody = doc.splitTextToSize(verdict.body, barW);
+    doc.text(vBody.slice(0, 5), barX, y + 23);
+
+    y += panelH + 6;
+
+    // ───── Metrics breakdown ─────
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.setTextColor(...C.muted);
+    doc.text('SCORING BREAKDOWN', M, y);
+    y += 4;
+
+    const cols = 2;
+    const colGap = 4;
+    const cardW = (W - colGap) / cols;
+    const cardH = 13;
+    metrics.forEach((m, i) => {
+      const col = i % cols;
+      const row = Math.floor(i / cols);
+      const cx = M + col * (cardW + colGap);
+      const cy = y + row * (cardH + 2);
+
+      doc.setDrawColor(...C.border);
+      doc.setFillColor(...C.white);
+      doc.roundedRect(cx, cy, cardW, cardH, 1.5, 1.5, 'FD');
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8.5);
+      doc.setTextColor(...C.text);
+      doc.text(m.label, cx + 3, cy + 5);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(...C.muted);
+      doc.text(`${m.pct}%`, cx + cardW - 3, cy + 5, { align: 'right' });
+
+      // Bar
+      doc.setFillColor(...C.border);
+      doc.roundedRect(cx + 3, cy + 8, cardW - 6, 2, 1, 1, 'F');
+      const fill = m.pct >= 70 ? C.green : m.pct >= 45 ? C.yellow : C.red;
+      doc.setFillColor(...fill);
+      const fw = Math.max(0.5, (cardW - 6) * (m.pct / 100));
+      doc.roundedRect(cx + 3, cy + 8, fw, 2, 1, 1, 'F');
+    });
+    y += Math.ceil(metrics.length / cols) * (cardH + 2) + 4;
+
+    // ───── Recommendations ─────
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.setTextColor(...C.muted);
+    doc.text('YOUR TOP NEXT STEPS', M, y);
+    y += 4;
+
+    const recItems = recs.length === 0
+      ? [{ key: 'all', text: 'Strong scores across all six dimensions. Talk to 5 more potential users this week and start prototyping the smallest possible version.', severity: 'ok' }]
+      : recs;
+
+    recItems.forEach(rec => {
+      const isAll = rec.key === 'all';
+      const head = isAll ? 'Nice work' : rec.text.split(':')[0];
+      const body = isAll ? rec.text : rec.text.split(':').slice(1).join(':').trim();
+      const accent = rec.severity === 'bad' ? C.red : rec.severity === 'warn' ? C.yellow : C.green;
+
+      const bodyLines = doc.splitTextToSize(body, W - 8);
+      const shown = bodyLines.slice(0, 3);
+      const blockH = 6 + shown.length * 4 + 3;
+
+      doc.setDrawColor(...C.border);
+      doc.setFillColor(...C.white);
+      doc.roundedRect(M, y, W, blockH, 1.5, 1.5, 'FD');
+      doc.setFillColor(...accent);
+      doc.rect(M, y, 1.5, blockH, 'F');
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8.5);
+      doc.setTextColor(...C.text);
+      doc.text(head + (isAll ? '.' : ':'), M + 4, y + 5);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.5);
+      doc.setTextColor(...C.muted);
+      doc.text(shown, M + 4, y + 9);
+
+      y += blockH + 2;
+    });
+
+    // ───── CTA / Footer ─────
+    // CTA box near the bottom
+    const ctaY = Math.min(y + 4, PH - M - 28);
+    doc.setFillColor(243, 232, 255);
+    doc.setDrawColor(...C.primary);
+    doc.roundedRect(M, ctaY, W, 18, 2, 2, 'FD');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(...C.primary);
+    doc.text('Want a personal review?', M + 5, ctaY + 7);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8.5);
+    doc.setTextColor(...C.text);
+    doc.text('Reply to grant@aifusionautomations.com or book a 15-minute call:', M + 5, ctaY + 12);
+    doc.setTextColor(...C.primary);
+    doc.textWithLink('link.aifusionautomations.com/widget/booking/5MSAczS5HPvcvB5OSZ5f', M + 5, ctaY + 16, {
+      url: 'https://link.aifusionautomations.com/widget/booking/5MSAczS5HPvcvB5OSZ5f'
+    });
+
+    // Footer
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7);
+    doc.setTextColor(...C.faint);
+    doc.text('Generated by Idea Validator · Built by AI Fusion Automations', PW / 2, PH - 8, { align: 'center' });
+
+    return doc;
+  }
+
+  $('#btn-pdf').addEventListener('click', () => {
     const btn = $('#btn-pdf');
     const original = btn.textContent;
-    btn.textContent = 'Generating...';
+    btn.textContent = 'Generating…';
     btn.disabled = true;
-    document.body.classList.add('pdf-mode');
     try {
-      const opt = {
-        margin: [10, 10, 10, 10],
-        filename: 'idea-validator-results.pdf',
-        image: { type: 'jpeg', quality: 0.96 },
-        html2canvas: { scale: 2, backgroundColor: '#ffffff', useCORS: true },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      };
-      await window.html2pdf().set(opt).from(card).save();
+      const doc = buildPdf();
+      const filename = `idea-validator-${new Date().toISOString().slice(0,10)}.pdf`;
+      doc.save(filename);
     } catch (err) {
       console.error('PDF export failed', err);
       alert('PDF export failed. Try the Share button instead.');
     } finally {
-      document.body.classList.remove('pdf-mode');
       btn.textContent = original;
       btn.disabled = false;
     }
