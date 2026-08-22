@@ -1,0 +1,127 @@
+{
+  "generated_at": "2026-08-22T05:54:54.339796+00:00",
+  "pages": 212,
+  "non_redirect": 207,
+  "severity": {
+    "low": 509,
+    "med": 189,
+    "high": 170
+  },
+  "by_type": {
+    "seo-desc-long": 174,
+    "og-image-missing": 96,
+    "schema-missing": 137,
+    "seo-title-long": 172,
+    "twitter-card-missing": 10,
+    "a11y-input-label": 61,
+    "sec-noopener": 13,
+    "a11y-iframe-title": 9,
+    "a11y-heading-skip": 3,
+    "seo-canonical-missing": 7,
+    "og-title-missing": 9,
+    "seo-title-short": 1,
+    "seo-title-missing": 1,
+    "seo-desc-missing": 7,
+    "a11y-viewport": 1,
+    "a11y-lang": 1,
+    "seo-h1-missing": 6,
+    "broken-internal-link": 50,
+    "sitemap-missing": 105,
+    "sitemap-extra": 5
+  },
+  "sitemap_missing_count": 105,
+  "sitemap_extra": [
+    "https://tools.aifusionautomations.com/ai-agents-v1.0.html",
+    "https://tools.aifusionautomations.com/boxleaguepro-lite.html",
+    "https://tools.aifusionautomations.com/dominate-v1.0.html",
+    "https://tools.aifusionautomations.com/essentials-v1.0.html",
+    "https://tools.aifusionautomations.com/growth-v1.0.html"
+  ],
+  "news_articles": 101,
+  "news_in_sitemap": 0,
+  "broken_internal_unique": [
+    "https://tools.aifusionautomations.com/audit"
+  ],
+  "missing_og_image_count": 96,
+  "gtm_pages": 28,
+  "fb_pages": 2,
+  "no_nav_js_count": 51,
+  "no_analytics_count": 179,
+  "big_assets_top": [
+    [
+      "tiles/ig-aifa-3.png",
+      1300022,
+      ".png"
+    ],
+    [
+      "tiles/fb-aifa-3.png",
+      1798384,
+      ".png"
+    ],
+    [
+      "tiles/ig-aifa-1.png",
+      1246547,
+      ".png"
+    ],
+    [
+      "tiles/li-grant-2.png",
+      1919063,
+      ".png"
+    ],
+    [
+      "tiles/li-grant-1.png",
+      1814660,
+      ".png"
+    ],
+    [
+      "tiles/li-aifa-1.png",
+      2097872,
+      ".png"
+    ],
+    [
+      "tiles/ig-aifa-4.png",
+      1267350,
+      ".png"
+    ],
+    [
+      "tiles/gbp-aifa-2.png",
+      1841933,
+      ".png"
+    ],
+    [
+      "tiles/fb-aifa-1.png",
+      1736331,
+      ".png"
+    ],
+    [
+      "tiles/li-grant-3.png",
+      1759201,
+      ".png"
+    ],
+    [
+      "tiles/ig-aifa-2.png",
+      1263073,
+      ".png"
+    ],
+    [
+      "tiles/gbp-aifa-1.png",
+      1792059,
+      ".png"
+    ],
+    [
+      "tiles/fb-aifa-2.png",
+      1814252,
+      ".png"
+    ],
+    [
+      "tiles/li-grant-4.png",
+      1835448,
+      ".png"
+    ],
+    [
+      "tiles/li-aifa-2.png",
+      1849592,
+      ".png"
+    ]
+  ]
+}
