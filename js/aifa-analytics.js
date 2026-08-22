@@ -8,6 +8,7 @@
   window.dataLayer = window.dataLayer || [];
 
   function push(eventName, params) {
+    if (window.aifaConsent && !window.aifaConsent.allowsMarketing()) return;
     try {
       window.dataLayer.push(Object.assign({ event: eventName }, params || {}));
     } catch (e) {

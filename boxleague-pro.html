@@ -13,7 +13,9 @@
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="apple-touch-icon" sizes="192x192" href="/favicon-192.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="/js/aifa-consent.js?v=consent-v1"></script>
   <title>BoxLeague Pro</title>
+<meta property="og:image" content="https://tools.aifusionautomations.com/og-default.png">
   <link rel="canonical" href="https://tools.aifusionautomations.com/boxleague-pro.html">
   <meta name="description" content="Free app for organising box league matches. Find times, book matches, share with your club.">
   <meta name="theme-color" content="#1e3a8a">
@@ -339,7 +341,7 @@
     @media (min-width: 600px) { .content { padding: 24px; } }
   </style>
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="/css/aifa-nav.css?v=footer-v2">
+<link rel="stylesheet" href="/css/aifa-nav.css?v=footer-v3">
 <link rel="stylesheet" href="/css/aifa-katalyst.css?v=phase-4">
 </head>
 <body>
@@ -377,12 +379,15 @@
 
   <div class="auth-form">
     <div class="auth-error" id="auth-error"></div>
+    <label class="aifa-sr-only" for="auth-name">Your name</label>
     <input class="fi" id="auth-name" type="text" placeholder="Your name" style="display:none">
-    <input class="fi" id="auth-email" type="email" placeholder="Email address">
-    <input class="fi" id="auth-password" type="password" placeholder="Password (min 6 characters)">
+    <label class="aifa-sr-only" for="auth-email">Email address</label>
+    <input class="fi" id="auth-email" type="email" placeholder="Email address" autocomplete="email">
+    <label class="aifa-sr-only" for="auth-password">Password</label>
+    <input class="fi" id="auth-password" type="password" placeholder="Password (min 6 characters)" autocomplete="current-password">
     <label id="auth-gdpr" style="display:none;color:rgba(255,255,255,0.85);font-size:13px;line-height:1.5;margin:8px 0 12px;text-align:left;cursor:pointer">
       <input type="checkbox" id="auth-consent" style="margin-right:8px;vertical-align:middle;width:16px;height:16px">
-      I agree to receive match updates and league communications. We'll store your name and email to manage your league. You can unsubscribe or request data deletion at any time. <a href="https://tools.aifusionautomations.com/privacy-policy.html" target="_blank" style="color:#93c5fd">Privacy Policy</a>
+      I agree to receive match updates and league communications. We'll store your name and email to manage your league. You can unsubscribe or request data deletion at any time. <a href="https://tools.aifusionautomations.com/privacy-policy-aifa.html" target="_blank" rel="noopener" style="color:#93c5fd">Privacy Policy</a>
     </label>
     <button class="btn-email" id="btn-email-signin" onclick="emailSignIn()">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg>
@@ -436,6 +441,7 @@
       <div style="font-size:15px;font-weight:700;margin-bottom:4px">Have a league code?</div>
       <div style="font-size:13px;color:var(--muted);margin-bottom:10px;line-height:1.4">Your league organiser will have shared a 6-character code (e.g. AK7T3P). Enter it below to join their league instantly.</div>
       <div style="display:flex;gap:8px">
+        <label class="aifa-sr-only" for="inp-league-code">League code</label>
         <input class="fi" id="inp-league-code" placeholder="e.g. AK7T3P" maxlength="6" style="flex:1;text-transform:uppercase;letter-spacing:2px;font-weight:700;text-align:center">
         <button class="btn btn-primary" onclick="joinByCode()" style="white-space:nowrap">Join</button>
       </div>
@@ -445,6 +451,7 @@
 
     <div class="section-title">Find your club</div>
     <div class="fg">
+      <label class="aifa-sr-only" for="inp-club-search">Search clubs</label>
       <input class="fi" id="inp-club-search" placeholder="Search or type club name..." oninput="searchClubs()">
     </div>
     <div id="club-results"></div>
@@ -480,11 +487,11 @@
       <div id="create-league-form" style="display:none" class="card mt12">
         <div class="card-title" style="margin-bottom:12px">New League</div>
         <div class="fg">
-          <label class="fl">League Name</label>
+          <label class="fl" for="inp-create-league-name">League Name</label>
           <input class="fi" id="inp-create-league-name" placeholder="e.g. Men's Doubles Box 3">
         </div>
         <div class="fg">
-          <label class="fl">Sport</label>
+          <label class="fl" for="inp-create-league-sport">Sport</label>
           <select class="fi" id="inp-create-league-sport">
             <option value="tennis">Tennis</option>
             <option value="padel">Padel</option>
@@ -525,6 +532,7 @@
       <div class="wizard-step-title">What's your name?</div>
       <div class="wizard-step-desc">This is how other players will see you in the league.</div>
       <div class="fg">
+        <label class="aifa-sr-only" for="wiz-name">Your name</label>
         <input class="fi" id="wiz-name" placeholder="e.g. Grant" style="font-size:20px;text-align:center;font-weight:700">
       </div>
       <div class="wizard-nav">
@@ -538,6 +546,7 @@
       <div class="wizard-step-title">Who's your doubles partner?</div>
       <div class="wizard-step-desc">Enter their first name. If they've already joined, we'll match you up automatically.</div>
       <div class="fg">
+        <label class="aifa-sr-only" for="wiz-partner">Partner name</label>
         <input class="fi" id="wiz-partner" placeholder="e.g. James" style="font-size:20px;text-align:center;font-weight:700">
       </div>
       <div id="wiz-partner-match" style="display:none" class="success-box mt12"></div>
@@ -636,11 +645,11 @@
       <div class="card">
         <div class="card-title" style="margin-bottom:12px">League Settings</div>
         <div class="fg">
-          <label class="fl">League Name</label>
+          <label class="fl" for="inp-league-name">League Name</label>
           <input class="fi" id="inp-league-name" placeholder="e.g. Men's Doubles Box 3" oninput="saveSettings()">
         </div>
         <div class="fg">
-          <label class="fl">Availability Deadline</label>
+          <label class="fl" for="inp-deadline">Availability Deadline</label>
           <input class="fi" type="datetime-local" id="inp-deadline" onchange="saveSettings()">
         </div>
       </div>
@@ -654,11 +663,11 @@
         <div class="card">
           <div class="card-title" style="margin-bottom:12px">New Team</div>
           <div class="fg">
-            <label class="fl">Team Name</label>
+            <label class="fl" for="inp-gname">Team Name</label>
             <input class="fi" id="inp-gname" placeholder="e.g. Grant & James">
           </div>
           <div class="fg">
-            <label class="fl">Player Names <span style="font-weight:400;text-transform:none">(comma-separated)</span></label>
+            <label class="fl" for="inp-gplayers">Player Names <span style="font-weight:400;text-transform:none">(comma-separated)</span></label>
             <input class="fi" id="inp-gplayers" placeholder="e.g. Grant, James">
           </div>
           <div style="display:flex;gap:8px">
@@ -682,7 +691,7 @@
           <div class="card-title" style="margin-bottom:8px" id="template-title">Quick Add</div>
           <div class="info-box" id="template-info"></div>
           <div class="fg">
-            <label class="fl">Paste names <span style="font-weight:400;text-transform:none">(one team per line)</span></label>
+            <label class="fl" for="inp-template">Paste names <span style="font-weight:400;text-transform:none">(one team per line)</span></label>
             <textarea class="fi" id="inp-template" rows="6" style="font-size:15px;line-height:1.6"></textarea>
           </div>
           <div style="display:flex;gap:8px">
@@ -878,10 +887,10 @@
       <button onclick="closeProfile()" style="background:none;border:none;font-size:24px;cursor:pointer;color:#64748b;padding:4px">&times;</button>
     </div>
     <div style="padding:20px">
-      <div style="font-size:13px;font-weight:600;color:#6b7280;margin-bottom:4px">Player Name</div>
+      <label for="profile-name" style="display:block;font-size:13px;font-weight:600;color:#6b7280;margin-bottom:4px">Player Name</label>
       <input class="fi" id="profile-name" placeholder="Your name" style="margin-bottom:12px">
       <div id="profile-partner-wrap">
-        <div style="font-size:13px;font-weight:600;color:#6b7280;margin-bottom:4px">Partner Name</div>
+        <label for="profile-partner" style="display:block;font-size:13px;font-weight:600;color:#6b7280;margin-bottom:4px">Partner Name</label>
         <input class="fi" id="profile-partner" placeholder="Your partner's name" style="margin-bottom:12px">
       </div>
       <div style="font-size:12px;color:#9ca3af;margin-bottom:16px">Changes will update your team in this league.</div>
@@ -902,7 +911,7 @@
     </p>
     <label style="display:flex;align-items:flex-start;gap:10px;text-align:left;font-size:13px;color:#374151;line-height:1.5;margin-bottom:20px;cursor:pointer">
       <input type="checkbox" id="google-consent-check" checked style="margin-top:3px;width:16px;height:16px;flex-shrink:0">
-      I agree to receive match updates and league communications. You can unsubscribe or request data deletion at any time. <a href="https://tools.aifusionautomations.com/privacy-policy.html" target="_blank" style="color:#2563eb">Privacy Policy</a>
+      I agree to receive match updates and league communications. You can unsubscribe or request data deletion at any time. <a href="https://tools.aifusionautomations.com/privacy-policy-aifa.html" target="_blank" rel="noopener" style="color:#2563eb">Privacy Policy</a>
     </label>
     <div style="display:flex;gap:10px">
       <button onclick="declineGoogleConsent()" style="flex:1;padding:12px;border-radius:10px;border:1.5px solid #e2e8f0;background:#fff;font-size:15px;font-weight:600;cursor:pointer;color:#6b7280">No thanks</button>
@@ -2961,6 +2970,6 @@ setInterval(renderDeadline, 60000);
 </script>
 
 <script defer src="/js/aifa-analytics.js"></script>
-<script src="/js/aifa-nav.js?v=footer-v2" defer></script>
+<script src="/js/aifa-nav.js?v=footer-v3" defer></script>
 </body>
 </html>

@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 BASE_URL = "https://tools.aifusionautomations.com"
@@ -21,10 +21,13 @@ BASE_URL = "https://tools.aifusionautomations.com"
 # Exact filenames (relative to repo root) to skip — duplicates, legacy, drafts.
 EXCLUDE_FILES = {
     "index.html.bak",
-    "tools-index.html",            # legacy version of index.html
+    "404.html",
+    "audit.html",                  # redirect stub → strategy-call.html
+    "book.html",                   # redirect stub → strategy-call.html
     "privacy-policy.html",         # superseded by privacy-policy-aifa.html
     "boxleaguepro-lite.html",      # superseded by boxleague-pro.html
     "roi-calculator.html",         # superseded by roi-calculator-v2.0.html
+    "includes/comparison-table.html",
     "3d-demo-template.html",       # template, not a public page
     "ai-tools-cheat-sheet.html",   # not yet deployed (404 currently)
     "skill-pack-download.html",    # not yet deployed
@@ -33,6 +36,7 @@ EXCLUDE_FILES = {
 # Files matching these regex patterns are excluded.
 EXCLUDE_PATTERNS = [
     re.compile(r".*-v1\.0\.html$"),  # all -v1.0 legacy duplicates
+    re.compile(r"^videos/.+/index\.html$"),  # slide-deck canvases, not articles
 ]
 
 # Priority by URL pattern (highest match wins). 1.0 = highest, 0.0 = lowest.
@@ -47,6 +51,9 @@ PRIORITY_RULES = [
     (re.compile(r"^/about\.html$"), 0.7, "monthly"),
     (re.compile(r"^/blog/$"), 0.85, "weekly"),
     (re.compile(r"^/blog/.+\.html$"), 0.7, "monthly"),
+    (re.compile(r"^/news/$"), 0.85, "weekly"),
+    (re.compile(r"^/news/.+\.html$"), 0.65, "monthly"),
+    (re.compile(r"^/tools-index\.html$"), 0.8, "monthly"),
     (re.compile(r"^/services/$"), 0.7, "weekly"),
     (re.compile(r"^/services/.+\.html$"), 0.6, "monthly"),
     (re.compile(r"^/videos/$"), 0.75, "monthly"),
@@ -102,7 +109,7 @@ def collect_pages() -> list[tuple[str, float, str]]:
 
 
 def render_sitemap(pages: list[tuple[str, float, str]]) -> str:
-    today = datetime.utcnow().strftime("%Y-%m-%d")
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     lines = ['<?xml version="1.0" encoding="UTF-8"?>',
              '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for url, priority, changefreq in pages:

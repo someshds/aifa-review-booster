@@ -7,6 +7,7 @@
   var AIFA_CHAT_RESOURCES_URL = 'https://widgets.leadconnectorhq.com/chat-widget/loader.js';
 
   var navMarkup = [
+    '<a class="aifa-skip-link" href="#main">Skip to content</a>',
     '<nav class="aifa-global-nav" aria-label="Primary">',
     '  <div class="aifa-nav-inner">',
     '    <a class="aifa-nav-brand" href="/">',
@@ -34,6 +35,7 @@
     '        <div class="aifa-nav-dropdown">',
     '          <a href="/products/">Products Hub</a>',
     '          <a href="/products/ai-agents.html">AI Agents</a>',
+    '          <a href="/products/chatbots.html">AI Chatbots</a>',
     '          <a href="/products/crm.html">CRM</a>',
     '          <a href="/products/funnels.html">Funnels</a>',
     '          <a href="/products/email-sms.html">Email &amp; SMS</a>',
@@ -55,7 +57,7 @@
     '      <li class="aifa-nav-item">',
     '        <button class="aifa-nav-trigger" type="button" aria-expanded="false">Free Tools</button>',
     '        <div class="aifa-nav-dropdown">',
-    '          <a href="/tools-index.html">Tools Hub</a>',
+    '          <a href="/tools-index.html">Tools hub</a>',
     '          <a href="/idea-validator.html">Idea Validator</a>',
     '          <a href="/roi-calculator-v2.0.html">ROI Calculator</a>',
     '          <a href="/review-booster.html">Review Booster</a>',
@@ -67,8 +69,7 @@
     '      <li class="aifa-nav-item">',
     '        <button class="aifa-nav-trigger" type="button" aria-expanded="false">Events</button>',
     '        <div class="aifa-nav-dropdown">',
-    '          <a href="https://go.aifusionautomations.com/ai-office-hours-page">AI Office Hours - 23 June</a>',
-    '          <a href="https://go.aifusionautomations.com/aifa-webinar-transforming-your-work-2026">AI Workflow Webinar - 25 June</a>',
+    '          <a href="/webinars/transforming-your-work-replay.html">Webinar replay</a>',
     '        </div>',
     '      </li>',
     '      <li><a class="aifa-nav-link" href="/blog/">Blog</a></li>',
@@ -113,14 +114,15 @@
     '      </div>',
     '      <div class="aifa-footer-column">',
     '        <h2>Company</h2>',
-    '        <a href="https://go.aifusionautomations.com/ai-office-hours-page">AI Office Hours - 23 June</a>',
-    '        <a href="https://go.aifusionautomations.com/aifa-webinar-transforming-your-work-2026">AI Workflow Webinar - 25 June</a>',
+    '        <a href="/webinars/transforming-your-work-replay.html">Webinar replay</a>',
     '        <a href="/blog/">Blog</a>',
-    '        <a href="/#book-a-call">Contact Us</a>',
+    '        <a href="/news/">AI News archive</a>',
+    '        <a href="/strategy-call.html">Contact Us</a>',
     '        <a href="/strategy-call.html">Book a Call</a>',
     '        <a href="/privacy-policy-aifa.html">Privacy Policy</a>',
     '        <a href="/terms.html">Terms &amp; Conditions</a>',
     '        <a href="/earnings-disclaimer.html">Earnings Disclaimer</a>',
+    '        <a href="#cookies" class="aifa-cookie-settings">Cookie settings</a>',
     '      </div>',
     '    </div>',
     '    <div class="aifa-footer-bottom">',
@@ -133,7 +135,7 @@
     '        <a href="https://x.com/ai_fusion_auto" aria-label="AI Fusion Automations on X">X</a>',
     '        <a href="https://www.linkedin.com/company/ai-fusion-automations/" aria-label="AI Fusion Automations on LinkedIn">in</a>',
     '        <a href="https://www.facebook.com/aifusionautomations" aria-label="AI Fusion Automations on Facebook">f</a>',
-    '        <a href="https://www.youtube.com/@AIFusionAutomations" aria-label="AI Fusion Automations on YouTube">&#9658;</a>',
+    '        <a href="/webinars/transforming-your-work-replay.html" aria-label="AI Fusion Automations webinar on YouTube">&#9658;</a>',
     '      </div>',
     '    </div>',
     '  </div>',
@@ -249,6 +251,11 @@
     }
 
     var footerOnly = document.body.hasAttribute('data-aifa-footer-only');
+    if (!document.getElementById('main')) {
+      var mainEl = document.querySelector('main') || document.querySelector('.hero, .page-shell, .article-shell, .container');
+      if (mainEl && !mainEl.id) mainEl.id = 'main';
+      else if (!mainEl) document.body.id = document.body.id || 'main';
+    }
     document.body.classList.add('aifa-nav-ready');
     if (footerOnly) {
       document.body.classList.add('aifa-footer-only');
@@ -280,6 +287,16 @@
     }
 
     footerMount.innerHTML = footerMarkup;
+    var cookieLink = footerMount.querySelector('.aifa-cookie-settings');
+    if (cookieLink) {
+      cookieLink.addEventListener('click', function (event) {
+        event.preventDefault();
+        if (window.aifaConsent && typeof window.aifaConsent.show === 'function') {
+          try { localStorage.removeItem('aifa_cookie_consent'); } catch (e) {}
+          window.aifaConsent.show();
+        }
+      });
+    }
     loadAifaChatWidget();
   }
 
@@ -302,6 +319,19 @@
 
   function loadAifaChatWidget() {
     if (shouldSkipAifaChatWidget()) {
+      return;
+    }
+
+    if (!window.aifaConsent || !window.aifaConsent.allowsMarketing()) {
+      Array.prototype.slice.call(document.querySelectorAll('script[data-widget-id]')).forEach(function (script) {
+        script.remove();
+      });
+      if (!window.__aifaChatConsentBound) {
+        window.__aifaChatConsentBound = true;
+        window.addEventListener('aifa-consent-changed', function (event) {
+          if (event.detail === 'all') loadAifaChatWidget();
+        });
+      }
       return;
     }
 
