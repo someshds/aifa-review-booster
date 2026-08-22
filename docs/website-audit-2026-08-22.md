@@ -7,6 +7,34 @@
 
 ---
 
+## Remediation status (22 August 2026)
+
+In-repo remediations for every finding we can fix without Cloudflare, Squarespace DNS, or new editorial content. Live GitHub Pages will match after this branch deploys.
+
+**Fixed in this branch**
+
+- `/audit` stub redirects to `/strategy-call.html`; 50 news “Book free audit” buttons now hit that calendar.
+- Branded `404.html` (GitHub Pages custom 404).
+- Sitemap regenerated from the file tree: news articles, `/products/ai-agents.html`, `/products/chatbots.html`, and `/tools-index.html` are included. Legacy `*-v1.0.html`, `boxleaguepro-lite.html`, `book.html`, `audit.html`, `404.html`, `includes/comparison-table.html`, and video slide decks are excluded.
+- Legacy pricing/product URLs and video slide decks are `noindex`.
+- `robots.txt` disallows `/includes/`.
+- Cookie banner (`js/aifa-consent.js`) stores `aifa_cookie_consent`. GTM, Meta Pixel, and the AIFA chat widget load only after Accept all. Privacy §8 matches that behaviour.
+- Nav/footer: skip link, Chatbots in Products, Tools hub → `/tools-index.html` (real hub, not a redirect), Events → webinar replay, Cookie settings, YouTube 404 handle removed.
+- Old calendar `BROmkGCfiVZy4Kgg0sWi` and `aifusionautomations.com/#book-a-call` CTAs now point at `/strategy-call.html`.
+- Homepage Organization JSON-LD + default `og:image`; default OG image added site-wide where missing.
+- News hub labelled as an archive (paused after 7 July 2026); July 7 “26 days away” headlines restated in past tense.
+- Form labels on Idea Validator, Review Booster, Analyser, CRM lead magnets, League Scheduler, and BoxLeague Pro auth/settings fields.
+
+**Cannot fix in this repo**
+
+- Security headers, long-cache for CSS/JS, and HTTP 301s (GitHub Pages; needs Cloudflare or similar).
+- Apex / `www` vs `tools.` as the single canonical host (Squarespace DNS).
+- Resuming the news desk (editorial).
+- Moving 12–21 MB founder MP4s off GitHub Pages.
+- Rewriting 49 thin industry templates into distinct guides.
+
+---
+
 ## Executive summary
 
 The site is a real marketing engine: a polished dark-theme homepage, a full products hub, 49 industry landing pages, free tools, and a high-volume AI news desk. Brand, proof (founder walkthroughs, case study), and booking infrastructure are in place.
