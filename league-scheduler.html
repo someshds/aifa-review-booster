@@ -6,7 +6,9 @@
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="apple-touch-icon" sizes="192x192" href="/favicon-192.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<script src="/js/aifa-consent.js?v=consent-v1"></script>
   <title>League Scheduler — BoxLeague Pro</title>
+<meta property="og:image" content="https://tools.aifusionautomations.com/og-default.png">
   <link rel="canonical" href="https://tools.aifusionautomations.com/league-scheduler.html">
   <style>
     :root {
@@ -296,7 +298,7 @@
 <meta name="description" content="BoxLeague Pro's League Scheduler — auto-generates round-robin and knockout schedules from player availability described in plain English.">
 <meta property="og:title" content="League Scheduler — BoxLeague Pro">
 <meta property="og:description" content="BoxLeague Pro's League Scheduler — auto-generates round-robin and knockout schedules from player availability described in plain English.">
-<link rel="stylesheet" href="/css/aifa-nav.css?v=footer-v2">
+<link rel="stylesheet" href="/css/aifa-nav.css?v=footer-v3">
 <link rel="stylesheet" href="/css/aifa-katalyst.css?v=phase-4">
 </head>
 <body class="has-aifa-nav">
@@ -310,7 +312,7 @@
       <li><a href="https://tools.aifusionautomations.com">&#8592; All Free Tools</a></li>
       <li><a href="https://tools.aifusionautomations.com/#services">Services</a></li>
       <li><a href="https://tools.aifusionautomations.com/#blog">Blog</a></li>
-      <li><a href="https://tools.aifusionautomations.com/#book-a-call" class="aifa-site-nav-cta">Book a Call</a></li>
+      <li><a href="/strategy-call.html" class="aifa-site-nav-cta">Book a Call</a></li>
     </ul>
     <button class="aifa-site-nav-hamburger" id="aifaHamburger" aria-label="Open menu">
       <span></span><span></span><span></span>
@@ -322,7 +324,7 @@
   <a href="https://tools.aifusionautomations.com" onclick="aifaCloseMobile()">&#8592; All Free Tools</a>
   <a href="https://tools.aifusionautomations.com/#services" onclick="aifaCloseMobile()">Services</a>
   <a href="https://tools.aifusionautomations.com/#blog" onclick="aifaCloseMobile()">Blog</a>
-  <a href="https://tools.aifusionautomations.com/#book-a-call" class="aifa-mobile-cta" onclick="aifaCloseMobile()">Book a Call</a>
+  <a href="/strategy-call.html" class="aifa-mobile-cta" onclick="aifaCloseMobile()">Book a Call</a>
 </div>
 
 
@@ -365,9 +367,9 @@
 
     <div id="add-team-form" class="card" style="display:none; border:2px solid var(--green); background:#f8faff;">
       <div class="card-title" style="margin-bottom:12px">New Team</div>
-      <div class="fg"><label class="fl">Team Name</label><input class="fi" id="inp-tname" placeholder="e.g. The Aces" /></div>
-      <div class="fg"><label class="fl">Player 1</label><input class="fi" id="inp-p1" placeholder="First Last" /></div>
-      <div class="fg"><label class="fl">Player 2</label><input class="fi" id="inp-p2" placeholder="First Last" /></div>
+      <div class="fg"><label class="fl" for="inp-tname">Team Name</label><input class="fi" id="inp-tname" placeholder="e.g. The Aces" /></div>
+      <div class="fg"><label class="fl" for="inp-p1">Player 1</label><input class="fi" id="inp-p1" placeholder="First Last" /></div>
+      <div class="fg"><label class="fl" for="inp-p2">Player 2</label><input class="fi" id="inp-p2" placeholder="First Last" /></div>
       <div class="flex gap8 mt8">
         <button class="btn btn-secondary" style="flex:1" onclick="hideAddTeamForm()">Cancel</button>
         <button class="btn btn-primary" style="flex:1" onclick="addTeam()">Add Team</button>
@@ -379,7 +381,7 @@
     <div class="divider" style="margin:24px 0 16px"></div>
     <div class="card-title" style="margin-bottom:12px">💬 Comments &amp; Feedback</div>
     <div class="card">
-      <div class="fg" style="margin-bottom:0"><label class="fl">Your Name</label>
+      <div class="fg" style="margin-bottom:0"><label class="fl" for="cmt-sel-teams">Your Name</label>
         <select class="fi" id="cmt-sel-teams" onchange="renderComments('teams')">
           <option value="">— Select your name —</option>
         </select>
@@ -388,6 +390,7 @@
     <div id="cmt-messages-teams" class="chat-messages" style="max-height:280px"><div class="chat-empty">No comments yet — be the first!</div></div>
     <div class="card" style="padding:12px">
       <div class="chat-input-row">
+        <label class="aifa-sr-only" for="cmt-input-teams">Add a comment</label>
         <input class="fi" id="cmt-input-teams" placeholder="Add a comment…" style="flex:1;margin-bottom:0" onkeydown="commentKeyDown(event,'teams')" />
         <button class="btn btn-primary" onclick="sendComment('teams')">Send</button>
       </div>
@@ -401,7 +404,7 @@
     <div class="section-title">My Availability</div>
     <div class="card">
       <div class="fg" style="margin-bottom:0">
-        <label class="fl">Your Name</label>
+        <label class="fl" for="avail-sel">Your Name</label>
         <select class="fi" id="avail-sel" onchange="onPlayerSelect()">
           <option value="">— Select your name —</option>
         </select>
@@ -435,7 +438,7 @@
     <div class="divider" style="margin:24px 0 16px"></div>
     <div class="card-title" style="margin-bottom:12px">💬 Comments &amp; Feedback</div>
     <div class="card">
-      <div class="fg" style="margin-bottom:0"><label class="fl">Your Name</label>
+      <div class="fg" style="margin-bottom:0"><label class="fl" for="cmt-sel-availability">Your Name</label>
         <select class="fi" id="cmt-sel-availability" onchange="renderComments('availability')">
           <option value="">— Select your name —</option>
         </select>
@@ -444,6 +447,7 @@
     <div id="cmt-messages-availability" class="chat-messages" style="max-height:280px"><div class="chat-empty">No comments yet — be the first!</div></div>
     <div class="card" style="padding:12px">
       <div class="chat-input-row">
+        <label class="aifa-sr-only" for="cmt-input-availability">Add a comment</label>
         <input class="fi" id="cmt-input-availability" placeholder="Add a comment…" style="flex:1;margin-bottom:0" onkeydown="commentKeyDown(event,'availability')" />
         <button class="btn btn-primary" onclick="sendComment('availability')">Send</button>
       </div>
@@ -456,6 +460,7 @@
     <div class="info-box" style="margin-bottom:14px">ℹ️ Tap any fixture to see details or enter a score. Filter by status using the dropdown below.</div>
     <div class="section-title">Fixtures</div>
     <div style="margin-bottom:12px">
+      <label class="aifa-sr-only" for="fix-filter">Filter fixtures</label>
       <select class="fi" id="fix-filter" onchange="renderFixtures()">
         <option value="all">All matches</option>
         <option value="unscheduled">Unscheduled</option>
@@ -468,7 +473,7 @@
     <div class="divider" style="margin:24px 0 16px"></div>
     <div class="card-title" style="margin-bottom:12px">💬 Comments &amp; Feedback</div>
     <div class="card">
-      <div class="fg" style="margin-bottom:0"><label class="fl">Your Name</label>
+      <div class="fg" style="margin-bottom:0"><label class="fl" for="cmt-sel-fixtures">Your Name</label>
         <select class="fi" id="cmt-sel-fixtures" onchange="renderComments('fixtures')">
           <option value="">— Select your name —</option>
         </select>
@@ -477,6 +482,7 @@
     <div id="cmt-messages-fixtures" class="chat-messages" style="max-height:280px"><div class="chat-empty">No comments yet — be the first!</div></div>
     <div class="card" style="padding:12px">
       <div class="chat-input-row">
+        <label class="aifa-sr-only" for="cmt-input-fixtures">Add a comment</label>
         <input class="fi" id="cmt-input-fixtures" placeholder="Add a comment…" style="flex:1;margin-bottom:0" onkeydown="commentKeyDown(event,'fixtures')" />
         <button class="btn btn-primary" onclick="sendComment('fixtures')">Send</button>
       </div>
@@ -492,7 +498,7 @@
     <div class="divider" style="margin:24px 0 16px"></div>
     <div class="card-title" style="margin-bottom:12px">💬 Comments &amp; Feedback</div>
     <div class="card">
-      <div class="fg" style="margin-bottom:0"><label class="fl">Your Name</label>
+      <div class="fg" style="margin-bottom:0"><label class="fl" for="cmt-sel-table">Your Name</label>
         <select class="fi" id="cmt-sel-table" onchange="renderComments('table')">
           <option value="">— Select your name —</option>
         </select>
@@ -501,6 +507,7 @@
     <div id="cmt-messages-table" class="chat-messages" style="max-height:280px"><div class="chat-empty">No comments yet — be the first!</div></div>
     <div class="card" style="padding:12px">
       <div class="chat-input-row">
+        <label class="aifa-sr-only" for="cmt-input-table">Add a comment</label>
         <input class="fi" id="cmt-input-table" placeholder="Add a comment…" style="flex:1;margin-bottom:0" onkeydown="commentKeyDown(event,'table')" />
         <button class="btn btn-primary" onclick="sendComment('table')">Send</button>
       </div>
@@ -514,7 +521,7 @@
     <div class="section-title">💬 Group Chat</div>
     <div class="card">
       <div class="fg" style="margin-bottom:0">
-        <label class="fl">Your Name</label>
+        <label class="fl" for="chat-sel">Your Name</label>
         <select class="fi" id="chat-sel" onchange="onChatPlayerSelect()">
           <option value="">— Select your name —</option>
         </select>
@@ -523,6 +530,7 @@
     <div id="chat-messages" class="chat-messages"><div class="chat-empty">No messages yet — say hello! 👋</div></div>
     <div class="card" style="padding:12px">
       <div class="chat-input-row">
+        <label class="aifa-sr-only" for="chat-input">Chat message</label>
         <input class="fi" id="chat-input" placeholder="Type a message…" style="flex:1;margin-bottom:0" onkeydown="chatKeyDown(event)" />
         <button class="btn btn-primary" onclick="sendChat()">Send</button>
       </div>
@@ -1690,7 +1698,6 @@ refreshCommentSelect('teams');
   if(h&&m){h.addEventListener('click',function(){var o=m.classList.toggle('open');h.classList.toggle('open');document.body.style.overflow=o?'hidden':'';});}
 })();
 </script>
-<script src="https://widgets.leadconnectorhq.com/loader.js" data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js" data-widget-id="668394bfc5fec605b13596ff"></script>
-<script src="/js/aifa-nav.js?v=footer-v2" defer></script>
+<script src="/js/aifa-nav.js?v=footer-v3" defer></script>
 </body>
 </html>

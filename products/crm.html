@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="/js/aifa-consent.js?v=consent-v1"></script>
 <title>CRM & Pipeline Management for Small Business | AI Fusion Automations</title>
 <meta name="description" content="Your complete CRM — contacts, pipelines, deals, and every customer conversation in one place. Unlimited contacts, visual sales pipelines, and an all-channel inbox. Built for UK small businesses.">
 <meta name="robots" content="index, follow">
@@ -12,16 +13,6 @@
 <meta property="og:description" content="Contacts, pipelines, deals, and every conversation in one place. Built for small businesses that want to stop losing leads.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://tools.aifusionautomations.com/products/crm.html">
-<script>
-// Defer GTM to improve Lighthouse performance
-setTimeout(function(){
-  (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-  })(window,document,'script','dataLayer','GTM-5JSZNZ4Q');
-},2000);
-</script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -115,6 +106,7 @@ footer a{color:var(--primary-light);text-decoration:none}
 .lead-magnet-card .lm-meta{display:inline-flex;align-items:center;gap:.5rem;color:var(--accent-light);font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.25rem}
 .lead-magnet-card p{color:var(--text-muted);font-size:.93rem;line-height:1.55;margin:0}
 .lead-magnet-form{display:flex;flex-direction:column;gap:.5rem;margin-top:auto}
+.lead-magnet-form label{font-size:.75rem;font-weight:700;color:var(--text-muted)}
 .lead-magnet-form input{background:rgba(15,15,26,.6);border:1px solid var(--border);color:var(--text);padding:.7rem 1rem;border-radius:10px;font-size:.92rem;font-family:inherit;width:100%}
 .lead-magnet-form input:focus{outline:none;border-color:var(--primary)}
 .lead-magnet-form button{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;border:none;padding:.75rem 1rem;border-radius:10px;font-size:.92rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
@@ -158,7 +150,7 @@ footer a{color:var(--primary-light);text-decoration:none}
 </style>
 <link rel="stylesheet" href="/css/comparison-table.css">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="/css/aifa-nav.css?v=footer-v2">
+<link rel="stylesheet" href="/css/aifa-nav.css?v=footer-v3">
 <link rel="stylesheet" href="/css/aifa-katalyst.css?v=phase-3">
 </head>
 <body>
@@ -398,9 +390,12 @@ footer a{color:var(--primary-light);text-decoration:none}
         <p>A no-fluff walk-through of what's included when you set up your CRM with us &mdash; pipeline configuration, integrations, training, and what to expect in the first 30 days.</p>
       </div>
       <form class="lead-magnet-form" data-resource="service-guide" novalidate>
-        <input type="text" name="first_name" placeholder="First name" autocomplete="given-name" required>
-        <input type="text" name="last_name" placeholder="Last name (optional)" autocomplete="family-name">
-        <input type="email" name="email" placeholder="you@email.com" autocomplete="email" required>
+        <label for="sg-first">First name</label>
+        <input type="text" id="sg-first" name="first_name" placeholder="First name" autocomplete="given-name" required>
+        <label for="sg-last">Last name (optional)</label>
+        <input type="text" id="sg-last" name="last_name" placeholder="Last name (optional)" autocomplete="family-name">
+        <label for="sg-email">Email</label>
+        <input type="email" id="sg-email" name="email" placeholder="you@email.com" autocomplete="email" required>
         <button type="submit">Send me the guide &#8594;</button>
         <p class="lm-status" role="status" aria-live="polite"></p>
         <p class="lm-fine-print">We'll email it once and only contact you again with relevant CRM tips. Unsubscribe any time.</p>
@@ -415,9 +410,12 @@ footer a{color:var(--primary-light);text-decoration:none}
         <p>A real AIFA client's CRM setup, from initial chaos to live pipeline &mdash; with the numbers on what changed for them in the first 90 days.</p>
       </div>
       <form class="lead-magnet-form" data-resource="case-study" novalidate>
-        <input type="text" name="first_name" placeholder="First name" autocomplete="given-name" required>
-        <input type="text" name="last_name" placeholder="Last name (optional)" autocomplete="family-name">
-        <input type="email" name="email" placeholder="you@email.com" autocomplete="email" required>
+        <label for="cs-first">First name</label>
+        <input type="text" id="cs-first" name="first_name" placeholder="First name" autocomplete="given-name" required>
+        <label for="cs-last">Last name (optional)</label>
+        <input type="text" id="cs-last" name="last_name" placeholder="Last name (optional)" autocomplete="family-name">
+        <label for="cs-email">Email</label>
+        <input type="email" id="cs-email" name="email" placeholder="you@email.com" autocomplete="email" required>
         <button type="submit">Send me the case study &#8594;</button>
         <p class="lm-status" role="status" aria-live="polite"></p>
         <p class="lm-fine-print">We'll email it once and only contact you again with relevant CRM tips. Unsubscribe any time.</p>
@@ -545,8 +543,6 @@ footer a{color:var(--primary-light);text-decoration:none}
   <p>&copy; 2026 <a href="https://aifusionautomations.com">AI Fusion Automations</a> · Based in East Sussex, UK · <a href="https://tools.aifusionautomations.com/privacy-policy-aifa.html">Privacy Policy</a> · <a href="https://tools.aifusionautomations.com/terms.html">Terms</a> · <a href="https://tools.aifusionautomations.com/earnings-disclaimer.html">Earnings Disclaimer</a></p>
   <p style="margin-top:.5rem">Customer service: <a href="tel:+447480488817">+44 7480 488817</a> &middot; <a href="tel:+447588711912">+44 7588 711912</a></p>
 </footer>
-
-<script src="https://widgets.leadconnectorhq.com/loader.js" data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js" data-widget-id="668394bfc5fec605b13596ff"></script>
 <script defer src="/js/aifa-analytics.js"></script>
 
 <!-- Lead-magnet form handler -->
@@ -734,6 +730,6 @@ window.CRM_LEAD_MAGNET_WEBHOOK = window.CRM_LEAD_MAGNET_WEBHOOK ||
 }
 </script>
 
-<script src="/js/aifa-nav.js?v=footer-v2" defer></script>
+<script src="/js/aifa-nav.js?v=footer-v3" defer></script>
 </body>
 </html>

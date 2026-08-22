@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /includes/
 Disallow: /index.html.bak
 
 Sitemap: https://tools.aifusionautomations.com/sitemap.xml
