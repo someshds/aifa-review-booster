@@ -55,12 +55,10 @@ body.aifa-footer-only .stage {
   width: 34px;
   height: 34px;
   border-radius: 8px;
-  display: grid;
-  place-items: center;
+  display: block;
   flex: 0 0 auto;
-  background: linear-gradient(135deg, #e60ba0, #c026d3);
-  color: #fff;
-  font-size: 1rem;
+  object-fit: cover;
+  background: #0b1220;
 }
 
 .aifa-nav-name {
@@ -260,12 +258,18 @@ body.aifa-footer-only .stage {
   width: 34px;
   height: 34px;
   border-radius: 8px;
-  display: grid;
-  place-items: center;
+  display: block;
   flex: 0 0 auto;
-  background: linear-gradient(135deg, #e60ba0, #c026d3);
-  color: #fff;
-  font-size: 1rem;
+  object-fit: cover;
+  background: #0b1220;
+}
+
+img.nav-logo-icon,
+img.site-nav-logo-icon,
+img.aifa-site-nav-logo-icon,
+img.brand-icon {
+  object-fit: cover;
+  background: none !important;
 }
 
 .aifa-footer-brand span:last-child {
