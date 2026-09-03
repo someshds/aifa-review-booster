@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 BASE_URL = "https://tools.aifusionautomations.com"
@@ -23,6 +23,7 @@ EXCLUDE_FILES = {
     "index.html.bak",
     "tools-index.html",            # legacy version of index.html
     "privacy-policy.html",         # superseded by privacy-policy-aifa.html
+    "ai-systems-snapshot.html",    # superseded by services/ai-systems-snapshot.html
     "boxleaguepro-lite.html",      # superseded by boxleague-pro.html
     "roi-calculator.html",         # superseded by roi-calculator-v2.0.html
     "3d-demo-template.html",       # template, not a public page
@@ -102,7 +103,7 @@ def collect_pages() -> list[tuple[str, float, str]]:
 
 
 def render_sitemap(pages: list[tuple[str, float, str]]) -> str:
-    today = datetime.utcnow().strftime("%Y-%m-%d")
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     lines = ['<?xml version="1.0" encoding="UTF-8"?>',
              '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
     for url, priority, changefreq in pages:
