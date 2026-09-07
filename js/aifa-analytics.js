@@ -1,11 +1,13 @@
 /* AIFA Analytics — GA4 key event tracking via dataLayer
- * Fires: book_call_click, form_submit, video_play, scroll_90
+ * Fires: book_call_click, contact_click, form_view, form_submit, video_play, scroll_90
  * Works with GTM-5JSZNZ4Q container (GTM forwards dataLayer events to GA4).
  * Load with: <script defer src="/js/aifa-analytics.js"></script>
  */
 (function () {
   "use strict";
   window.dataLayer = window.dataLayer || [];
+
+  window.dataLayer.push({ event: "aifa_page_view", page_path: window.location.pathname, page_title: document.title });
 
   function push(eventName, params) {
     try {
@@ -25,6 +27,8 @@
     var href = (a.getAttribute("href") || "").toLowerCase();
     var text = (a.textContent || "").toLowerCase().trim();
     if (href.indexOf("leadconnectorhq.com/widget/booking") !== -1) return true;
+    if (href.indexOf("link.aifusionautomations.com/widget/bookings") !== -1) return true;
+    if (a.getAttribute("data-conversion") === "book-call") return true;
     if (href.indexOf("#book-a-call") !== -1) return true;
     if (text.indexOf("book a call") !== -1) return true;
     if (text.indexOf("book a free") !== -1) return true;
@@ -51,9 +55,17 @@
           page_title: document.title,
         });
       }
+      if (target && target.tagName === "A" && /^(mailto:|tel:)/i.test(target.getAttribute("href") || "")) {
+        push("contact_click", { contact_method: target.getAttribute("href").split(":")[0], page_path: window.location.pathname });
+      }
     },
     { capture: true, passive: true }
   );
+
+  var leadFrame = document.querySelector('iframe[src*="widget/form"]');
+  if (leadFrame) leadFrame.addEventListener("load", function () {
+    push("form_view", { form_id: leadFrame.id || "embedded", page_path: window.location.pathname });
+  }, { once: true });
 
   // ───────────────────────────────────────────────────────────
   // 2. FORM SUBMISSIONS

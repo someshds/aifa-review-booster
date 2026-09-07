@@ -10,14 +10,14 @@
     '<nav class="aifa-global-nav" aria-label="Primary">',
     '  <div class="aifa-nav-inner">',
     '    <a class="aifa-nav-brand" href="/" aria-label="AI Fusion Automations home">',
-    '      <img class="aifa-nav-logo" src="/img/brand/fusion-flow-icon.png" width="34" height="34" alt="">',
+    '      <img class="aifa-nav-logo" src="/img/brand/fusion-flow-icon-128.webp" width="34" height="34" alt="">',
     '      <span class="aifa-nav-name">AI Fusion Automations</span>',
     '    </a>',
     '    <button class="aifa-nav-toggle" type="button" aria-expanded="false" aria-label="Open menu"><span></span></button>',
     '    <ul class="aifa-nav-menu">',
     '      <li><a class="aifa-nav-link" href="/">Home</a></li>',
     '      <li class="aifa-nav-item">',
-    '        <button class="aifa-nav-trigger" type="button" aria-expanded="false">Services</button>',
+    '        <button class="aifa-nav-trigger" type="button" aria-expanded="false">What we fix</button>',
     '        <div class="aifa-nav-dropdown">',
     '          <a href="/services/ai-systems-snapshot.html">AI Systems Snapshot</a>',
     '          <a href="/ai-operating-systems.html">AI Operating Systems</a>',
@@ -27,21 +27,6 @@
     '          <a href="/products/automations.html">Workflow Automations</a>',
     '          <a href="/products/funnels.html">Website &amp; Funnel Building</a>',
     '          <a href="/services/">Industry Solutions</a>',
-    '        </div>',
-    '      </li>',
-    '      <li class="aifa-nav-item">',
-    '        <button class="aifa-nav-trigger" type="button" aria-expanded="false">Products</button>',
-    '        <div class="aifa-nav-dropdown">',
-    '          <a href="/products/">Products Hub</a>',
-    '          <a href="/products/ai-agents.html">AI Agents</a>',
-    '          <a href="/products/crm.html">CRM</a>',
-    '          <a href="/products/funnels.html">Funnels</a>',
-    '          <a href="/products/email-sms.html">Email &amp; SMS</a>',
-    '          <a href="/products/reputation.html">Reputation</a>',
-    '          <a href="/products/voice-ai.html">Voice AI</a>',
-    '          <a href="/products/automations.html">Automations</a>',
-    '          <a href="/products/calendars.html">Calendars</a>',
-    '          <a href="/products/payments.html">Payments</a>',
     '        </div>',
     '      </li>',
     '      <li class="aifa-nav-item">',
@@ -64,17 +49,8 @@
     '        </div>',
     '      </li>',
     '      <li><a class="aifa-nav-link" href="/pricing.html">Pricing</a></li>',
-    '      <li class="aifa-nav-item">',
-    '        <button class="aifa-nav-trigger" type="button" aria-expanded="false">Events</button>',
-    '        <div class="aifa-nav-dropdown">',
-    '          <a href="https://go.aifusionautomations.com/ai-office-hours-page">AI Office Hours - 23 June</a>',
-    '          <a href="https://go.aifusionautomations.com/aifa-webinar-transforming-your-work-2026">AI Workflow Webinar - 25 June</a>',
-    '        </div>',
-    '      </li>',
-    '      <li><a class="aifa-nav-link" href="/blog/">Blog</a></li>',
-    '      <li><a class="aifa-nav-link" href="/news/">AI News</a></li>',
-    '      <li><a class="aifa-nav-link" href="/#book-a-call">Contact Us</a></li>',
-    '      <li><a class="aifa-nav-link aifa-nav-cta" href="/strategy-call.html">Book a Call</a></li>',
+    '      <li><a class="aifa-nav-link" href="/blog/">Insights</a></li>',
+    '      <li><a class="aifa-nav-link aifa-nav-cta" href="/strategy-call.html" data-conversion="book-call">15-min call</a></li>',
     '    </ul>',
     '  </div>',
     '</nav>'
@@ -86,10 +62,10 @@
     '    <div class="aifa-footer-main">',
     '      <div class="aifa-footer-brand-block">',
     '        <a class="aifa-footer-brand" href="/" aria-label="AI Fusion Automations home">',
-    '          <img class="aifa-footer-logo" src="/img/brand/fusion-flow-icon.png" width="34" height="34" alt="">',
+    '          <img class="aifa-footer-logo" src="/img/brand/fusion-flow-icon-128.webp" width="34" height="34" alt="">',
     '          <span>AI Fusion Automations</span>',
     '        </a>',
-    '        <p>Helping small businesses grow with AI-powered automation, chatbots, and CRM solutions. Based in East Sussex, serving businesses across the UK and worldwide.</p>',
+    '        <p>Practical AI, CRM and workflow systems that stop leads and important work falling through the gaps.</p>',
     '      </div>',
     '      <div class="aifa-footer-column">',
     '        <h2>Services</h2>',
@@ -113,11 +89,11 @@
     '      </div>',
     '      <div class="aifa-footer-column">',
     '        <h2>Company</h2>',
-    '        <a href="https://go.aifusionautomations.com/ai-office-hours-page">AI Office Hours - 23 June</a>',
-    '        <a href="https://go.aifusionautomations.com/aifa-webinar-transforming-your-work-2026">AI Workflow Webinar - 25 June</a>',
+    '        <a href="/about.html">About Grant &amp; AIFA</a>',
+    '        <a href="/case-study-10-international.html">Case study</a>',
     '        <a href="/blog/">Blog</a>',
-    '        <a href="/#book-a-call">Contact Us</a>',
-    '        <a href="/strategy-call.html">Book a Call</a>',
+    '        <a href="/#book">Contact</a>',
+    '        <a href="/strategy-call.html" data-conversion="book-call">Book a 15-minute call</a>',
     '        <a href="/privacy-policy-aifa.html">Privacy Policy</a>',
     '        <a href="/terms.html">Terms &amp; Conditions</a>',
     '        <a href="/earnings-disclaimer.html">Earnings Disclaimer</a>',
@@ -265,7 +241,8 @@
       if (!mount) {
         mount = document.createElement('div');
         mount.id = 'aifa-nav-mount';
-        document.body.insertBefore(mount, document.body.firstChild);
+        var main = document.querySelector('main');
+        document.body.insertBefore(mount, main || document.body.firstChild);
       }
 
       mount.innerHTML = navMarkup;
@@ -280,7 +257,8 @@
     }
 
     footerMount.innerHTML = footerMarkup;
-    loadAifaChatWidget();
+    if (window.localStorage.getItem('aifa_cookie_consent_v1') === 'granted') loadAifaChatWidget();
+    window.addEventListener('aifa-consent-granted', loadAifaChatWidget, { once: true });
   }
 
   function shouldSkipAifaChatWidget() {
