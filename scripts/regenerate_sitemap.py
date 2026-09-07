@@ -12,8 +12,9 @@ Update EXCLUDE_FILES / EXCLUDE_PATTERNS when adding/removing pages.
 from __future__ import annotations
 
 import re
+import subprocess
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 BASE_URL = "https://tools.aifusionautomations.com"
@@ -33,6 +34,7 @@ EXCLUDE_FILES = {
 # Files matching these regex patterns are excluded.
 EXCLUDE_PATTERNS = [
     re.compile(r".*-v1\.0\.html$"),  # all -v1.0 legacy duplicates
+    re.compile(r"^includes/"),
 ]
 
 # Priority by URL pattern (highest match wins). 1.0 = highest, 0.0 = lowest.
@@ -82,33 +84,46 @@ def priority_for(url: str) -> tuple[float, str]:
     return DEFAULT_PRIORITY
 
 
-def collect_pages() -> list[tuple[str, float, str]]:
-    pages: list[tuple[str, float, str]] = []
+def git_lastmod(rel: str) -> str:
+    result = subprocess.run(
+        ["git", "log", "-1", "--format=%cs", "--", rel],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    return result.stdout.strip() or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+
+def collect_pages() -> list[tuple[str, float, str, str]]:
+    pages: list[tuple[str, float, str, str]] = []
     seen_urls: set[str] = set()
     for path in sorted(REPO_ROOT.rglob("*.html")):
         rel = path.relative_to(REPO_ROOT).as_posix()
         # Skip anything in node_modules, .git, scripts, etc.
-        if rel.startswith((".git/", "node_modules/", "scripts/")):
+        if rel.startswith((".git/", "node_modules/", "scripts/", "test-results/", "playwright-report/")):
             continue
         if should_exclude(rel):
+            continue
+        source = path.read_text(encoding="utf-8", errors="replace")
+        if re.search(r'<meta[^>]+name=["\']robots["\'][^>]+content=["\'][^"\']*noindex', source, re.I):
             continue
         url = url_for(rel)
         if url in seen_urls:
             continue
         seen_urls.add(url)
         priority, changefreq = priority_for(url)
-        pages.append((url, priority, changefreq))
+        pages.append((url, priority, changefreq, git_lastmod(rel)))
     return pages
 
 
-def render_sitemap(pages: list[tuple[str, float, str]]) -> str:
-    today = datetime.utcnow().strftime("%Y-%m-%d")
+def render_sitemap(pages: list[tuple[str, float, str, str]]) -> str:
     lines = ['<?xml version="1.0" encoding="UTF-8"?>',
              '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
-    for url, priority, changefreq in pages:
+    for url, priority, changefreq, lastmod in pages:
         lines.append(
             f"  <url><loc>{url}</loc>"
-            f"<lastmod>{today}</lastmod>"
+            f"<lastmod>{lastmod}</lastmod>"
             f"<changefreq>{changefreq}</changefreq>"
             f"<priority>{priority:.1f}</priority></url>"
         )

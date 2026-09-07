@@ -1,6 +1,9 @@
+:root{--primary:#e60ba0!important;--primary-light:#ff7acb!important;--primary-dark:#b425d6!important;--accent:#22d3ee!important;--accent-light:#67e8f9!important;--bg:#070b18!important;--bg-soft:#0d1427!important;--bg-card:#141d34!important;--text:#f8fafc!important;--text-muted:#a9b4c8!important;--border:rgba(169,180,200,.18)!important}
 body.aifa-nav-ready {
   padding-top: 0 !important;
 }
+body.aifa-nav-ready{font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body.aifa-nav-ready :where(a,button,input,select,textarea):focus-visible{outline:3px solid #22d3ee!important;outline-offset:3px}
 
 body.aifa-nav-ready #aifa-footer-mount {
   margin-top: auto;
@@ -21,9 +24,10 @@ body.aifa-footer-only .stage {
   position: sticky;
   top: 0;
   z-index: 10000;
-  background: linear-gradient(180deg, #e60ba0 0%, #ffd6f1 100%);
-  border-bottom: 1px solid rgba(230, 11, 160, 0.18);
-  color: #070811;
+  background: rgba(7, 11, 24, 0.92);
+  border-bottom: 1px solid rgba(169, 180, 200, 0.16);
+  color: #f8fafc;
+  backdrop-filter: blur(18px);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
 }
 
@@ -45,7 +49,7 @@ body.aifa-footer-only .stage {
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
-  color: #070811;
+  color: #f8fafc;
   text-decoration: none;
   font-weight: 800;
   min-width: 0;
@@ -66,7 +70,7 @@ body.aifa-footer-only .stage {
   line-height: 1;
   white-space: nowrap;
   background: none;
-  color: #070811;
+  color: #f8fafc;
 }
 
 .aifa-nav-menu {
@@ -90,7 +94,7 @@ body.aifa-footer-only .stage {
   border-radius: 7px;
   padding: 0 0.66rem;
   background: transparent;
-  color: #070811;
+  color: #f8fafc;
   text-decoration: none;
   font: inherit;
   font-size: 0.85rem;
@@ -104,8 +108,8 @@ body.aifa-footer-only .stage {
 .aifa-nav-link:focus-visible,
 .aifa-nav-trigger:hover,
 .aifa-nav-trigger:focus-visible {
-  color: #070811;
-  background: rgba(255, 255, 255, 0.32);
+  color: #fff;
+  background: rgba(255, 255, 255, 0.09);
   outline: none;
 }
 
@@ -183,10 +187,10 @@ body.aifa-footer-only .stage {
   display: none;
   width: 42px;
   height: 42px;
-  border: 1px solid rgba(7, 8, 17, 0.18);
+  border: 1px solid rgba(248, 250, 252, 0.2);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.3);
-  color: #070811;
+  color: #f8fafc;
   cursor: pointer;
 }
 
